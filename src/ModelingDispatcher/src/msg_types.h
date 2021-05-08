@@ -1,6 +1,7 @@
 #ifndef MISSILESYSTEM_MSG_TYPES_H
 #define MISSILESYSTEM_MSG_TYPES_H
 
+#include "msg_channel.h"
 #include <array>
 
 typedef std::array<double, 3> vec3;
@@ -19,12 +20,21 @@ struct BasePhysicsEntity : public Entity
     TargetStatus status;
 };
 
-sctruct TargetMsg : public BasePhysicsEntity {};
+struct TargetMsg : public BasePhysicsEntity {};
 
 struct RocketMsg : public BasePhysicsEntity
 {
     bool is_explosion;
     bool is_target_destroyed;
+};
+
+struct RLCMsg
+{
+    id_type target_id;
+    vec3 variance;
+    double elevator, azimuth;
+    double distance;
+    double v_r;
 };
 
 #endif //MISSILESYSTEM_MSG_TYPES_H

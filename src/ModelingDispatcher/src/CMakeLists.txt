@@ -6,9 +6,11 @@ project(${projectName})
 
 set(HEADERS
         abstractmodel.h
+        ModelingDispatcher.h
         )
 
 set(SOURCES
+        ModelingDispatcher.cpp
         )
 
 add_library(${projectName} INTERFACE
