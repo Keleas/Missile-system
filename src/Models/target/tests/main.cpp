@@ -1,6 +1,4 @@
-#include <QCoreApplication>
 #include <iostream>
-#include <QFile>
 
 #include "airtarget.h"
 
@@ -32,14 +30,14 @@ int main(int argc, char *argv[])
 
     std::cout << data1.nPoints;
 
-    QFile file("results.txt");
-    file.open(QIODevice::Append);
-    QTextStream io(&file);
-
-    for (int i = 0; i < data1.nPoints; i++)
-    {
-        io << data1.xPos[i] << " " << data1.yPos[i] << " " << data1.zPos[i] << "\n";
-    }
-
-    file.close();
+//    QFile file("results.txt");
+//    file.open(QIODevice::Append);
+//    QTextStream io(&file);
+//
+//    for (int i = 0; i < data1.nPoints; i++)
+//    {
+//        io << data1.xPos[i] << " " << data1.yPos[i] << " " << data1.zPos[i] << "\n";
+//    }
+//
+//    file.close();
 }

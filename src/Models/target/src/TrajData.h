@@ -2,7 +2,7 @@
 #define TRAJDATA_H
 
 #include <vector>
-#include <Vector3D.h>
+#include "Vector3D.h"
 
 struct TrajectoryPoint
 {
