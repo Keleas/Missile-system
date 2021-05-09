@@ -8,8 +8,6 @@
 #include "msg_types.h"
 
 constexpr double g = 9.81;
-constexpr double dt = 0.1;
-
 
 struct AirTargetParams
 {
@@ -22,9 +20,10 @@ struct AirTargetParams
 class AirTarget : public Model
 {
 public:
-    AirTarget(std::string targetName_, AirTargetParams param_);
+    AirTarget(id_type id, MsgChannelCarrier& carrier);
+//    AirTarget(std::string targetName_, AirTargetParams param_);
 
-    void calculate();
+    void calculate(double dt);
 
     bool init(std::string const& initial_data) override final;
     void firstStep() override final;

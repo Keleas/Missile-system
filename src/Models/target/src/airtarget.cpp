@@ -2,8 +2,8 @@
 
 #define square_destroy_range 2500
 
-AirTarget::AirTarget(std::string targetName_, AirTargetParams param_)
-    : targetName(targetName_), param{param_}
+AirTarget::AirTarget(id_type id, MsgChannelCarrier &carrier)
+    : Model{id, carrier}
 {
     declareteQueue(recieve_msg);
 }
@@ -55,11 +55,24 @@ void AirTarget::step(double time)
             status = TargetStatus::is_destroy;
         }
     }
+    double dt;
+    if (data.nPoints != 0)
+        dt = time - data.times.back();
+    else
+        dt = time;
+
     if (status == TargetStatus::is_fly)
-        calculate();
+        calculate(dt);
+
+    TargetMsg msg;
+    msg.coord = {data.xPos.back(), data.yPos.back(), data.zPos.back()};
+    msg.vels = {data.xVel.back(), data.yVel.back(), data.zVel.back()};
+    msg.status = TargetStatus::is_fly;
+
+    send<TargetMsg>(data.times.back(), msg);
 }
 
-void AirTarget::calculate()
+void AirTarget::calculate(double dt)
 {
     std::vector<Vector3D> _points;
     std::vector<Vector3D> _vels;
