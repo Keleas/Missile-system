@@ -11,7 +11,7 @@ public:
     PBU(id_type id, MsgChannelCarrier& carrier);
     ~PBU();
 
-    bool init(std::string const& initial_data) override final;
+//    bool init(std::string const& initial_data) override final;
 
     void firstStep() override final;
 
