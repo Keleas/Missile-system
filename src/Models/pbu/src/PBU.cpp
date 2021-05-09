@@ -3,7 +3,7 @@
 PBU::PBU(id_type id, MsgChannelCarrier& carrier)
     : Model{id, carrier}
 {
-    declareteQueue(msg_from_rlc);
+    //declareteQueue(msg_from_rlc);
 }
 
 

@@ -9,7 +9,7 @@ public:
     Vector3D() = default;
     Vector3D(double _x, double _y, double _z);
     Vector3D(GeocentricCoodinates coord);
-    Vector3D(const std::array<double, 3>& coord);
+    Vector3D(const std::array<double, 3> &coord);
 
 
     double length() const;
@@ -43,7 +43,7 @@ inline Vector3D::Vector3D(double _x, double _y, double _z) : x{_x}, y{_y}, z{_z}
 
 inline Vector3D::Vector3D(GeocentricCoodinates coord) : x{coord.x}, y{coord.y}, z{coord.z} {}
 
-inline Vector3D::Vector3D(const std::array<double, _Tp2> &coord)
+inline Vector3D::Vector3D(const std::array<double, 3> &coord)
 {
     x = coord[0];
     y = coord[1];

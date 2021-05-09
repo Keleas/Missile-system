@@ -17,7 +17,7 @@ public:
 
     void step(double time) final;
 private:
-    MessageQueue<RLCMsg> msg_from_rlc;
+    //MessageQueue<RLCMsg> msg_from_rlc;
 };
 
 

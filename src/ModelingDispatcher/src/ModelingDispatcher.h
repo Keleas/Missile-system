@@ -12,6 +12,9 @@ public:
     ~ModelingDispatcher();
 
     void run(std::string const& scenario);
+
+    template <typename MT>
+    MsgChannel<MT>& getChannel() { return carrier.get<MT>();}
 private:
     double current_time{0.}, delta_time;
 

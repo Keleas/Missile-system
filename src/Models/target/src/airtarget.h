@@ -2,8 +2,10 @@
 #define AIRTARGET_H
 
 #include <string>
+#include <fstream>
 
 #include "abstractmodel.h"
+#include "modelfactory.h"
 #include "TrajData.h"
 #include "msg_types.h"
 
@@ -28,6 +30,7 @@ public:
     bool init(const rapidjson::Value &initial_data) override final;
     void firstStep() override final;
     void step(double time) override final;
+    void endStep() override final {write_to_file("target_crd", control_points);};
 
     TargetStatus get_status();
     Vector3D get_coords();
@@ -35,6 +38,7 @@ public:
     void set_status(TargetStatus trg);
 
     int num_point_passed = 0;
+    void write_to_file(std::string file_name, std::vector<TrajectoryPoint> points = {});
 
 private:
     std::string targetName;
@@ -53,6 +57,41 @@ private:
     void TransformForCalculate();
 
 };
+
+inline void AirTarget::write_to_file(std::string file_name, std::vector<TrajectoryPoint> points)
+{
+    std::ofstream ofs(file_name);
+
+    int k = 0;
+
+    for (int i = 0; i < data.nPoints; i++)
+    {
+        GeocentricCoodinates GC(data.xPos[i], data.yPos[i], data.zPos[i]);
+        GeodezicCoodinates GD = GeocentricToGeodezic(GC);
+        ofs << GD.latitude << " " << GD.longitude << " " << GD.altitude;
+        if (!points.empty())
+        {
+            std::string s1 = std::to_string(points[k].initialPoint.x);
+            std::string s2 = std::to_string(points[k].initialPoint.y);
+            std::string s3 = std::to_string(points[k].initialPoint.z);
+
+            std::string w1 = std::to_string(GC.x);
+            std::string w2 = std::to_string(GC.y);
+            std::string w3 = std::to_string(GC.z);
+
+            if (s1 == w1 && s2 == w2 && s3 == w3)
+            {
+                ofs << " control_point";
+                k++;
+            }
+        }
+        ofs << "\n";
+    }
+
+    ofs.close();
+}
+
+DEFAULT_MODEL_FACTORY(AirTarget)
 
 Vector3D GeoToLocal(GeodezicCoodinates GD, GeocentricCoodinates GC, GeocentricCoodinates GC0);
 GeocentricCoodinates LocalToGeo(GeodezicCoodinates GD, Vector3D Loc, GeocentricCoodinates GC0);

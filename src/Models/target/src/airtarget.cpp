@@ -73,12 +73,15 @@ void AirTarget::step(double time)
     }
     double dt;
     if (data.nPoints != 0)
+    {
+        std::cout << time << " " << data.times.back() << "\n";
         dt = time - data.times.back();
+    }
     else
         dt = time;
 
     if (status == TargetStatus::is_fly)
-        calculate(dt);
+        calculate(0.01);
 
     TargetMsg msg;
     msg.coord = {data.xPos.back(), data.yPos.back(), data.zPos.back()};
@@ -295,6 +298,8 @@ void AirTarget::calculate(double dt)
 
     double dist = (GC_2 - GC).length();
 
+    //std::cout << dist << "\n";
+
     if (dist <= 100)
     {
         radiusVector = GeoToLocal(GD, GC_2, GC);
@@ -312,8 +317,8 @@ void AirTarget::calculate(double dt)
     }
 
     this->NuCurNext = NuCurNext;
-    coords = {data.xPos.back(), data.yPos.back(), data.zPos.back()};
     data.insert(data.nPoints, _points, _vels, _accels, _bankAngle, _horizontal_plane, _wayAngle, _transOV, _normOV, dt);
+    coords = {data.xPos.back(), data.yPos.back(), data.zPos.back()};
 }
 
 TargetStatus AirTarget::get_status()
