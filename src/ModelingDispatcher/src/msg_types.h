@@ -27,4 +27,9 @@ struct RocketMsg : public BasePhysicsEntity
     bool is_target_destroyed;
 };
 
+struct Explosion
+{
+    vec3 crd_rct;
+};
+
 #endif //MISSILESYSTEM_MSG_TYPES_H

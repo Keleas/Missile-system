@@ -1,8 +1,11 @@
 #ifndef AIRTARGET_H
 #define AIRTARGET_H
 
-#include "TrajData.h"
 #include <string>
+
+#include "abstractmodel.h"
+#include "TrajData.h"
+#include "msg_types.h"
 
 constexpr double g = 9.81;
 
@@ -14,26 +17,42 @@ struct AirTargetParams
     double MIN_TRANSVERSE_OVERLOAD;
 };
 
-class AirTarget
+class AirTarget : public Model
 {
 public:
     AirTarget(std::string targetName_, AirTargetParams param_);
-    std::vector<double> NuCurLast;
-    std::vector<double> NuCurNextLast;
-    std::vector<double> AccelsLast;
-    double NormLast;
-    double TransLast;
-    double HorizLast;
-    double BankLast;
-    double WayLast;
 
-    void calculate(const std::vector<TrajectoryPoint> &points, TrajData &data, int num_iter = -1, std::vector<double> cur_vec_vel = {},
-                   std::vector<double> next_vec_vel_ = {}, std::vector<double> AccelsLast_ = {}, double NormLast_ = 0, double TransLast_ = 0,
-                   double HorizLast_ = 0, double BankLast_ = 0, double WayLast_ = 0);
+    void calculate(int num_iter);
+
+    bool init(std::string const& initial_data) override final;
+    void firstStep() override final;
+    void step(double time) override final;
+
+    TargetStatus get_status();
+    Vector3D get_coords();
+
+    void set_status(TargetStatus trg);
+
+    int num_point_passed = 0;
 
 private:
     std::string targetName;
     AirTargetParams param;
+    MessageQueue<Explosion> recieve_msg;
+    Vector3D coords;
+    TargetStatus status = TargetStatus::is_not_fly;
+
+    std::vector<TrajectoryPoint> control_points;
+    TrajData data;
+
+    std::vector<double> NuCurLast = {0, 0, 0};
+    std::vector<double> NuCurNextLast = {0, 0, 0};
+    std::vector<double> AccelsLast = {0, 0, 0};
+    double NormLast = 0;
+    double TransLast = 0;
+    double HorizLast = 0;
+    double BankLast = 0;
+    double WayLast = 0;
 };
 
 Vector3D GeoToLocal(GeodezicCoodinates GD, GeocentricCoodinates GC, GeocentricCoodinates GC0);
