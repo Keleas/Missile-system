@@ -36,6 +36,7 @@ GeocentricCoodinates LocalToGeo(GeodezicCoodinates GD, Vector3D Loc, GeocentricC
 
 bool AirTarget::init(const rapidjson::Value& initial_data)
 {
+    targetModelType = initial_data["target_model_type"].GetString();
     targetName = initial_data["target_name"].GetString();
     param.MAX_TRANSVERSE_OVERLOAD = initial_data["target_max_Nx"].GetDouble();
     param.MAX_NORMAL_OVERLOAD =  initial_data["target_max_Ny"].GetDouble();
@@ -87,6 +88,8 @@ void AirTarget::step(double time)
     msg.coord = {data.xPos.back(), data.yPos.back(), data.zPos.back()};
     msg.vels = {data.xVel.back(), data.yVel.back(), data.zVel.back()};
     msg.status = TargetStatus::is_fly;
+
+    write_to_csv();
 
     send<TargetMsg>(data.times.back(), msg);
 }

@@ -20,7 +20,7 @@ struct BasePhysicsEntity : public Entity
     TargetStatus status;
 };
 
-struct TargetMsg : public BasePhysicsEntity {};
+struct TargetMsg : public BasePhysicsEntity {std::string type_model;};
 
 struct RocketMsg : public BasePhysicsEntity
 {

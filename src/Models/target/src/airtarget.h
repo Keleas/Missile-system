@@ -23,7 +23,6 @@ class AirTarget : public Model
 {
 public:
     AirTarget(id_type id, MsgChannelCarrier& carrier);
-//    AirTarget(std::string targetName_, AirTargetParams param_);
 
     void calculate(double dt);
 
@@ -39,9 +38,11 @@ public:
 
     int num_point_passed = 0;
     void write_to_file(std::string file_name, std::vector<TrajectoryPoint> points = {});
+    void write_to_csv();
 
 private:
     std::string targetName;
+    std::string targetModelType;
     AirTargetParams param;
     MessageQueue<Explosion> recieve_msg;
     Vector3D coords;
@@ -89,6 +90,25 @@ inline void AirTarget::write_to_file(std::string file_name, std::vector<Trajecto
     }
 
     ofs.close();
+}
+
+inline void AirTarget::write_to_csv()
+{
+    std::string name = "test.csv";
+    std::ofstream ofs(name);
+    std::string sep = ", ";
+
+    ofs << "Target_type" << sep << "Id" << sep << "Latitude" << sep << "Longitude" << sep
+        << "Altitude" << sep << "Vx" << sep << "Vy" << sep << "Vz" << sep << "Elevation" << sep
+        << "Azimut" << sep << "Status" << "\n";
+
+    GeocentricCoodinates GC = {data.xPos.back(), data.yPos.back(), data.zPos.back()};
+    GeodezicCoodinates GD = GeocentricToGeodezic(GC);
+
+    ofs << targetModelType << sep << id << sep << GD.latitude << sep << GD.longitude << sep
+        << GD.altitude << sep << data.xVel.back() << sep << data.yVel.back() << sep
+        << data.zVel.back() << sep << data.angle_horizontal_plane.back() << sep
+        << data.wayAngle.back() << sep << int(status) << "\n";
 }
 
 DEFAULT_MODEL_FACTORY(AirTarget)
