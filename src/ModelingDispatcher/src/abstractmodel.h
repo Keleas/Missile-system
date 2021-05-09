@@ -3,6 +3,7 @@
 
 #include <list>
 #include <iostream>
+#include "rapidjson/document.h"
 #include "channel_carrier.h"
 
 template <typename MT>
@@ -37,7 +38,7 @@ public:
     Model(id_type id, MsgChannelCarrier& carrier);
     virtual ~Model() {}
 
-    virtual bool init(std::string const& initial_data) = 0;
+    virtual bool init(const rapidjson::Value& initial_data) = 0;
 
     template <typename MT>
     /**
