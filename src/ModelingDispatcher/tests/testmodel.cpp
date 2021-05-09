@@ -1,7 +1,7 @@
 #include "testmodel.h"
 
-TestModelBase::TestModelBase(id_type id, MsgChannelCarrier &carrier)
-    : Model{id, carrier} {}
+TestModelBase::TestModelBase(id_type id, MsgChannelCarrier &carrier, std::ostream& log)
+    : Model{id, carrier, log} {}
 
 /**
  * @brief TestModelBase::printQueue
@@ -9,29 +9,29 @@ TestModelBase::TestModelBase(id_type id, MsgChannelCarrier &carrier)
  */
 void TestModelBase::printQueue()
 {
-    std::cout << "int:\n";
+    log << "int:\n";
     while(!int_queue.empty())
     {
-        std::cout << "\tfrom: " << int_queue.front().source_id;
-        std::cout << "\ttime: " << int_queue.front().time;
-        std::cout << "\tmessage: " << int_queue.front().message;
-        std::cout << std::endl;
+        log << "\tfrom: " << int_queue.front().source_id;
+        log << "\ttime: " << int_queue.front().time;
+        log << "\tmessage: " << int_queue.front().message;
+        log << std::endl;
         int_queue.pop_front();
     }
-    std::cout << "str:\n";
+    log << "str:\n";
     while(!str_queue.empty())
     {
-        std::cout << "\tfrom: " << str_queue.front().source_id;
-        std::cout << "\ttime: " << str_queue.front().time;
-        std::cout << "\tmessage: " << str_queue.front().message;
-        std::cout << std::endl;
+        log << "\tfrom: " << str_queue.front().source_id;
+        log << "\ttime: " << str_queue.front().time;
+        log << "\tmessage: " << str_queue.front().message;
+        log << std::endl;
         str_queue.pop_front();
     }
 }
 
 
-model1::model1(id_type id, MsgChannelCarrier& carrier)
-    : TestModelBase{id, carrier}
+model1::model1(id_type id, MsgChannelCarrier& carrier, std::ostream& log)
+    : TestModelBase{id, carrier, log}
 {
     declareteQueue(str_queue); //декларация очереди сообщений типа string от всех
     declareteQueue(int_queue, 33);//очерередь сообщений типа int также используется для получения сообщений от отправителя с id=33
@@ -61,8 +61,8 @@ bool model1::init(const rapidjson::Value &initial_data) {
     return true;
 }
 
-model2::model2(id_type id, MsgChannelCarrier& carrier)
-    : TestModelBase{id, carrier}
+model2::model2(id_type id, MsgChannelCarrier& carrier, std::ostream& log)
+    : TestModelBase{id, carrier, log}
 {
     declareteQueue(int_queue); //декларация очереди сообщщений типа int от всех
     declareteQueue(str_queue); //декларация очереди сообщщений типа string от всех

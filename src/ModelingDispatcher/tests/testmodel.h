@@ -13,7 +13,7 @@
 class TestModelBase : public Model
 {
 public:
-    TestModelBase(id_type id, MsgChannelCarrier& carrier);
+    TestModelBase(id_type id, MsgChannelCarrier& carrier, std::ostream& log);
     virtual ~TestModelBase() {}
 
     virtual bool init(const rapidjson::Value& initial_data) override { return true; }
@@ -35,7 +35,7 @@ protected:
 class model1 : public TestModelBase
 {
 public:
-    model1(id_type id, MsgChannelCarrier& carrier);
+    model1(id_type id, MsgChannelCarrier& carrier, std::ostream& log);
     virtual ~model1() {}
 
     virtual bool init(const rapidjson::Value& initial_data) override final;
@@ -48,7 +48,7 @@ private:
 class model2 : public TestModelBase
 {
 public:
-    model2(id_type id, MsgChannelCarrier& carrier);
+    model2(id_type id, MsgChannelCarrier& carrier, std::ostream& log);
     virtual ~model2() {}
 
     virtual void firstStep() override;
