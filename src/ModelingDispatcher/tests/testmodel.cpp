@@ -30,10 +30,9 @@ void TestModelBase::printQueue()
 }
 
 
-model1::model1(id_type id, MsgChannelCarrier& carrier, id_type listen)
+model1::model1(id_type id, MsgChannelCarrier& carrier)
     : TestModelBase{id, carrier}
 {
-    declareteQueue(int_queue, listen); //декларация очереди сообщений от отправителя с id = listen типа int
     declareteQueue(str_queue); //декларация очереди сообщений типа string от всех
     declareteQueue(int_queue, 33);//очерередь сообщений типа int также используется для получения сообщений от отправителя с id=33
 }
@@ -54,6 +53,12 @@ void model1::step(double time)
     t += time;
     send<int>(t, t * 2);
     send<std::string>(t, "model1");
+}
+
+bool model1::init(const rapidjson::Value &initial_data) {
+    id_type listen = initial_data["listen"].GetUint();
+    declareteQueue(int_queue, listen); //декларация очереди сообщений от отправителя с id = listen типа int
+    return true;
 }
 
 model2::model2(id_type id, MsgChannelCarrier& carrier)

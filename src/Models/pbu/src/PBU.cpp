@@ -9,9 +9,9 @@ PBU::PBU(id_type id, MsgChannelCarrier& carrier)
 
 PBU::~PBU() {}
 
-bool PBU::init(const std::string &initial_data) {
-    return true;
-}
+//bool PBU::init(const std::string &initial_data) {
+//    return true;
+//}
 
 void PBU::firstStep() {
 

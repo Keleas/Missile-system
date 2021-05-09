@@ -1,7 +1,8 @@
 #ifndef TESTMODELBASE_H
 #define TESTMODELBASE_H
 
-#include "../src/abstractmodel.h"
+#include "abstractmodel.h"
+#include "modelfactory.h"
 
 /**
  * @brief The TestModelBase class
@@ -15,7 +16,9 @@ public:
     TestModelBase(id_type id, MsgChannelCarrier& carrier);
     virtual ~TestModelBase() {}
 
-    virtual bool init(std::string const& initial_data) override { return true; }
+    virtual bool init(const rapidjson::Value& initial_data) override { return true; }
+
+    virtual void endStep() override { printQueue(); }
 
     void printQueue();///> Печать очередей
 
@@ -32,8 +35,10 @@ protected:
 class model1 : public TestModelBase
 {
 public:
-    model1(id_type id, MsgChannelCarrier& carrier, id_type listen);
+    model1(id_type id, MsgChannelCarrier& carrier);
     virtual ~model1() {}
+
+    virtual bool init(const rapidjson::Value& initial_data) override final;
 
     virtual void firstStep() override;
     virtual void step(double time) override;
@@ -50,5 +55,8 @@ public:
     virtual void step(double time) override;
 private:
 };
+
+DEFAULT_MODEL_FACTORY(model1)
+DEFAULT_MODEL_FACTORY(model2)
 
 #endif // TESTMODELBASE_H

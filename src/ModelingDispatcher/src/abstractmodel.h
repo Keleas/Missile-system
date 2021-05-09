@@ -58,6 +58,8 @@ public:
      */
     virtual void step(double time) = 0;
 
+    virtual void endStep() = 0;
+
 private:
     MsgChannelCarrier& carrier;
 protected:
