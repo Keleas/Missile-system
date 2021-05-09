@@ -25,7 +25,7 @@ public:
 
     void calculate(double dt);
 
-    bool init(std::string const& initial_data) override final;
+    bool init(const rapidjson::Value &initial_data) override final;
     void firstStep() override final;
     void step(double time) override final;
 

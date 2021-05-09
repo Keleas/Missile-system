@@ -34,8 +34,24 @@ GeocentricCoodinates LocalToGeo(GeodezicCoodinates GD, Vector3D Loc, GeocentricC
     return GeocentricCoodinates(xGeo, yGeo, zGeo);
 }
 
-bool AirTarget::init(std::string const& initial_data)
-{}
+bool AirTarget::init(const rapidjson::Value& initial_data)
+{
+    targetName = initial_data["target_name"].GetString();
+    param.MAX_TRANSVERSE_OVERLOAD = initial_data["target_max_Nx"].GetDouble();
+    param.MAX_NORMAL_OVERLOAD =  initial_data["target_max_Ny"].GetDouble();
+    param.MAX_MAH =  initial_data["target_max_M"].GetDouble();
+    param.MIN_TRANSVERSE_OVERLOAD =  initial_data["target_min_Nx"].GetDouble();
+
+    for (auto& v : initial_data["target_points"].GetArray())
+    {
+        TrajectoryPoint p;
+        p.initialPoint.x = v["x"].GetDouble();
+        p.initialPoint.y = v["y"].GetDouble();
+        p.initialPoint.z = v["z"].GetDouble();
+        p.initialVel = v["vel"].GetDouble();
+        control_points.push_back(p);
+    }
+}
 
 void AirTarget::firstStep()
 {
@@ -296,6 +312,7 @@ void AirTarget::calculate(double dt)
     }
 
     this->NuCurNext = NuCurNext;
+    coords = {data.xPos.back(), data.yPos.back(), data.zPos.back()};
     data.insert(data.nPoints, _points, _vels, _accels, _bankAngle, _horizontal_plane, _wayAngle, _transOV, _normOV, dt);
 }
 
