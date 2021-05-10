@@ -8,6 +8,50 @@ AirTarget::AirTarget(id_type id, MsgChannelCarrier &carrier)
     declareteQueue(recieve_msg);
 }
 
+Vector3D GeoToPBU(GeocentricCoodinates GC0, GeocentricCoodinates GC)
+{
+    EarthEllipsoid ellipsoid;
+    GeodezicCoodinates GD0 = GeocentricToGeodezic(GC0).toRadians();
+    double sinB = sin(GD0.latitude);
+    double N = ellipsoid.a / sqrt(1 - pow(ellipsoid.e, 2) * pow(sinB, 2));
+
+    double z = GC.z + pow(ellipsoid.e, 2) * N * sinB;
+    double x = GC.x * cos(GD0.longitude) + GC.y * sin(GD0.longitude);
+    double y = -GC.x * sin(GD0.longitude) + GC.y * cos(GD0.longitude);
+
+    double z1 = z;
+
+    z = z1 * cos(M_PI_2 - GD0.latitude) + x * sin(M_PI_2 - GD0.latitude);
+    x = -z1 * sin(M_PI_2 - GD0.latitude) + x * cos(M_PI_2 - GD0.latitude);
+    z = z - (N+GD0.altitude);
+    x = -x;
+    return Vector3D(x, y, z);
+}
+
+GeocentricCoodinates PBUToGeo(GeocentricCoodinates GC0, Vector3D PBU)
+{
+    EarthEllipsoid ellipsoid;
+    GeodezicCoodinates GD0 = GeocentricToGeodezic(GC0).toRadians();
+    double sinB = sin(GD0.latitude);
+    double N = ellipsoid.a / sqrt(1 - pow(ellipsoid.e, 2) * pow(sinB, 2));
+
+    double x = -PBU.x;
+    double z = PBU.z + N + GD0.altitude;
+
+    double z1 = z;
+    z = z1 * cos(-M_PI_2 + GD0.latitude) + x * sin(-M_PI_2 + GD0.latitude);
+    x = -z1 * sin(-M_PI_2 + GD0.latitude) + x * cos(-M_PI_2 + GD0.latitude);
+
+    double x1 = x;
+    x = x1 * cos(-GD0.longitude) + PBU.y * sin(-GD0.longitude);
+    double y = -x1 * sin(-GD0.longitude) + PBU.y * cos(-GD0.longitude);
+
+    z = z - pow(ellipsoid.e, 2) * N * sinB;
+
+    return GeocentricCoodinates(x, y, z);
+
+}
+
 Vector3D GeoToLocal(GeodezicCoodinates GD, GeocentricCoodinates GC, GeocentricCoodinates GC0)
 {
     double sinL = sin(GD.longitude);
