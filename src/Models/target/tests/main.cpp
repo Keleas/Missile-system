@@ -4,7 +4,7 @@
 #include "ModelingDispatcher.h"
 
 const std::string scenario = "{"
-                             "  \"end_time\": 10000.0,"
+                             "  \"end_time\": 1800.0,"
                              "  \"objects\": "
                              "      ["
                              "          {"
@@ -20,21 +20,21 @@ const std::string scenario = "{"
                              "                   \"target_points\": "
                              "                      ["
                              "                          {"
-                                 "                      \"x\" : 2551014.27811,"
-                                 "                      \"y\" : 2641652.6159,"
-                                 "                      \"z\" : 5209575.04365,"
+                                 "                      \"x\" : 37035.885104,"
+                                 "                      \"y\" : 574478.867425,"
+                                 "                      \"z\" : -15932.8059282,"
                                  "                      \"vel\" : 300"
                                  "                      },"
                              "                          {"
-                                 "                      \"x\" : 2521759.87014,"
-                                 "                      \"y\" : 2270602.78583,"
-                                 "                      \"z\" : 5394218.20446,"
+                                 "                      \"x\" : 345000.604917,"
+                                 "                      \"y\" : 295751.039344,"
+                                 "                      \"z\" : -6164.34553825,"
                                  "                      \"vel\" : 300"
                                  "                      },"
                              "                          {"
-                                 "                      \"x\" : 2587663.12314,"
-                                 "                      \"y\" : 2329942.34136,"
-                                 "                      \"z\" : 5325983.96688,"
+                                 "                      \"x\" : 233495.792456,"
+                                 "                      \"y\" : 303480.14781,"
+                                 "                      \"z\" : -11386.4586281,"
                                  "                      \"vel\" : 300"
                                  "                      }"
                                  "                      ]"
@@ -63,40 +63,18 @@ int main(int argc, char *argv[])
     md.run(scenario);
     std::cout << "finished!\n";
 
-    /*GeodezicCoodinates start (55, 45, 10000);
-    double vel1 = 200;
-    GeodezicCoodinates finish (55, 45.2, 10000);
-    double vel2 = 300;
+    /* GC1(2551014.27811, 2641652.6159, 5209575.04365);
+    GeocentricCoodinates GC2(2521759.87014, 2270602.78583, 5394218.20446);
+    GeocentricCoodinates GC3(2587663.12314, 2329942.34136, 5325983.96688);
 
-    TrajectoryPoint point_start(GeodezicToGeoCentric(start), vel1);
-    TrajectoryPoint point_finish(GeodezicToGeoCentric(finish), vel2);
+    GeodezicCoodinates GD_Msc = GeodezicCoodinates(55, 37, 0); //костыыыыль
 
-    std::vector<TrajectoryPoint> points;
-    points.push_back(point_start);
-    points.push_back(point_finish);
+    Vector3D p1 = GeoToPBU(GeodezicToGeoCentric(GD_Msc), GC1);
+    Vector3D p2 = GeoToPBU(GeodezicToGeoCentric(GD_Msc), GC2);
+    Vector3D p3 = GeoToPBU(GeodezicToGeoCentric(GD_Msc), GC3);
 
-    AirTargetParams params;
-    params.MAX_MAH = 2;
-    params.MAX_NORMAL_OVERLOAD = 6;
-    params.MAX_TRANSVERSE_OVERLOAD = 2;
-    params.MIN_TRANSVERSE_OVERLOAD = -1.2;
-
-    AirTarget target1 ("plane1", params);
-
-    TrajData data1;
-
-    target1.calculate(points, data1);
-
-    std::cout << data1.nPoints;*/
-
-//    QFile file("results.txt");
-//    file.open(QIODevice::Append);
-//    QTextStream io(&file);
-//
-//    for (int i = 0; i < data1.nPoints; i++)
-//    {
-//        io << data1.xPos[i] << " " << data1.yPos[i] << " " << data1.zPos[i] << "\n";
-//    }
-//
-//    file.close();
+    std::cout << std::setprecision(12) << p1.x << " " << p1.y << " " << p1.z << "\n";
+    std::cout << std::setprecision(12) << p2.x << " " << p2.y << " " << p2.z << "\n";
+    std::cout << std::setprecision(12) << p3.x << " " << p3.y << " " << p3.z << "\n";
+    */
 }

@@ -29,7 +29,7 @@ public:
     bool init(const rapidjson::Value &initial_data) override final;
     void firstStep() override final;
     void step(double time) override final;
-    void endStep() override final {write_to_file("target_crd", control_points);};
+    void endStep() override final {write_to_file("target_crd.txt", control_points);};
 
     TargetStatus get_status();
     Vector3D get_coords();
@@ -38,7 +38,7 @@ public:
 
     int num_point_passed = 0;
     void write_to_file(std::string file_name, std::vector<TrajectoryPoint> points = {});
-    void write_to_csv();
+    void write_to_csv(bool fisrt_time=false);
 
 private:
     std::string targetName;
@@ -53,7 +53,7 @@ private:
 
     Vector3D NuCurNext;
 
-    GeodezicCoodinates GD_Msc = GeodezicCoodinates(55, 37, 1000); //ךמסעûûûûכü
+    GeodezicCoodinates GD_Msc = GeodezicCoodinates(55, 37, 0); //ךמסעûûûûכü
 
     void TransformForCalculate();
 
@@ -92,30 +92,36 @@ inline void AirTarget::write_to_file(std::string file_name, std::vector<Trajecto
     ofs.close();
 }
 
-inline void AirTarget::write_to_csv()
+inline void AirTarget::write_to_csv(bool fisrt_time)
 {
     std::string name = "test.csv";
-    std::ofstream ofs(name);
     std::string sep = ", ";
 
-    ofs << "Target_type" << sep << "Id" << sep << "Latitude" << sep << "Longitude" << sep
-        << "Altitude" << sep << "Vx" << sep << "Vy" << sep << "Vz" << sep << "Elevation" << sep
-        << "Azimut" << sep << "Status" << "\n";
+    if (fisrt_time)
+    {
+        std::ofstream ofs(name);
+        ofs << "Target_type" << sep << "Id" << sep << "X" << sep << "Y" << sep
+            << "Z" << sep << "Vx" << sep << "Vy" << sep << "Vz" << sep << "Elevation" << sep
+            << "Azimut" << sep << "Status" << "\n";
+    }
+    else
+    {
+        std::ofstream ofs(name, std::ofstream::app);
 
-    GeocentricCoodinates GC = {data.xPos.back(), data.yPos.back(), data.zPos.back()};
-    GeodezicCoodinates GD = GeocentricToGeodezic(GC);
+        GeocentricCoodinates GC = {data.xPos.back(), data.yPos.back(), data.zPos.back()};
+        //GeodezicCoodinates crd = GeocentricToGeodezic(GC);
+        Vector3D crd = GeoToPBU(GeodezicToGeoCentric(GD_Msc), GC);
 
-    ofs << targetModelType << sep << id << sep << GD.latitude << sep << GD.longitude << sep
-        << GD.altitude << sep << data.xVel.back() << sep << data.yVel.back() << sep
-        << data.zVel.back() << sep << data.angle_horizontal_plane.back() << sep
-        << data.wayAngle.back() << sep << int(status) << "\n";
+        ofs << targetModelType << sep << id << sep << crd.x << sep << crd.y << sep
+            << crd.z << sep << data.xVel.back() << sep << data.yVel.back() << sep
+            << data.zVel.back() << sep << data.angle_horizontal_plane.back() << sep
+            << data.wayAngle.back() << sep << int(status) << "\n";
+    }
 }
 
 DEFAULT_MODEL_FACTORY(AirTarget)
 
 Vector3D GeoToLocal(GeodezicCoodinates GD, GeocentricCoodinates GC, GeocentricCoodinates GC0);
 GeocentricCoodinates LocalToGeo(GeodezicCoodinates GD, Vector3D Loc, GeocentricCoodinates GC0);
-Vector3D GeoToPBU(GeocentricCoodinates GC0, GeocentricCoodinates GC);
-GeocentricCoodinates PBUToGeo(GeocentricCoodinates GC0, Vector3D PBU);
 
 #endif // AIRTARGET_H

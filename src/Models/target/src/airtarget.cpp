@@ -8,50 +8,6 @@ AirTarget::AirTarget(id_type id, MsgChannelCarrier &carrier)
     declareteQueue(recieve_msg);
 }
 
-Vector3D GeoToPBU(GeocentricCoodinates GC0, GeocentricCoodinates GC)
-{
-    EarthEllipsoid ellipsoid;
-    GeodezicCoodinates GD0 = GeocentricToGeodezic(GC0).toRadians();
-    double sinB = sin(GD0.latitude);
-    double N = ellipsoid.a / sqrt(1 - pow(ellipsoid.e, 2) * pow(sinB, 2));
-
-    double z = GC.z + pow(ellipsoid.e, 2) * N * sinB;
-    double x = GC.x * cos(GD0.longitude) + GC.y * sin(GD0.longitude);
-    double y = -GC.x * sin(GD0.longitude) + GC.y * cos(GD0.longitude);
-
-    double z1 = z;
-
-    z = z1 * cos(M_PI_2 - GD0.latitude) + x * sin(M_PI_2 - GD0.latitude);
-    x = -z1 * sin(M_PI_2 - GD0.latitude) + x * cos(M_PI_2 - GD0.latitude);
-    z = z - (N+GD0.altitude);
-    x = -x;
-    return Vector3D(x, y, z);
-}
-
-GeocentricCoodinates PBUToGeo(GeocentricCoodinates GC0, Vector3D PBU)
-{
-    EarthEllipsoid ellipsoid;
-    GeodezicCoodinates GD0 = GeocentricToGeodezic(GC0).toRadians();
-    double sinB = sin(GD0.latitude);
-    double N = ellipsoid.a / sqrt(1 - pow(ellipsoid.e, 2) * pow(sinB, 2));
-
-    double x = -PBU.x;
-    double z = PBU.z + N + GD0.altitude;
-
-    double z1 = z;
-    z = z1 * cos(-M_PI_2 + GD0.latitude) + x * sin(-M_PI_2 + GD0.latitude);
-    x = -z1 * sin(-M_PI_2 + GD0.latitude) + x * cos(-M_PI_2 + GD0.latitude);
-
-    double x1 = x;
-    x = x1 * cos(-GD0.longitude) + PBU.y * sin(-GD0.longitude);
-    double y = -x1 * sin(-GD0.longitude) + PBU.y * cos(-GD0.longitude);
-
-    z = z - pow(ellipsoid.e, 2) * N * sinB;
-
-    return GeocentricCoodinates(x, y, z);
-
-}
-
 Vector3D GeoToLocal(GeodezicCoodinates GD, GeocentricCoodinates GC, GeocentricCoodinates GC0)
 {
     double sinL = sin(GD.longitude);
@@ -90,9 +46,13 @@ bool AirTarget::init(const rapidjson::Value& initial_data)
     for (auto& v : initial_data["target_points"].GetArray())
     {
         TrajectoryPoint p;
-        p.initialPoint.x = v["x"].GetDouble();
-        p.initialPoint.y = v["y"].GetDouble();
-        p.initialPoint.z = v["z"].GetDouble();
+        double x = v["x"].GetDouble();
+        double y = v["y"].GetDouble();
+        double z = v["z"].GetDouble();
+
+        GeocentricCoodinates GC = PBUToGeo(GeodezicToGeoCentric(GD_Msc), {x,y,z});
+
+        p.initialPoint = GC;
         p.initialVel = v["vel"].GetDouble();
         control_points.push_back(p);
     }
@@ -101,6 +61,7 @@ bool AirTarget::init(const rapidjson::Value& initial_data)
 void AirTarget::firstStep()
 {
     status = TargetStatus::is_fly;
+    write_to_csv(true);
 }
 
 void AirTarget::step(double time)
@@ -112,26 +73,28 @@ void AirTarget::step(double time)
         double dist = (coords-crd_rct).sqrlength();
 
         if (dist <= square_destroy_range)
-        {
             status = TargetStatus::is_destroy;
-        }
     }
     double dt;
     if (data.nPoints != 0)
     {
-        std::cout << time << " " << data.times.back() << "\n";
         dt = time - data.times.back();
     }
     else
         dt = time;
 
+    if (num_point_passed == control_points.size()-1)
+        status = TargetStatus::is_done;
+
     if (status == TargetStatus::is_fly)
         calculate(0.01);
 
     TargetMsg msg;
-    msg.coord = {data.xPos.back(), data.yPos.back(), data.zPos.back()};
+    GeocentricCoodinates GC(data.xPos.back(), data.yPos.back(), data.zPos.back());
+    Vector3D crd = GeoToPBU(GeodezicToGeoCentric(GD_Msc), GC);
+    msg.coord = {crd.x, crd.y, crd.z};
     msg.vels = {data.xVel.back(), data.yVel.back(), data.zVel.back()};
-    msg.status = TargetStatus::is_fly;
+    msg.status = status;
 
     write_to_csv();
 
