@@ -12,11 +12,11 @@ modeling::modeling(QWidget *parent) :
                                     QCP::iSelectLegend | QCP::iSelectPlottables);
     ui->customPlot_1->xAxis->setRange(-1000, 1000);
     ui->customPlot_1->yAxis->setRange(-1000, 1000);
-    ui->customPlot_1->axisRect()->setupFullAxesBox();
+    //ui->customPlot_1->axisRect()->setupFullAxesBox();
 
     ui->customPlot_2->xAxis->setRange(-1000, 1000);
     ui->customPlot_2->yAxis->setRange(-1000, 1000);
-    ui->customPlot_2->axisRect()->setupFullAxesBox();
+    //ui->customPlot_2->axisRect()->setupFullAxesBox();
 
 //    ui->customPlot_1->plotLayout()->insertRow(0);
 //    QCPTextElement *title = new QCPTextElement(ui->customPlot_1,
@@ -24,18 +24,18 @@ modeling::modeling(QWidget *parent) :
 //                                               QFont("sans", 17, QFont::Bold));
 //    ui->customPlot_1->plotLayout()->addElement(0, 0, title);
 
-    ui->customPlot_2->xAxis->setLabel("x, m");
-    ui->customPlot_2->yAxis->setLabel("y, m");
+    ui->customPlot_2->xAxis->setLabel("x, km");
+    ui->customPlot_2->yAxis->setLabel("y, km");
 
-    ui->customPlot_1->xAxis->setLabel("Дальность, m");
-    ui->customPlot_1->yAxis->setLabel("Высота, m");
+    ui->customPlot_1->xAxis->setLabel("Угол азимута");
+    ui->customPlot_1->yAxis->setLabel("Угол места");
 
     //ui->customPlot_1->legend->setVisible(true);
-    QFont legendFont = font();
-    legendFont.setPointSize(10);
-    ui->customPlot_1->legend->setFont(legendFont);
-    ui->customPlot_1->legend->setSelectedFont(legendFont);
-    ui->customPlot_1->legend->setSelectableParts(QCPLegend::spItems); // legend box shall not be selectable, only legend items
+//    QFont legendFont = font();
+//    legendFont.setPointSize(10);
+//    ui->customPlot_1->legend->setFont(legendFont);
+//    ui->customPlot_1->legend->setSelectedFont(legendFont);
+//    ui->customPlot_1->legend->setSelectableParts(QCPLegend::spItems); // legend box shall not be selectable, only legend items
 
 //    addRandomGraph();
 //    addRandomGraph();
