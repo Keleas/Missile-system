@@ -1,7 +1,7 @@
 #include "PBU.h"
 
-PBU::PBU(id_type id, MsgChannelCarrier& carrier)
-    : Model{id, carrier}
+PBU::PBU(id_type id, MsgChannelCarrier& carrier, std::ostream& log)
+    : Model{id, carrier, log}
 {
     //declareteQueue(msg_from_rlc);
 }

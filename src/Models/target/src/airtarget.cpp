@@ -2,8 +2,8 @@
 
 #define square_destroy_range 2500
 
-AirTarget::AirTarget(id_type id, MsgChannelCarrier &carrier)
-    : Model{id, carrier}
+AirTarget::AirTarget(id_type id, MsgChannelCarrier &carrier, std::ostream& log)
+    : Model{id, carrier, log}
 {
     declareteQueue(recieve_msg);
 }

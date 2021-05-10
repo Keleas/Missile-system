@@ -4,6 +4,7 @@
 #include "ModelingDispatcher.h"
 
 const std::string scenario = "{"
+                             "  \"scenario_name\": \"1Target3Points\","
                              "  \"end_time\": 1800.0,"
                              "  \"objects\": "
                              "      ["

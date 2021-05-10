@@ -8,7 +8,7 @@
 class PBU : public Model
 {
 public:
-    PBU(id_type id, MsgChannelCarrier& carrier);
+    PBU(id_type id, MsgChannelCarrier& carrier, std::ostream& log);
     ~PBU();
 
 //    bool init(std::string const& initial_data) override final;

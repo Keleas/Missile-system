@@ -22,7 +22,7 @@ struct AirTargetParams
 class AirTarget : public Model
 {
 public:
-    AirTarget(id_type id, MsgChannelCarrier& carrier);
+    AirTarget(id_type id, MsgChannelCarrier& carrier, std::ostream& log);
 
     void calculate(double dt);
 
@@ -94,25 +94,21 @@ inline void AirTarget::write_to_file(std::string file_name, std::vector<Trajecto
 
 inline void AirTarget::write_to_csv(bool fisrt_time)
 {
-    std::string name = "test.csv";
     std::string sep = ", ";
 
     if (fisrt_time)
     {
-        std::ofstream ofs(name);
-        ofs << "Target_type" << sep << "Id" << sep << "X" << sep << "Y" << sep
+        log << "Target_type" << sep << "Id" << sep << "X" << sep << "Y" << sep
             << "Z" << sep << "Vx" << sep << "Vy" << sep << "Vz" << sep << "Elevation" << sep
             << "Azimut" << sep << "Status" << "\n";
     }
     else
     {
-        std::ofstream ofs(name, std::ofstream::app);
-
         GeocentricCoodinates GC = {data.xPos.back(), data.yPos.back(), data.zPos.back()};
         //GeodezicCoodinates crd = GeocentricToGeodezic(GC);
         Vector3D crd = GeoToPBU(GeodezicToGeoCentric(GD_Msc), GC);
 
-        ofs << targetModelType << sep << id << sep << crd.x << sep << crd.y << sep
+        log << targetModelType << sep << id << sep << crd.x << sep << crd.y << sep
             << crd.z << sep << data.xVel.back() << sep << data.yVel.back() << sep
             << data.zVel.back() << sep << data.angle_horizontal_plane.back() << sep
             << data.wayAngle.back() << sep << int(status) << "\n";
