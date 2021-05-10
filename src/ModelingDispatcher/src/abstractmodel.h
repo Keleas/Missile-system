@@ -3,6 +3,7 @@
 
 #include <list>
 #include <iostream>
+#include <fstream>
 #include "rapidjson/document.h"
 #include "channel_carrier.h"
 
@@ -35,7 +36,7 @@ public:
      * @param id - id моделируемого объекта
      * @param carrier - контейнер каналов сообщений
      */
-    Model(id_type id, MsgChannelCarrier& carrier);
+    Model(id_type id, MsgChannelCarrier& carrier, std::ostream& log);
     virtual ~Model() {}
 
     virtual bool init(const rapidjson::Value& initial_data) = 0;
@@ -65,6 +66,8 @@ private:
 protected:
     const id_type id; ///> id объекта моделирования
 
+    std::ostream& log;
+
     template <typename MT>
     /**
      * @brief declareteQueue - декларировать очередь сообщений
@@ -81,8 +84,8 @@ protected:
     void declareteQueue(MessageQueue<MT>& queue, id_type source);
 };
 
-inline Model::Model(id_type id, MsgChannelCarrier& carrier)
-    : carrier{carrier}, id{id} {}
+inline Model::Model(id_type id, MsgChannelCarrier& carrier, std::ostream& log)
+    : carrier{carrier}, id{id}, log{log} {}
 
 template <typename MT>
 void Model::send(double time, MT message)
