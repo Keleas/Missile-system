@@ -723,14 +723,18 @@ void widget_modelset::on_save_pushButton_clicked()
     d->setLayout(vbox);
     int result=0;
     result = d->exec();
+    ///@note добавить обработку пустых векторов
     if(result == QDialog::Accepted)
     {
+        QMessageBox msgBox;
         name=lineEdit_name->text() + "_config.csv";
         name_config = name.toStdString().c_str();
         fill_config("pbu",1,4,vector_data_pbu,name);
         fill_config("pu",vector_item_pu.size(),7,vector_data_pu,name);
         fill_config("rls",vector_item_radar.size(),8,vector_data_radar,name);
         fill_config_for_la("la",vector_data_la_all.size(),name);
+        msgBox.setText("Данные сохранены в файл: "+name);
+        msgBox.exec();
     }
 }
 
