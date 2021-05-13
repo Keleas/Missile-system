@@ -1,15 +1,25 @@
 #include "PBU.h"
 
-PBU::PBU(id_type id, MsgChannelCarrier& carrier)
-    : Model{id, carrier}
+PBU::PBU(id_type id, MsgChannelCarrier& carrier, std::ostream& log)
+    : Model{id, carrier, log}
 {
     declareteQueue(msg_from_rlc);
 }
 
-
 PBU::~PBU() {}
 
-bool PBU::init(const std::string &initial_data) {
+bool PBU::init(const rapidjson::Value &initial_data)
+{
+    for(auto& it : initial_data["initial_data"].GetArray())
+    {        
+
+        pu_base[it["pu_id"].GetUint()].insert({it["zur_id"][0].GetUint(), true});
+        pu_coords.insert({it["pu_id"].GetUint(), {it["coordinates"][0].GetDouble(),
+                                                it["coordinates"][1].GetDouble(),
+                                                it["coordinates"][2].GetDouble()}});
+
+    }
+
     return true;
 }
 
@@ -18,7 +28,60 @@ void PBU::firstStep() {
     //FindIdenticalTracks();
 
 }
-//  std::map<id_type, std::map<int, RLCMsg>> all_traces;
+
+void PBU::Target::CalculateParametrs()
+{
+    if(history_coords.empty() && history_speed.empty())
+        return;
+
+    for(size_t i = 0; i < history_coords.size(); i++)
+    {
+        for(size_t j = 0; j < 3; j++ )
+        {
+            coords[j] += history_coords[i][j];
+            speed[j] += history_speed[i][j];
+        }
+    }
+    for(size_t i = 0; i < history_coords.size(); i++)
+    {
+        coords[i] = (coords[i] / history_coords.size());
+        speed[i] = (speed[i] / history_speed.size());
+    }
+
+    history_coords.erase(history_coords.begin(), history_coords.end());
+    history_speed.erase(history_speed.begin(), history_speed.end());
+
+    history_coords.resize(0);
+    history_speed.resize(0);
+}
+
+bool PBU::CheckTrack(const RLCMsg& t1, const Target& t2)
+{
+
+    return ((t1.coordinates[0] - t2.coords[0]) * (t1.coordinates[0] - t2.coords[0]) +
+            (t1.coordinates[1] - t2.coords[1]) * (t1.coordinates[1] - t2.coords[1]) +
+            (t1.coordinates[2] - t2.coords[2]) * (t1.coordinates[2] - t2.coords[2]) <= 2500) ||
+
+            ((t1.speed[0] * t1.speed[0]) - (t2.speed[0] * t2.speed[0]) +
+            (t1.speed[1] * t1.speed[1]) - (t2.speed[1] * t2.speed[1]) +
+            (t1.speed[2] * t1.speed[2]) - (t2.speed[2] * t2.speed[2]) <= 400);
+}
+
+void PBU::AddNewTarget()
+{
+    id_table[std::make_pair(msg_from_rlc.front().source_id,
+                            msg_from_rlc.front().message.target_id)] = target_counter;
+
+    history_id[target_counter].insert(std::make_pair(msg_from_rlc.front().source_id,
+                                                     msg_from_rlc.front().message.target_id));
+
+    targets_time[std::make_pair(msg_from_rlc.front().source_id,
+                                msg_from_rlc.front().message.target_id)] = msg_from_rlc.front().time;
+    targets.insert({target_counter, Target(target_counter, msg_from_rlc.front().message)});
+    ++target_counter;
+}
+
+
 void PBU::GetRLIfromRadar()
 {
     double step_time = msg_from_rlc.front().time;
@@ -54,7 +117,7 @@ void PBU::GetRLIfromRadar()
                 }
                 void AddNewTarget();    // Такой цели не было обнаружено другими РЛС
             }
-            else                        // Инфформация об данной цели уже приходила с РЛС k
+            else                        // Инфформация о данной цели уже приходила с РЛС k (обнавление данных)
             {
                 id_type My_ID = id_table[std::make_pair(msg_from_rlc.front().source_id,
                                                        msg_from_rlc.front().message.target_id)];
@@ -93,7 +156,6 @@ void PBU::GetRLIfromRadar()
     for(auto& item : targets)
         item.second.CalculateParametrs();                       // Пересчитываем координаты
 }
-
 
 void PBU::step(double time) {
     //обработка сообщений
