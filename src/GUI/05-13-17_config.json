@@ -1,0 +1,213 @@
+{
+    "end_time": "1000",
+    "objects": [
+        {
+            "id": "0",
+            "initial_data": {
+                "x": "72.2611",
+                "y": "69.0162",
+                "z": "0"
+            },
+            "model_name": "pbu"
+        },
+        {
+            "id": "1",
+            "initial_data": {
+                "cooldown": "10",
+                "count_ammo": "8",
+                "radius": "100",
+                "x": "-18.648",
+                "y": "533.04",
+                "z": "0"
+            },
+            "model_name": "pu"
+        },
+        {
+            "id": "2",
+            "initial_data": {
+                "cooldown": "10",
+                "count_ammo": "8",
+                "radius": "100",
+                "x": "-300.699",
+                "y": "-274.596",
+                "z": "0"
+            },
+            "model_name": "pu"
+        },
+        {
+            "id": "3",
+            "initial_data": {
+                "cooldown": "10",
+                "count_ammo": "8",
+                "radius": "100",
+                "x": "529.138",
+                "y": "-632.893",
+                "z": "0"
+            },
+            "model_name": "pu"
+        },
+        {
+            "id": "7",
+            "initial_data": {
+                "cooldown": "10",
+                "count_ammo": "8",
+                "radius": "100",
+                "x": "596.737",
+                "y": "574.156",
+                "z": "0"
+            },
+            "model_name": "pu"
+        },
+        {
+            "id": "4",
+            "initial_data": {
+                "count_channels_targets": "64",
+                "count_channels_zurs": "32",
+                "model": "0",
+                "radius": "100",
+                "x": "438.228",
+                "y": "142.438",
+                "z": "0"
+            },
+            "model_name": "rls"
+        },
+        {
+            "id": "5",
+            "initial_data": {
+                "count_channels_targets": "64",
+                "count_channels_zurs": "32",
+                "model": "2",
+                "radius": "100",
+                "x": "-787.879",
+                "y": "189.427",
+                "z": "0"
+            },
+            "model_name": "rls"
+        },
+        {
+            "id": "6",
+            "initial_data": {
+                "count_channels_targets": "64",
+                "count_channels_zurs": "32",
+                "model": "2",
+                "radius": "100",
+                "x": "-151.515",
+                "y": "-624.082",
+                "z": "0"
+            },
+            "model_name": "rls"
+        },
+        {
+            "id": "8",
+            "initial_data": {
+                "target_max_M": "213",
+                "target_max_Nx": "155",
+                "target_max_Ny": "118",
+                "target_min_Nx": "229",
+                "target_model_type": "Fighter",
+                "target_name": "plane_8",
+                "target_points": [
+                    {
+                        "vel": "2342",
+                        "x": "258.741",
+                        "y": "726.872",
+                        "z": "324"
+                    },
+                    {
+                        "vel": "2342",
+                        "x": "272.727",
+                        "y": "-782.673",
+                        "z": "2342"
+                    },
+                    {
+                        "vel": "234",
+                        "x": "748.252",
+                        "y": "-588.84",
+                        "z": "2342"
+                    },
+                    {
+                        "vel": "42342",
+                        "x": "-361.305",
+                        "y": "110.132",
+                        "z": "242"
+                    }
+                ],
+                "target_practical_roof": "281"
+            },
+            "model_name": "AirTarget"
+        },
+        {
+            "id": "9",
+            "initial_data": {
+                "target_max_M": "213",
+                "target_max_Nx": "155",
+                "target_max_Ny": "118",
+                "target_min_Nx": "229",
+                "target_model_type": "Fighter",
+                "target_name": "plane_9",
+                "target_points": [
+                    {
+                        "vel": "24",
+                        "x": "-247.086",
+                        "y": "765.051",
+                        "z": "244"
+                    },
+                    {
+                        "vel": "4234",
+                        "x": "-550.117",
+                        "y": "-459.618",
+                        "z": "4242"
+                    },
+                    {
+                        "vel": "242",
+                        "x": "34.965",
+                        "y": "-753.304",
+                        "z": "242"
+                    },
+                    {
+                        "vel": "244",
+                        "x": "710.956",
+                        "y": "-77.8267",
+                        "z": "242"
+                    }
+                ],
+                "target_practical_roof": "281"
+            },
+            "model_name": "AirTarget"
+        },
+        {
+            "id": "10",
+            "initial_data": {
+                "target_max_M": "207",
+                "target_max_Nx": "109",
+                "target_max_Ny": "138",
+                "target_min_Nx": "111",
+                "target_model_type": "Fighter",
+                "target_name": "plane_10",
+                "target_points": [
+                    {
+                        "vel": "242",
+                        "x": "589.744",
+                        "y": "427.313",
+                        "z": "422"
+                    },
+                    {
+                        "vel": "2442",
+                        "x": "-785.548",
+                        "y": "-820.852",
+                        "z": "242"
+                    },
+                    {
+                        "vel": "24",
+                        "x": "897.436",
+                        "y": "-397.944",
+                        "z": "3244"
+                    }
+                ],
+                "target_practical_roof": "189"
+            },
+            "model_name": "AirTarget"
+        }
+    ],
+    "scenario_name": "05-13-17_config"
+}

@@ -69,16 +69,25 @@ private:
     /// \brief Текущее состояние вкладки
     ///
     int state_buttons;
+    ///
+    /// \brief
+    ///
+    int count_id = 0;
     /// \brief Указатель на самый верхний элемент дерева для объектов
     QTreeWidgetItem* top_item_pbu, *top_item_pu, *top_item_la, *top_item_radar;
     /// \brief Указатель дочерний элемент top_item_pbu
     QTreeWidgetItem* item_pbu /*item_maneuver*/;
-    /// \brief Вектора указателей дочерних элементов объектов
+    /// \brief Вектор указателей дочерних элементов объектов
     QVector<QTreeWidgetItem*> vector_item_pu, vector_item_radar, vector_item_la;
-    /// \brief Вектора, содержащие информацию объектов и одного ЛА
-    QVector<QString> vector_data_pu, vector_data_radar,
-                     vector_data_pbu, vector_data_la;
-    /// \brief Вектор, содержащий информацию о всех ЛА
+    /// \brief Вектор, содержащий информацию о ПУ
+    QVector<QString> vector_data_pu,
+    /// \brief Вектора, содержащий информацию о РЛС
+    vector_data_radar,
+    /// \brief Вектора, содержащий информацию о ПБУ
+    vector_data_pbu,
+    /// \brief Вектора, содержащий информацию о единичном ЛА
+    vector_data_la;
+    /// \brief Вектор, содержащий вектора с данными о всех ЛА
     QVector<QVector<QString>> vector_data_la_all;
     /// \brief Флаг поставленной начальной точки траектории ЛА
     bool item_la_added = false;
@@ -239,6 +248,7 @@ private slots:
     /// \brief Слот, обработки нажатия кнопки "Сохранить"
     ///
     void on_save_pushButton_clicked();
+    void on_pushButton_open_clicked();
 };
 
 #endif // WIDGET_MODELSET_H

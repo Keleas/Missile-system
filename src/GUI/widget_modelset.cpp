@@ -189,6 +189,12 @@ void widget_modelset::clearData()
     remove_tree_items(top_item_pu);
     remove_tree_items(top_item_radar);
     index_la=0;
+    ui->customPlot->clearGraphs();
+    ui->customPlot->replot();
+    ui->customPlot->update();
+    create_stationary_elements();
+    set_state_buttons(777);
+    count_id=0;
 }
 
 void widget_modelset::plot(int number,
@@ -323,11 +329,6 @@ void widget_modelset::set_state_buttons(int state)
 void widget_modelset::on_pushButton_clear_clicked()
 {
     clearData();
-    ui->customPlot->clearGraphs();
-    ui->customPlot->replot();
-    ui->customPlot->update();
-    create_stationary_elements();
-    set_state_buttons(777);
 }
 
 void widget_modelset::create_stationary_elements()
@@ -386,6 +387,7 @@ void widget_modelset::remove_tree_items(QTreeWidgetItem* _main_item)
 
 void widget_modelset::add_basic_items_la(QTreeWidgetItem* _item, int _count)
 {
+    ++count_id;
     QList<QString> list;
     QString buff = input_dialog_model(state_la);
     QSqlQuery query(db);
@@ -395,7 +397,7 @@ void widget_modelset::add_basic_items_la(QTreeWidgetItem* _item, int _count)
 
     while (query.next())
     {
-        list<<"ID: "+QString::number(_count)
+        list<<"ID: "+QString::number(count_id)/*QString::number(_count)*/
            <<"Модель: "+buff
           <<"max_Nx: "+query.value(0).toString()
          <<"max_Ny: "+query.value(1).toString()
@@ -414,10 +416,11 @@ void widget_modelset::add_basic_items_la(QTreeWidgetItem* _item, int _count)
 
 void widget_modelset::add_children_items_pu(double x, double y)
 {
+    ++count_id;
     int count = vector_item_pu.size();
     QTreeWidgetItem* item = new QTreeWidgetItem();
     QList<QString> list, list_buff;
-    list<<"ID: "+QString::number(count)
+    list<<"ID: "+QString::number(count_id)
         <<"x: "+QString::number(x)
         <<"y: "+QString::number(y)
         <<"z: 0";
@@ -437,10 +440,11 @@ void widget_modelset::add_children_items_pu(double x, double y)
 
 void widget_modelset::add_children_items_radar(double x, double y)
 {
+    ++count_id;
     int count = vector_item_radar.size();
     QTreeWidgetItem* item = new QTreeWidgetItem();
     QList<QString> list;
-    list<<"ID: "+QString::number(count)
+    list<<"ID: "+QString::number(count_id)
         <<"Модель: "
         <<"x: "+QString::number(x)
         <<"y: "+QString::number(y)
@@ -547,7 +551,7 @@ QString widget_modelset::input_dialog_model(int _state)
         QString select = "SELECT ID, type FROM aircrafts WHERE type = 'ЛА'";
         query.exec(select);
         label->setText("Выберите модель для ЛА_"+
-                       QString::number(vector_x_la.size()));
+                       QString::number(vector_data_la_all.size()));
     }
     if (_state==state_radar)
     {
@@ -740,8 +744,6 @@ void widget_modelset::on_save_pushButton_clicked()
     }
 }
 
-// как параметры передаем число объектов каждого типа,
-//число параметров данного объекта и затем их параметры массивом
 void widget_modelset::fill_csv(QString type_object,
                                   int num_objects,
                                   int num_params,
@@ -756,10 +758,9 @@ void widget_modelset::fill_csv(QString type_object,
         QTextStream writeStream(&file);
         writeStream << type_object << "\n"
                     << num_objects << "\n";
-        // Цикл по объектам текущего типа
+
         for (int i = 0; i < num_objects; i++)
         {
-            // Вставляем данные в файл
             for (int j = 0; j < num_params - 1; j++)
             {
                 writeStream << params.at(i*num_params + j) << ", ";
@@ -771,25 +772,25 @@ void widget_modelset::fill_csv(QString type_object,
 }
 
 void widget_modelset::fill_csv_for_la(QString type_object,
-                                         int num_objects,
-                                         QString config_name)
+                                      int num_objects,
+                                      QString config_name)
 {
     int num_params;
     QVector <QString> params;
-    // указатель файла
+
     QFile file(config_name);
-    // открывает существующий CSV-файл или создает новый файл.
+
     if (file.open(QIODevice::WriteOnly | QIODevice::Append))
     {
         QTextStream writeStream(&file);
         writeStream << type_object << "\n"
                     << num_objects << "\n";
-    // Цикл по объектам текущего типа
+
     for (int i = 0; i < num_objects; i++)
     {
         num_params = vector_data_la_all.at(i).size();
         params = vector_data_la_all.at(i);
-        // Вставляем данные в файл
+
         for (int j = 0; j < num_params - 1; j++)
         {
             writeStream << params.at(j) << ", ";
@@ -811,33 +812,52 @@ void widget_modelset::fill_csv_for_la(QString type_object,
 //    add_point(x,y);
 //}
 
-void widget_modelset:: serialization_json(QString _config_name)
+void widget_modelset::serialization_json(QString _config_name)
 {
 
-    QFile fileJson(_config_name);
-    QString scenario_name = _config_name.split(".").at(0);
-    QJsonObject j_object
-    {
-        {"scenario_name", scenario_name},
-        {"end_time",ui->time_modelinglineEdit->text()},
-    };
+    int countId = 0;
 
+    QFile fileJson(_config_name);
     fileJson.open(QIODevice::WriteOnly);
 
-    QJsonObject j_oblect_pbu
+    QJsonArray objArray;
+
+    QJsonObject rootJsonObj
+    {
+        {"scenario_name",   _config_name.split(".").at(0)},
+        {"end_time",        ui->time_modelinglineEdit->text()},
+    };
+    //==========================================================================
+    //  Упаковка данных ПБУ
+
+    QJsonObject pbuJsonObj
     {
         {"id", vector_data_pbu.at(0)},
+        {"model_name", "pbu"}
+    };
+    QJsonObject pbuJsonInitData
+    {
+        //{"id", vector_data_pbu.at(0)},
         {"x",vector_data_pbu.at(1)},
         {"y",vector_data_pbu.at(2)},
         {"z",vector_data_pbu.at(3)},
     };
+    pbuJsonObj.insert("initial_data", QJsonValue(pbuJsonInitData));
+    objArray.append(QJsonValue(pbuJsonObj));
 
-    QJsonArray array_pu;
+    //==========================================================================
+    //  Упаковка данных ПУ
+
     for(int ii = 0; ii<vector_data_pu.size(); ii+=7)
     {
-        QJsonObject j_object_pu
+        QJsonObject puJsonObj
         {
             {"id", vector_data_pu.at(ii)},
+            {"model_name", "pu"}
+        };
+        QJsonObject puJsonInitData
+        {
+            //{"id", vector_data_pu.at(ii)},
             {"x",vector_data_pu.at(1+ii)},
             {"y",vector_data_pu.at(2+ii)},
             {"z",vector_data_pu.at(3+ii)},
@@ -845,15 +865,23 @@ void widget_modelset:: serialization_json(QString _config_name)
             {"count_ammo",vector_data_pu.at(5+ii)},
             {"cooldown",vector_data_pu.at(6+ii)}
         };
-        array_pu.append(QJsonValue(j_object_pu));
+        puJsonObj.insert("initial_data", QJsonValue(puJsonInitData));
+        objArray.append(QJsonValue(puJsonObj));
     }
 
-    QJsonArray array_radar;
+    //==========================================================================
+    //  Упаковка данных РЛС
+
     for(int ii = 0; ii<vector_data_radar.size(); ii+=8)
     {
-        QJsonObject j_object_radar
+        QJsonObject rlsJsonObj
         {
             {"id", vector_data_radar.at(ii)},
+            {"model_name", "rls"}
+        };
+        QJsonObject rlsJsonInitData
+        {
+           // {"id", vector_data_radar.at(ii)},
             {"model", vector_data_radar.at(1+ii)},
             {"x",vector_data_radar.at(2+ii)},
             {"y",vector_data_radar.at(3+ii)},
@@ -862,30 +890,40 @@ void widget_modelset:: serialization_json(QString _config_name)
             {"count_channels_targets",vector_data_radar.at(6+ii)},
             {"count_channels_zurs",vector_data_radar.at(7+ii)}
         };
-        array_radar.append(QJsonValue(j_object_radar));
+        rlsJsonObj.insert("initial_data", QJsonValue(rlsJsonInitData));
+        objArray.append(QJsonValue(rlsJsonObj));
     }
 
-    QJsonArray array_la_all;
+    //==========================================================================
+    //  Упаковка данных ЛА
 
     for(QVector<QString> vector_la : vector_data_la_all)
     {
-        QJsonObject j_object_la
+        QJsonObject laJsonObj
         {
             {"id", vector_la.at(0)},
-            {"model", vector_la.at(1)},
-            {"max_Nx",vector_la.at(2)},
-            {"max_Ny",vector_la.at(3)},
-            {"min_Nx",vector_la.at(4)},
-            {"max_M",vector_la.at(5)},
-            {"practical_roof",vector_la.at(6)}
+            {"model_name", "AirTarget"}
+        };
+
+        QJsonObject laJsonInitData
+        {
+            //{"id", vector_la.at(0)},
+            {"target_name", "plane_"+vector_la.at(0)},
+            //{"target_model_type", vector_la.at(1)},
+            {"target_model_type", "Fighter"},
+            {"target_max_Nx",vector_la.at(2)},
+            {"target_max_Ny",vector_la.at(3)},
+            {"target_min_Nx",vector_la.at(4)},
+            {"target_max_M",vector_la.at(5)},
+            {"target_practical_roof",vector_la.at(6)}
         };
         QJsonArray la_points;
-        int count = 1;
+       // int count = 1;
         for(int ii = 7; ii<vector_la.size(); ii+=4)
         {
             QJsonObject j_object_point
             {
-                {"point", count++},
+                //{"point", count++},
                 {"x", vector_la.at(ii)},
                 {"y", vector_la.at(ii+1)},
                 {"z",vector_la.at(ii+2)},
@@ -893,21 +931,194 @@ void widget_modelset:: serialization_json(QString _config_name)
             };
             la_points.append(j_object_point);
         }
-        j_object_la.insert("target_points", QJsonValue(la_points));
-        array_la_all.append(j_object_la);
+        laJsonInitData.insert("target_points", QJsonValue(la_points));
+        laJsonObj.insert("initial_data", QJsonValue(laJsonInitData));
+        objArray.append(laJsonObj);
     }
 
-    j_object.insert("pbu",QJsonValue(j_oblect_pbu));
-    j_object.insert("pu",QJsonValue(array_pu));
-    j_object.insert("rls",QJsonValue(array_radar));
-    j_object.insert("la", QJsonValue(array_la_all));
+    //==========================================================================
 
-    fileJson.write(QJsonDocument(j_object).toJson());
+    rootJsonObj.insert("objects",QJsonValue(objArray));
 
+    fileJson.write(QJsonDocument(rootJsonObj).toJson());
     fileJson.close();
 }
 
-void widget_modelset:: deserialization_json(QString _config_name)
+void widget_modelset::deserialization_json(QString _config_name)
 {
+    QFile fileJson(_config_name);
+    fileJson.open(QIODevice::ReadOnly);
+    QJsonDocument doc = QJsonDocument::fromJson(fileJson.readAll());
+    QJsonObject j_object = doc.object();
+
+    QString name = j_object["scenario_name"].toString();
+    ui->time_modelinglineEdit->setText(j_object["end_time"].toString());
+
+    vector_data_pbu.append(j_object["pbu"].toObject()["id"].toString());
+    vector_data_pbu.append(j_object["pbu"].toObject()["x"].toString());
+    vector_data_pbu.append(j_object["pbu"].toObject()["y"].toString());
+    vector_data_pbu.append(j_object["pbu"].toObject()["z"].toString());
+
+    QJsonArray array_pu = j_object["pu"].toArray();
+    for (QJsonValue value : array_pu)
+    {
+        vector_data_pu.append(value.toObject()["id"].toString());
+        vector_data_pu.append(value.toObject()["x"].toString());
+        vector_data_pu.append(value.toObject()["y"].toString());
+        vector_data_pu.append(value.toObject()["z"].toString());
+        vector_data_pu.append(value.toObject()["radius"].toString());
+        vector_data_pu.append(value.toObject()["count_ammo"].toString());
+        vector_data_pu.append(value.toObject()["cooldown"].toString());
+    }
+
+    QJsonArray array_rls = j_object["rls"].toArray();
+    for (QJsonValue value : array_rls)
+    {
+        vector_data_radar.append(value.toObject()["id"].toString());
+        vector_data_radar.append(value.toObject()["model"].toString());
+        vector_data_radar.append(value.toObject()["x"].toString());
+        vector_data_radar.append(value.toObject()["y"].toString());
+        vector_data_radar.append(value.toObject()["z"].toString());
+        vector_data_radar.append(value.toObject()["radius"].toString());
+        vector_data_radar.append(value.toObject()["count_channels_targets"]
+                                                                   .toString());
+        vector_data_radar.append(value.toObject()["count_channels_zurs"]
+                                                                   .toString());
+    }
+
+    QJsonArray array_la = j_object["la"].toArray();
+    for (QJsonValue value : array_la)
+    {
+        QVector<QString> vector;
+        vector.append(value.toObject()["id"].toString());
+        vector.append(value.toObject()["target_model_type"].toString());
+        vector.append(value.toObject()["target_max_Nx"].toString());
+        vector.append(value.toObject()["target_max_Ny"].toString());
+        vector.append(value.toObject()["target_min_Nx"].toString());
+        vector.append(value.toObject()["target_max_M"].toString());
+        vector.append(value.toObject()["target_practical_roof"].toString());
+        QJsonArray array_points = value.toObject()["target_points"].toArray();
+        for (QJsonValue point : array_points)
+        {
+            vector.append(point.toObject()["x"].toString());
+            vector.append(point.toObject()["y"].toString());
+            vector.append(point.toObject()["z"].toString());
+            vector.append(point.toObject()["vel"].toString());
+        }
+        vector_data_la_all.append(vector);
+    }
+    fileJson.close();
+}
+
+void widget_modelset::on_pushButton_open_clicked()
+{
+    const QString& title = QString::fromUtf8("Выберите кофигурационный файл");
+    const QString& path   = qApp->applicationDirPath();
+    const QString& filters = QString::fromUtf8("Файлы регистрации (*.json)");
+    QString filename = QFileDialog::getOpenFileName(this, title, path, filters);
+
+    if(filename.isEmpty())
+        return;
+
+    clearData();
+    deserialization_json(filename);
 
 }
+
+
+
+//QFile fileJson(_config_name);
+//QString scenario_name = _config_name.split(".").at(0);
+//QJsonObject j_object
+//{
+//    {"scenario_name", scenario_name},
+//    {"end_time",ui->time_modelinglineEdit->text()},
+//};
+
+//fileJson.open(QIODevice::WriteOnly);
+
+//QJsonObject j_oblect_pbu
+//{
+//    {"id", vector_data_pbu.at(0)},
+//    {"model_name", "pbu"},
+//    {"x",vector_data_pbu.at(1)},
+//    {"y",vector_data_pbu.at(2)},
+//    {"z",vector_data_pbu.at(3)},
+//};
+
+//QJsonArray array_pu;
+//for(int ii = 0; ii<vector_data_pu.size(); ii+=7)
+//{
+//    QJsonObject j_object_pu
+//    {
+//        {"id", vector_data_pu.at(ii)},
+//        {"x",vector_data_pu.at(1+ii)},
+//        {"y",vector_data_pu.at(2+ii)},
+//        {"z",vector_data_pu.at(3+ii)},
+//        {"radius",vector_data_pu.at(4+ii)},
+//        {"count_ammo",vector_data_pu.at(5+ii)},
+//        {"cooldown",vector_data_pu.at(6+ii)}
+//    };
+//    array_pu.append(QJsonValue(j_object_pu));
+//}
+
+//QJsonArray array_radar;
+//for(int ii = 0; ii<vector_data_radar.size(); ii+=8)
+//{
+//    QJsonObject j_object_radar
+//    {
+//        {"id", vector_data_radar.at(ii)},
+//        {"model", vector_data_radar.at(1+ii)},
+//        {"x",vector_data_radar.at(2+ii)},
+//        {"y",vector_data_radar.at(3+ii)},
+//        {"z",vector_data_radar.at(4+ii)},
+//        {"radius",vector_data_radar.at(5+ii)},
+//        {"count_channels_targets",vector_data_radar.at(6+ii)},
+//        {"count_channels_zurs",vector_data_radar.at(7+ii)}
+//    };
+//    array_radar.append(QJsonValue(j_object_radar));
+//}
+
+//QJsonArray array_la_all;
+//////fix
+//int count_la=0;
+//for(QVector<QString> vector_la : vector_data_la_all)
+//{
+//    QJsonObject j_object_la
+//    {
+//        {"id", vector_la.at(0)},
+//        {"target_name", "plane_"+QString::number(++count_la)},
+//        //{"target_model_type", vector_la.at(1)},
+//        {"target_model_type", "Fighter"},
+//        {"target_max_Nx",vector_la.at(2)},
+//        {"target_max_Ny",vector_la.at(3)},
+//        {"target_min_Nx",vector_la.at(4)},
+//        {"target_max_M",vector_la.at(5)},
+//        {"target_practical_roof",vector_la.at(6)}
+//    };
+//    QJsonArray la_points;
+//    //int count = 1;
+//    for(int ii = 7; ii<vector_la.size(); ii+=4)
+//    {
+//        QJsonObject j_object_point
+//        {
+//            //{"point", count++},
+//            {"x", vector_la.at(ii)},
+//            {"y", vector_la.at(ii+1)},
+//            {"z",vector_la.at(ii+2)},
+//            {"vel",vector_la.at(ii+3)}
+//        };
+//        la_points.append(j_object_point);
+//    }
+//    j_object_la.insert("target_points", QJsonValue(la_points));
+//    array_la_all.append(j_object_la);
+//}
+
+//j_object.insert("pbu",QJsonValue(j_oblect_pbu));
+//j_object.insert("pu",QJsonValue(array_pu));
+//j_object.insert("rls",QJsonValue(array_radar));
+//j_object.insert("la", QJsonValue(array_la_all));
+
+//fileJson.write(QJsonDocument(j_object).toJson());
+
+//fileJson.close();
