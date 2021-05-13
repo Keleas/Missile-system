@@ -388,21 +388,21 @@ void widget_modelset::add_basic_items_la(QTreeWidgetItem* _item, int _count)
 {
     QList<QString> list;
     QString buff = input_dialog_model(state_la);
-//    QSqlQuery query(db);
-//    QString select = "SELECT nx_max, ny_max, nx_min, m_max, "
-//                     "practical_roof FROM aircrafts WHERE ID = "+buff;
-//    query.exec(select);
+    QSqlQuery query(db);
+    QString select = "SELECT nx_max, ny_max, nx_min, m_max, "
+                     "practical_roof FROM aircrafts WHERE ID = "+buff;
+    query.exec(select);
 
-//    while (query.next())
-//    {
+    while (query.next())
+    {
         list<<"ID: "+QString::number(_count)
-           <<"Модель: "+buff;
-//          <<"nx_max: "+query.value(0).toString()
-//         <<"ny_max: "+query.value(1).toString()
-//        <<"nx_min: "+query.value(2).toString()
-//        <<"m_max: "+query.value(3).toString()
-//        <<"practical_roof: "+query.value(4).toString();
-//    }
+           <<"Модель: "+buff
+          <<"max_Nx: "+query.value(0).toString()
+         <<"max_Ny: "+query.value(1).toString()
+        <<"min_Nx: "+query.value(2).toString()
+        <<"max_M: "+query.value(3).toString()
+        <<"practical_roof: "+query.value(4).toString();
+    }
     for (int ii=0;ii<list.size() ; ++ii)
     {
          QTreeWidgetItem* item_child = new QTreeWidgetItem();
@@ -727,12 +727,14 @@ void widget_modelset::on_save_pushButton_clicked()
     if(result == QDialog::Accepted)
     {
         QMessageBox msgBox;
-        name=lineEdit_name->text() + "_config.csv";
+        name=lineEdit_name->text() + "_config.json";
         name_config = name.toStdString().c_str();
-        fill_config("pbu",1,4,vector_data_pbu,name);
-        fill_config("pu",vector_item_pu.size(),7,vector_data_pu,name);
-        fill_config("rls",vector_item_radar.size(),8,vector_data_radar,name);
-        fill_config_for_la("la",vector_data_la_all.size(),name);
+        serialization_json(name);
+//        fill_csv("pbu",1,4,vector_data_pbu,name);
+//        fill_csv("pu",vector_item_pu.size(),7,vector_data_pu,name);
+//        fill_csv("rls",vector_item_radar.size(),8,vector_data_radar,name);
+//        fill_csv_for_la("la",vector_data_la_all.size(),name);
+
         msgBox.setText("Данные сохранены в файл: "+name);
         msgBox.exec();
     }
@@ -740,7 +742,7 @@ void widget_modelset::on_save_pushButton_clicked()
 
 // как параметры передаем число объектов каждого типа,
 //число параметров данного объекта и затем их параметры массивом
-void widget_modelset::fill_config(QString type_object,
+void widget_modelset::fill_csv(QString type_object,
                                   int num_objects,
                                   int num_params,
                                   QVector <QString> params,
@@ -768,7 +770,7 @@ void widget_modelset::fill_config(QString type_object,
     }
 }
 
-void widget_modelset::fill_config_for_la(QString type_object,
+void widget_modelset::fill_csv_for_la(QString type_object,
                                          int num_objects,
                                          QString config_name)
 {
@@ -797,6 +799,7 @@ void widget_modelset::fill_config_for_la(QString type_object,
     file.close();
     }
 }
+
 //void widget_modelset::add_maneuver(QMouseEvent *_event)
 //{
 //    flag_maneuver = true;
@@ -807,3 +810,104 @@ void widget_modelset::fill_config_for_la(QString type_object,
 //    ui->lineEdit->setText(cord);
 //    add_point(x,y);
 //}
+
+void widget_modelset:: serialization_json(QString _config_name)
+{
+
+    QFile fileJson(_config_name);
+    QString scenario_name = _config_name.split(".").at(0);
+    QJsonObject j_object
+    {
+        {"scenario_name", scenario_name},
+        {"end_time",ui->time_modelinglineEdit->text()},
+    };
+
+    fileJson.open(QIODevice::WriteOnly);
+
+    QJsonObject j_oblect_pbu
+    {
+        {"id", vector_data_pbu.at(0)},
+        {"x",vector_data_pbu.at(1)},
+        {"y",vector_data_pbu.at(2)},
+        {"z",vector_data_pbu.at(3)},
+    };
+
+    QJsonArray array_pu;
+    for(int ii = 0; ii<vector_data_pu.size(); ii+=7)
+    {
+        QJsonObject j_object_pu
+        {
+            {"id", vector_data_pu.at(ii)},
+            {"x",vector_data_pu.at(1+ii)},
+            {"y",vector_data_pu.at(2+ii)},
+            {"z",vector_data_pu.at(3+ii)},
+            {"radius",vector_data_pu.at(4+ii)},
+            {"count_ammo",vector_data_pu.at(5+ii)},
+            {"cooldown",vector_data_pu.at(6+ii)}
+        };
+        array_pu.append(QJsonValue(j_object_pu));
+    }
+
+    QJsonArray array_radar;
+    for(int ii = 0; ii<vector_data_radar.size(); ii+=8)
+    {
+        QJsonObject j_object_radar
+        {
+            {"id", vector_data_radar.at(ii)},
+            {"model", vector_data_radar.at(1+ii)},
+            {"x",vector_data_radar.at(2+ii)},
+            {"y",vector_data_radar.at(3+ii)},
+            {"z",vector_data_radar.at(4+ii)},
+            {"radius",vector_data_radar.at(5+ii)},
+            {"count_channels_targets",vector_data_radar.at(6+ii)},
+            {"count_channels_zurs",vector_data_radar.at(7+ii)}
+        };
+        array_radar.append(QJsonValue(j_object_radar));
+    }
+
+    QJsonArray array_la_all;
+
+    for(QVector<QString> vector_la : vector_data_la_all)
+    {
+        QJsonObject j_object_la
+        {
+            {"id", vector_la.at(0)},
+            {"model", vector_la.at(1)},
+            {"max_Nx",vector_la.at(2)},
+            {"max_Ny",vector_la.at(3)},
+            {"min_Nx",vector_la.at(4)},
+            {"max_M",vector_la.at(5)},
+            {"practical_roof",vector_la.at(6)}
+        };
+        QJsonArray la_points;
+        int count = 1;
+        for(int ii = 7; ii<vector_la.size(); ii+=4)
+        {
+            QJsonObject j_object_point
+            {
+                {"point", count++},
+                {"x", vector_la.at(ii)},
+                {"y", vector_la.at(ii+1)},
+                {"z",vector_la.at(ii+2)},
+                {"vel",vector_la.at(ii+3)}
+            };
+            la_points.append(j_object_point);
+        }
+        j_object_la.insert("target_points", QJsonValue(la_points));
+        array_la_all.append(j_object_la);
+    }
+
+    j_object.insert("pbu",QJsonValue(j_oblect_pbu));
+    j_object.insert("pu",QJsonValue(array_pu));
+    j_object.insert("rls",QJsonValue(array_radar));
+    j_object.insert("la", QJsonValue(array_la_all));
+
+    fileJson.write(QJsonDocument(j_object).toJson());
+
+    fileJson.close();
+}
+
+void widget_modelset:: deserialization_json(QString _config_name)
+{
+
+}

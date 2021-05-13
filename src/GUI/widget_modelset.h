@@ -114,7 +114,7 @@ private:
 
     ///
     /// \brief Функция, удаляющая элементы в дереве
-    /// \param[in] QTreeWidgetItem* - указатель на элемент дерева
+    /// \param[in] QTreeWidgetItem* - указатель на главный элемент дерева
     ///
     void remove_tree_items(QTreeWidgetItem*);
     ///
@@ -176,7 +176,7 @@ private:
     /// \param[in] params - вектор, содержащий все информацию об объекте
     /// \param[in] config_name - имя конфиг. файла
     ///
-    void fill_config(QString type_object,
+    void fill_csv(QString type_object,
                      int num_objects,
                      int num_params,
                      QVector <QString> params,
@@ -187,9 +187,21 @@ private:
     /// \param[in] num_objects - количество объектов
     /// \param[in] config_name - имя конфиг. файла
     ///
-    void fill_config_for_la(QString type_object,
+    void fill_csv_for_la(QString type_object,
                             int num_objects,
                             QString config_name);
+
+    ///
+    /// \brief Функция, заполняющая json файл данными c GUI
+    /// \param[in] _config_name - имя конфиг. файла
+    ///
+    void serialization_json(QString _config_name);
+
+    ///
+    /// \brief Функция, читающая json файл
+    /// \param[in] _config_name - имя конфиг. файла
+    ///
+    void deserialization_json(QString _config_name);
 
 private slots:
     ///
