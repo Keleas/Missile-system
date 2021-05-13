@@ -179,7 +179,7 @@ public:
 };
 
 
-*/
+/*
 int main()
 {
     Id_Gen gen;
