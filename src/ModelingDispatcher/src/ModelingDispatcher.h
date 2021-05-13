@@ -62,6 +62,9 @@ public:
      * @brief Очистка моделей
      */
     void clear();
+
+    template <typename MT>
+    void msgSubscribe(std::function<void(id_type, double, MT)>&& callback);
 private:
     double delta_time; //> шаг по времени
 
@@ -82,5 +85,10 @@ private:
     void initModels(rapidjson::Document& doc);
 };
 
+template <typename MT>
+void ModelingDispatcher::msgSubscribe(std::function<void(id_type, double, MT)>&& callback)
+{
+    carrier.get<MT>().subscribe(callback);
+}
 
 #endif //MISSILESYSTEM_MODELINGDISPATCHER_H

@@ -32,5 +32,8 @@ int main()
     ModelingDispatcher md(1.0, factories);
 
     md.run(scenario);
+
+    for(auto& it : factories)
+        delete it.second.second;
     return 0;
 }
