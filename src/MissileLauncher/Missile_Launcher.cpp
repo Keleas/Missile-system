@@ -126,11 +126,21 @@ public:
         Louncher_Status status;
         status.ready=ready;
         status.rocket_count=rocket_count;
-        status.cooldown=cooldown;
+        status.cooldown=Cooldown();
         return status;
     }
 
+    float Cooldown()
+    {
+        float cd=cooldown-no_launch_time;
+        if (cd > 0)
+            return cd;
+        else
+            return 0;
+        
+    }
     
+        
     Missile_Launcher_Logs Step_Logs()
     {
         Missile_Launcher_Logs logs;
@@ -188,26 +198,33 @@ int main()
     a.do_CSV_logs();
     std::string b = a.CSV_logs();
     std::cout<<"-1 "<<b<<"\n";
+    std::cout<<"        "<<a.Cooldown()<<"\n";
     
     a.Missile_Launcher_Step(0.01,&gen);
     std::string c=a.CSV_logs();
     std::cout<<"0  "<<c<<"\n";
+    std::cout<<"        "<<a.Cooldown()<<"\n";
     
     a.Launch_the_Rocket(7,8,9);
     a.Missile_Launcher_Step(0.01,&gen);
     std::string d=a.CSV_logs();
     std::cout<<"1  "<<d<<"\n";
+    std::cout<<"        "<<a.Cooldown()<<"\n";
     
     a.Missile_Launcher_Step(0.01,&gen);
     std::string e=a.CSV_logs();
     std::cout<<"2  "<<e<<"\n";
+    std::cout<<"        "<<a.Cooldown()<<"\n";
     
     a.Missile_Launcher_Step(4.99,&gen);
     std::string f=a.CSV_logs();
     std::cout<<"501  "<<f<<"\n";
+    std::cout<<"        "<<a.Cooldown()<<"\n";
     
     a.Missile_Launcher_Step(0.01,&gen);
     std::string h=a.CSV_logs();
     std::cout<<"502  "<<h<<"\n";
+    std::cout<<"        "<<a.Cooldown()<<"\n";
 }
 */
+
