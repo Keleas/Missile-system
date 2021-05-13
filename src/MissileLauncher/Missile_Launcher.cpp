@@ -157,7 +157,7 @@ public:
         unit_logs = logs.str();
     }   
     
-    void Missile_Launcher_Step(float dt/*, Id_Gen& id_gen, std::set<int> & rockets*/)
+    void Missile_Launcher_Step(float dt, Id_Gen *id_gen/*, std::set<int> & rockets*/)
     //Missile_Launcher_Step(шаг моделирования,ссылка на счетчик индека ЗУР,ссылка на сет ЗУР-ов)
     {
        ready=is_ready();
@@ -165,7 +165,7 @@ public:
        {
            Coordinates target_coordinats = launch_queue.front();
            launch_queue.pop_front();
-///           int id_rocket = it_gen.generate();
+           int id_rocket = id_gen->generate();
 ///        ZUR rocket = ZUR_constractor(id_rocket,unit_coordinates,target_coordinats,)
 ///        rockets.push_back(rocket);
            no_launch_time = 0;
@@ -179,29 +179,35 @@ public:
 };
 
 
-/*
+*/
 int main()
 {
-    std::cout<<"Hello World\n";
-    Missile_Launcher a(1,2,3,4);
+    Id_Gen gen;
+    
+    Missile_Launcher a(1,20,21,22);
     a.do_CSV_logs();
     std::string b = a.CSV_logs();
-    std::cout<<b<<"\n";
-    a.Missile_Launcher_Step(0.01);
+    std::cout<<"-1 "<<b<<"\n";
+    
+    a.Missile_Launcher_Step(0.01,&gen);
     std::string c=a.CSV_logs();
-    std::cout<<c<<"\n";
+    std::cout<<"0  "<<c<<"\n";
+    
     a.Launch_the_Rocket(7,8,9);
-    a.Missile_Launcher_Step(0.01);
+    a.Missile_Launcher_Step(0.01,&gen);
     std::string d=a.CSV_logs();
-    std::cout<<d<<"\n";
-    a.Missile_Launcher_Step(0.01);
+    std::cout<<"1  "<<d<<"\n";
+    
+    a.Missile_Launcher_Step(0.01,&gen);
     std::string e=a.CSV_logs();
-    std::cout<<e<<"\n";
-    a.Missile_Launcher_Step(4.99);
+    std::cout<<"2  "<<e<<"\n";
+    
+    a.Missile_Launcher_Step(4.99,&gen);
     std::string f=a.CSV_logs();
-    std::cout<<f<<"\n";
-     a.Missile_Launcher_Step(0.01);
+    std::cout<<"501  "<<f<<"\n";
+    
+    a.Missile_Launcher_Step(0.01,&gen);
     std::string h=a.CSV_logs();
-    std::cout<<h<<"\n";
+    std::cout<<"502  "<<h<<"\n";
 }
-/*
+*/
