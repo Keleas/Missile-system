@@ -1,5 +1,5 @@
-#ifndef AIRTARGET_H
-#define AIRTARGET_H
+//#ifndef AIRTARGET_H
+//#define AIRTARGET_H
 
 #include <string>
 #include <fstream>
@@ -120,4 +120,4 @@ DEFAULT_MODEL_FACTORY(AirTarget)
 Vector3D GeoToLocal(GeodezicCoodinates GD, GeocentricCoodinates GC, GeocentricCoodinates GC0);
 GeocentricCoodinates LocalToGeo(GeodezicCoodinates GD, Vector3D Loc, GeocentricCoodinates GC0);
 
-#endif // AIRTARGET_H
+//#endif // AIRTARGET_H

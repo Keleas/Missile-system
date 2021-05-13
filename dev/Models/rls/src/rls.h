@@ -33,6 +33,7 @@ private:
     int id;
     RLS_Params param;
     MessageQueue<Rocket_Start> recieve_pbu_msg;
+    MessageQueue<TargetMsg> recieve_target_msg;
 };
 
 inline void RLS::write_to_csv()

@@ -5,44 +5,40 @@ RLS::RLS(id_type id, MsgChannelCarrier &carrier, std::ostream& log)
     : Model{id, carrier, log}
 {
     declareteQueue(recieve_pbu_msg);
+    declareteQueue(recieve_target_msg);
 }
 
 bool RLS::init(const rapidjson::Value& initial_data)
 {
-    std::cout << "params" << std::endl;
-    std::cout << initial_data["coords"].GetDouble() << std::endl;
     param.COORDS = initial_data["coords"].GetDouble();
-    
-    std::cout << param.COORDS << std::endl; 
     param.OBSERVATION_PARAMS = initial_data["observation_params"].GetDouble();
     param.DISPERSION = initial_data["dispersion"].GetDouble();
-    std::cout << param.OBSERVATION_PARAMS << std::endl;
-    std::cout << param.DISPERSION << std::endl;
     return true;
 }
 
 void RLS::firstStep()
 {
-    std::cout << "Message from " << " at time " << std::endl;
     write_to_csv();
 }
 
 void RLS::step(double time)
 {
-    if (!recieve_pbu_msg.empty())
+    if (!recieve_target_msg.empty())
     {
-        //find rocket
+        Trajectory traj_msg;
+        traj_msg.target_coords = recieve_target_msg.front().message.coord;
+        traj_msg.target_v = recieve_target_msg.front().message.vels;
+        traj_msg.sigma = { 7.0, 8.0, 9.0 };
+        traj_msg.sigma_half_axis = { 10.0, 11.0, 12.0 };
+        traj_msg.target_id = recieve_target_msg.front().source_id;
+        
+        recieve_target_msg.pop_front();
+
+        //find target
+        calculate(time);        
+
+        send<Trajectory>(time, traj_msg);
     }
-    calculate(time);
-
-    Trajectory traj_msg;
-    traj_msg.target_coords = { 1.0, 2.0, 3.0 };
-    traj_msg.target_v = { 4.0, 5.0, 6.0 };
-    traj_msg.sigma = { 7.0, 8.0, 9.0 };
-    traj_msg.sigma_half_axis = { 10.0, 11.0, 12.0 };
-    traj_msg.target_id = 1;
-
-    send<Trajectory>(time, traj_msg);
 
     TargetCoords target_msg;
     target_msg.target_coords = { 1.0, 2.0, 3.0 };

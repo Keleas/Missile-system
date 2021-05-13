@@ -5,11 +5,11 @@ set(projectName pbu_model)
 project(${projectName})
 
 set(HEADERS
-        PBU.h
+        pbu.h
         )
 
 set(SOURCES
-        PBU.cpp
+        pbu.cpp
         )
 
 add_library(${projectName}
@@ -17,10 +17,9 @@ add_library(${projectName}
         ${SOURCES}
         )
 
-#target_include_directories(${projectName} INTERFACE
-#        ${PROJECT_ROOT}/ModelingDispatcher/src
-#        ${PROJECT_ROOT}/MessageManager/src
-#        )
+target_include_directories(${projectName} INTERFACE
+        ${PROJECT_ROOT}/ModelingDispatcher/src
+        )
 
 target_link_libraries(${projectName} INTERFACE
         modeling_dispatcher

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.19)
 
-set(projectName rls_test)
+set(projectName project_test)
 
 project(${projectName})
 
@@ -17,9 +17,13 @@ add_executable(${projectName}
         )
 
 target_include_directories(${projectName} PRIVATE
-        ${TARGET_ROOT}/src
+        ${PROJECT_ROOT}/Models/target/src
+        ${PROJECT_ROOT}/Models/rls/src
+        ${PROJECT_ROOT}/Models/pbu/src
         )
 
 target_link_libraries(${projectName} PRIVATE
+        target_model
         rls_model
+        pbu_model
         )

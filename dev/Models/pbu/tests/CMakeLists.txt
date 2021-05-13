@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.19)
 
-set(projectName pu_test)
+set(projectName pbu_test)
 
 project(${projectName})
 
@@ -17,9 +17,9 @@ add_executable(${projectName}
         )
 
 target_include_directories(${projectName} PRIVATE
-        ${TARGET_ROOT}/src
+        ${PBU_ROOT}/src
         )
 
 target_link_libraries(${projectName} PRIVATE
-        pu_model
+        pbu_model
         )
