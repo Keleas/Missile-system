@@ -28,6 +28,14 @@ struct RocketMsg : public BasePhysicsEntity
     bool is_target_destroyed;
 };
 
+struct RLCMsg
+{
+    id_type target_id;    
+    std::vector<double> coordinates;
+    std::vector<double> speed; 				//v_x, v_y, v_z
+    double time;  				//временная метка    
+};
+
 struct Explosion
 {
     vec3 crd_rct;
