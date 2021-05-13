@@ -72,7 +72,7 @@ class Missile_Launcher
     bool ready = 1;
     // no logs
     real cooldown=5;  //5 seconds
-    real no_launch_time=6;
+    real no_launch_time=5;
     
     
     std::duque<Coordinates>=launch_queue;  
@@ -146,30 +146,22 @@ public:
     //Missile_Launcher_Step(шаг моделирования,ссылка на счетчик индека ЗУР,ссылка на сет ЗУР-ов)
     {
        ready=is_ready();
-       
-       
-
        if (ready &&  !launch_queue.empty())
        {
-           
-           
-           
-           
            Coordinates target_coordinats = launch_queue.pop_front();
            int id_rocket = it_gen.generate();
 ///        ZUR rocket = ZUR_constractor(id_rocket,unit_coordinates,target_coordinats,)
 ///        rockets.push_back(rocket);
            no_launch_time = 0;
            rocket_count -= 1;
-           
        }
-       Missile_Launcher_Logs step_logs = Step_Logs();
-       
-       
-///    CSV Logs
-///   scv + "/n"+"n;X;Y;Z;N_rocket;Range;ready"
- 
-       unit_logs = unit_logs + 
+       no_launch_time += 0.01;
+    }       
+        
+        
+       Missile_Launcher_Logs step_logs = Step_Logs();   
+       {     
+       unit_logs = unit_logs  
                  + step_logs.id_rocket +";"
                  + step_logs.X +";"
                  + step_logs.Y +";"
@@ -177,6 +169,7 @@ public:
                  + step_logs.rocket_count +";"
                  + step_logs.range + ";"
                  + step_logs.ready + "/n";
+       }
 
 
 
