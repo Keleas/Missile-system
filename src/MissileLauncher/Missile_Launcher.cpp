@@ -2,26 +2,21 @@
 Consructors:
 Missile_Launcher(id,x,y,z)
 Missile_Launcher(id,x,y,z,N_rocker,Range)
-
 вспомогательнй класс - счетчик ЗУР, общий для всех ПУ
 Id_Gen()
-
 functions
-CSV_logs() - return logs as string in csv format
-Missile_Launcher_Step(float dt, Id_Gen& id_gen, std::set<ZUR>& rockets)  
+CSV_logs() - return step logs as string in csv format
+Missile_Launcher_Step (float dt, Id_Gen& id_gen, std::set<ZUR>& rockets)  
 Launch_the_Rocket(X,Y,Z)  command from PBU
 Louncher_Unit_Status() return louncher status for PBU
+Missile_Launcher_Logs() rerurn logs as struct 
 */
 
-
 #include <iostream>
-
-//constexpr real dt==0.01;
-
-#include <string>  
-#include <cmath> 
-//подключить библиотеку ЗУР
-//#include
+#include <string>
+#include <deque>
+#include <set>
+#include <sstream>
 
 struct Coordinates      //coordinates
 {
@@ -43,7 +38,7 @@ public:
 };
 
 
-struct Missile_Launcher_Logs()   //Log data
+struct Missile_Launcher_Logs   //Log data
 {
     int id;
     float X;
@@ -52,14 +47,14 @@ struct Missile_Launcher_Logs()   //Log data
     int rocket_count;
     float range; 
     bool ready;
-}
+};
 
-struct Louncher_Status()
+struct Louncher_Status
 {
-    bool ready_status;
-    int rocket_count_status;
-    float cooldown_status;
-}
+    bool ready;
+    int rocket_count;
+    float cooldown;
+};
 
 
 
@@ -72,12 +67,12 @@ class Missile_Launcher
     float range = 100; //100 km   int?
     bool ready = 1;
     // no logs
-    real cooldown=5;  //5 seconds
-    real no_launch_time=5;
+    float cooldown=5;  //5 seconds
+    float no_launch_time=5;
     
     
-    std::duque<Coordinates>=launch_queue;  
-    string unit_logs = "";
+    std::deque<Coordinates> launch_queue;  
+    std::string unit_logs = "";
      
 public:
     //contructors
@@ -98,7 +93,7 @@ public:
         unit_coordinates.Z = Z_;
         rocket_count = N_;
         range = R_;
-        if N_ < 1
+        if (N_ < 1)
         {
             ready=0;
         }
@@ -107,25 +102,31 @@ public:
     //functions
     bool is_ready()                   //return
     {
-        return (no_launch_time_time >= cooldown && rocket_count >= 1);
+        return (no_launch_time >= cooldown && rocket_count >= 1);
     }
     
     
     void Launch_the_Rocket(float X,float Y,float Z)
     //Launch_the_Rocket(X,Y,Z)  
     {
-        Coordinates target_coordinats(X,Y,Z);
-        lounch_queue.push_back(target_coordinats);
+        Coordinates target_coordinats;
+        target_coordinats.X = X;
+        target_coordinats.Z = Z;
+        target_coordinats.Y = Y;
+        launch_queue.push_back(target_coordinats);
     }
 
-    string CSV_logs()
+    std::string CSV_logs()
     {
         return unit_logs;
     }
 
     Louncher_Status Louncher_Unit_Status()
     {
-        Louncher_Status status(ready, rocket_count, cooldown-);
+        Louncher_Status status;
+        status.ready=ready;
+        status.rocket_count=rocket_count;
+        status.cooldown=cooldown;
         return status;
     }
 
@@ -142,40 +143,65 @@ public:
         logs.ready = is_ready();
         
     }
+ 
+    void do_CSV_logs()   
+    {     
+        std::ostringstream logs;
+        logs<<id<<";";
+        logs<<unit_coordinates.X<<";";
+        logs<<unit_coordinates.Y<<";";
+        logs<<unit_coordinates.Z<<";";
+        logs<<rocket_count<<";";
+        logs<<range<<";";
+        logs<<ready<<";";
+        unit_logs = logs.str();
+    }   
     
-    void Missile_Launcher_Step(float dt, Id_Gen& id_gen, std::set<ZUR>& rockets)
+    void Missile_Launcher_Step(float dt/*, Id_Gen& id_gen, std::set<int> & rockets*/)
     //Missile_Launcher_Step(шаг моделирования,ссылка на счетчик индека ЗУР,ссылка на сет ЗУР-ов)
     {
        ready=is_ready();
        if (ready &&  !launch_queue.empty())
        {
-           Coordinates target_coordinats = launch_queue.pop_front();
-           int id_rocket = it_gen.generate();
+           Coordinates target_coordinats = launch_queue.front();
+           launch_queue.pop_front();
+///           int id_rocket = it_gen.generate();
 ///        ZUR rocket = ZUR_constractor(id_rocket,unit_coordinates,target_coordinats,)
 ///        rockets.push_back(rocket);
            no_launch_time = 0;
            rocket_count -= 1;
+           ready = 0;
        }
-       no_launch_time += 0.01;
+       do_CSV_logs();
+       no_launch_time += dt;
     }       
-        
-        
-       Missile_Launcher_Logs step_logs = Step_Logs();   
-       {     
-       unit_logs = unit_logs  
-                 + step_logs.id_rocket +";"
-                 + step_logs.X +";"
-                 + step_logs.Y +";"
-                 + step_logs.Z +";"
-                 + step_logs.rocket_count +";"
-                 + step_logs.range + ";"
-                 + step_logs.ready + "/n";
-       }
+
+};
 
 
-
-
-
-    
-    
+/*
+int main()
+{
+    std::cout<<"Hello World\n";
+    Missile_Launcher a(1,2,3,4);
+    a.do_CSV_logs();
+    std::string b = a.CSV_logs();
+    std::cout<<b<<"\n";
+    a.Missile_Launcher_Step(0.01);
+    std::string c=a.CSV_logs();
+    std::cout<<c<<"\n";
+    a.Launch_the_Rocket(7,8,9);
+    a.Missile_Launcher_Step(0.01);
+    std::string d=a.CSV_logs();
+    std::cout<<d<<"\n";
+    a.Missile_Launcher_Step(0.01);
+    std::string e=a.CSV_logs();
+    std::cout<<e<<"\n";
+    a.Missile_Launcher_Step(4.99);
+    std::string f=a.CSV_logs();
+    std::cout<<f<<"\n";
+     a.Missile_Launcher_Step(0.01);
+    std::string h=a.CSV_logs();
+    std::cout<<h<<"\n";
 }
+/*
