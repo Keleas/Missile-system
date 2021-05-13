@@ -13,6 +13,7 @@ bool PU::init(const rapidjson::Value& initial_data)
     param.COORDS = initial_data["coords"].GetDouble();
     param.ROCKETS_AMOUNT =  initial_data["rockets_amount"].GetInt();
     param.IS_READY = initial_data["is_ready"].GetBool();
+    return 0;
 }
 
 void PU::firstStep()
@@ -50,4 +51,9 @@ void PU::step(double time)
 void PU::calculate(double time)
 {
     // update all
+}
+
+void PU::endStep()
+{
+    write_to_csv();
 }

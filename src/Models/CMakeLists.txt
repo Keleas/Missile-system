@@ -5,3 +5,5 @@ include_directories(${PROJECT_ROOT}/ModelingDispatcher/src)
 
 add_subdirectory(pbu)
 add_subdirectory(target)
+add_subdirectory(rls)
+add_subdirectory(pu)

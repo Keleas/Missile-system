@@ -1,18 +1,15 @@
 cmake_minimum_required(VERSION 3.19)
 
-set(projectName target_model)
+set(projectName pu_model)
 
 project(${projectName})
 
 set(HEADERS
-        airtarget.h
-        Coordinates.h
-        TrajData.h
-        Vector3D.h
+        pu.h
         )
 
 set(SOURCES
-        airtarget.cpp
+        pu.cpp
         )
 
 add_library(${projectName}

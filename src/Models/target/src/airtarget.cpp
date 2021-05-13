@@ -56,6 +56,7 @@ bool AirTarget::init(const rapidjson::Value& initial_data)
         p.initialVel = v["vel"].GetDouble();
         control_points.push_back(p);
     }
+    return true;
 }
 
 void AirTarget::firstStep()
