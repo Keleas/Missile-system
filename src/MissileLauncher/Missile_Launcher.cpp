@@ -153,7 +153,7 @@ public:
         logs<<unit_coordinates.Z<<";";
         logs<<rocket_count<<";";
         logs<<range<<";";
-        logs<<ready<<";";
+        logs<<ready;
         unit_logs = logs.str();
     }   
     
