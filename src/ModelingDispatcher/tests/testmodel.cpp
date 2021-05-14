@@ -46,6 +46,7 @@ void model1::step(double time)
     t += time;
     send<int>(t, t * 2);
     send<std::string>(t, "model1");
+    send<std::string>(42, t, "model1 полет нормальный");
 }
 
 bool model1::init(const rapidjson::Value &initial_data) {
@@ -77,4 +78,5 @@ void model2::step(double time)
     t += time;
     send<int>(t, t);
     send<std::string>(t, "model2");
+    send<std::string>(42, t, "model2 полет нормальный");
 }

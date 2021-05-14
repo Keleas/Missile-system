@@ -96,7 +96,7 @@ private:
 template <typename MT>
 void ModelingDispatcher::msgSubscribe(typename MsgChannel<MT>::callback_type&& callback)
 {
-    carrier.get<MT>().subscribe(callback);
+    carrier.get<MT>().subscribe(std::move(callback));
 }
 
 #endif //MISSILESYSTEM_MODELINGDISPATCHER_H

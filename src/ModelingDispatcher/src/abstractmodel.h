@@ -55,6 +55,15 @@ public:
      */
     void send(double time, MT message);
 
+    template <typename MT>
+    /**
+     * @brief send - отправка сообщения типа MT конкретному потребителю
+     * @param to - id получателя
+     * @param time - текущее модельное время
+     * @param message - сообщение
+     */
+    void send(id_type to, double time, MT message);
+
     virtual void firstStep() = 0; /// первый шаг моделирования
     /**
      * @brief step - выполнить шаг моделирование
@@ -124,9 +133,15 @@ void Model::send(double time, MT message)
 }
 
 template <typename MT>
+void Model::send(id_type to, double time, MT message)
+{
+    carrier.get<MT>().send(id, to, time, message);
+}
+
+template <typename MT>
 void Model::declareteQueue(MessageQueue<MT> &queue)
 {
-    carrier.get<MT>().subscribe([&queue](id_type from, double time, MT mes)
+    carrier.get<MT>().subscribe(id, [&queue](id_type from, double time, MT mes)
     {
         queue.push_front({from, time, mes});
     });
@@ -135,7 +150,7 @@ void Model::declareteQueue(MessageQueue<MT> &queue)
 template <typename MT>
 void Model::declareteQueue(MessageQueue<MT> &queue, id_type source)
 {
-    carrier.get<MT>().subscribe([&queue](id_type from, double time, MT mes)
+    carrier.get<MT>().subscribe(id, [&queue](id_type from, double time, MT mes)
     {
         queue.push_front({from, time, mes});
     }, source);
