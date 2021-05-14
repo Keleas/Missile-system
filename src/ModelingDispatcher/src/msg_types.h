@@ -30,11 +30,36 @@ struct RocketMsg : public BasePhysicsEntity
 
 struct RLCMsg
 {
-    id_type target_id;    
+    id_type target_id;
     std::vector<double> coordinates;
     std::vector<double> speed; 				//v_x, v_y, v_z
-    double time;  				//временная метка    
+    double time;  				            //временная метка
 };
+
+struct PUtoPBUstartMsg
+{
+    id_type launcher_id;
+    vec3 coord;
+    int zur_num;
+    bool status;
+};
+
+struct PUtoBPUMsg
+{
+    int zur_num;
+    bool status;
+};
+
+struct PBUtoPUMsg
+{
+    vec3 target_coord;
+};
+
+struct PUtoPBUzurIDMsg
+{
+    id_type zur_id;
+};
+
 
 struct Explosion
 {

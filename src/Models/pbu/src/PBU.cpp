@@ -19,7 +19,6 @@ bool PBU::init(const rapidjson::Value &initial_data)
                                                 it["coordinates"][2].GetDouble()}});
 
     }
-
     return true;
 }
 
@@ -157,7 +156,8 @@ void PBU::GetRLIfromRadar()
         item.second.CalculateParametrs();                       // Пересчитываем координаты
 }
 
-void PBU::step(double time) {
+void PBU::step(double time)
+{
     //обработка сообщений
     //моделирование
     //отправка сообщений
