@@ -14,9 +14,6 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <widget class="QCustomPlot" name="customPlot_1" native="true"/>
-   </item>
    <item row="0" column="1" rowspan="2">
     <widget class="QGroupBox" name="groupBox">
      <property name="maximumSize">
@@ -251,9 +248,6 @@ background-color: rgb(255, 255, 255);</string>
      </layout>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QCustomPlot" name="customPlot_2" native="true"/>
-   </item>
    <item row="2" column="0" colspan="2">
     <widget class="QGroupBox" name="groupBox_4">
      <property name="maximumSize">
@@ -330,14 +324,6 @@ background-color: rgb(255, 255, 255);</string>
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>QCustomPlot</class>
-   <extends>QWidget</extends>
-   <header>qcustomplot.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

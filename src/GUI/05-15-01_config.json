@@ -1,0 +1,136 @@
+{
+    "end_time": "1000",
+    "objects": [
+        {
+            "id": 0,
+            "initial_data": {
+                "x": 0,
+                "y": 13.215859030837107,
+                "z": 0
+            },
+            "model_name": "PBU"
+        },
+        {
+            "id": "3",
+            "initial_data": {
+                "count_channels_targets": 64,
+                "count_channels_zurs": 32,
+                "model": 0,
+                "radius": 100,
+                "x": 743.5897435897436,
+                "y": -148.31130690161532,
+                "z": 0
+            },
+            "model_name": "RLS"
+        },
+        {
+            "id": 4,
+            "initial_data": {
+                "target_max_M": 207,
+                "target_max_Nx": 158,
+                "target_max_Ny": 134,
+                "target_min_Nx": 206,
+                "target_model_type": "UFO",
+                "target_name": "plane_0",
+                "target_points": [
+                    {
+                        "vel": 12312,
+                        "x": -158.50815850815846,
+                        "y": 603.52422907489,
+                        "z": 23132
+                    },
+                    {
+                        "vel": 131,
+                        "x": 489.5104895104896,
+                        "y": -647.5770925110132,
+                        "z": 13123
+                    },
+                    {
+                        "vel": 13,
+                        "x": 696.969696969697,
+                        "y": -556.5345080763583,
+                        "z": 1313
+                    }
+                ],
+                "target_practical_roof": 100
+            },
+            "model_name": "AirTarget"
+        },
+        {
+            "id": 6,
+            "initial_data": {
+                "target_max_M": 206,
+                "target_max_Nx": 186,
+                "target_max_Ny": 180,
+                "target_min_Nx": 179,
+                "target_model_type": "F-86 Sabre",
+                "target_name": "plane_1",
+                "target_points": [
+                    {
+                        "vel": 131,
+                        "x": -710.955710955711,
+                        "y": 98.38472834067558,
+                        "z": 131
+                    },
+                    {
+                        "vel": 1321,
+                        "x": 554.7785547785548,
+                        "y": 98.38472834067558,
+                        "z": 131
+                    },
+                    {
+                        "vel": 131,
+                        "x": -186.4801864801865,
+                        "y": -665.1982378854626,
+                        "z": 1313
+                    },
+                    {
+                        "vel": 3131,
+                        "x": -368.29836829836825,
+                        "y": 480.17621145374443,
+                        "z": 13131
+                    }
+                ],
+                "target_practical_roof": 75
+            },
+            "model_name": "AirTarget"
+        },
+        {
+            "id": 1,
+            "initial_data": {
+                "cooldown": 10,
+                "radius": 100,
+                "rockets_amount": 4,
+                "x": 282.05128205128216,
+                "y": 453.74449339207047,
+                "z": 0
+            },
+            "model_name": "PU"
+        },
+        {
+            "id": 2,
+            "initial_data": {
+                "cooldown": 10,
+                "radius": 100,
+                "rockets_amount": 4,
+                "x": -321.67832167832165,
+                "y": -271.65932452276064,
+                "z": 0
+            },
+            "model_name": "PU"
+        },
+        {
+            "id": 5,
+            "initial_data": {
+                "cooldown": 10,
+                "radius": 100,
+                "rockets_amount": 4,
+                "x": 65.26806526806527,
+                "y": -368.57562408223197,
+                "z": 0
+            },
+            "model_name": "PU"
+        }
+    ],
+    "scenario_name": "05-15-01_config"
+}
