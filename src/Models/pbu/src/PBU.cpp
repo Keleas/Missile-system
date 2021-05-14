@@ -4,26 +4,25 @@ PBU::PBU(id_type id, MsgChannelCarrier& carrier, std::ostream& log)
     : Model{id, carrier, log}
 {
     declareteQueue(msg_from_rlc);
+    declareteQueue(msg_from_pu_start);
+    declareteQueue(msg_from_pu);
+    declareteQueue(msg_from_pu_zur);
 }
 
 PBU::~PBU() {}
 
 bool PBU::init(const rapidjson::Value &initial_data)
 {
-    for(auto& it : initial_data["initial_data"].GetArray())
-    {        
+    pbu_coords = std::vector<double>({initial_data["x"].GetDouble(),
+                                     initial_data["y"].GetDouble(),
+                                     initial_data["z"].GetDouble()});
 
-        pu_base[it["pu_id"].GetUint()].insert({it["zur_id"][0].GetUint(), true});
-        pu_coords.insert({it["pu_id"].GetUint(), {it["coordinates"][0].GetDouble(),
-                                                it["coordinates"][1].GetDouble(),
-                                                it["coordinates"][2].GetDouble()}});
-
-    }
     return true;
 }
 
 void PBU::firstStep() {
     GetRLIfromRadar();
+    FirstStepFromPU();
     //FindIdenticalTracks();
 
 }
@@ -154,6 +153,22 @@ void PBU::GetRLIfromRadar()
     }
     for(auto& item : targets)
         item.second.CalculateParametrs();                       // Пересчитываем координаты
+}
+
+void PBU::FirstStepFromPU()
+{
+    while (!msg_from_pu_start.empty())
+    {
+        pu_base[msg_from_pu_start.front().source_id] = msg_from_pu_start.front().message;
+        msg_from_pu_start.erase(msg_from_pu_start.begin());
+    }
+}
+
+double CalculateDistanse(const std::vector<double>& a, const std::vector<double>& b)
+{
+    return sqrt((a[0] - b[0]) * (a[0] - b[0]) +
+            (a[1] - b[1]) * (a[1] - b[1]) +
+            (a[2] - b[2]) * (a[2] - b[2]));
 }
 
 void PBU::step(double time)
