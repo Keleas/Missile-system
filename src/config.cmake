@@ -1,2 +1,2 @@
 set(BUILD_TESTS YES)
-set(RAPIDJSON_INCLUDE D:\\MissileSys\\rapidjson-master\\include)
+set(RAPIDJSON_INCLUDE C:\\GIt\\rapidjson\\include)
