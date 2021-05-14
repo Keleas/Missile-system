@@ -63,14 +63,12 @@ void ModelingDispatcher::initModels(rapidjson::Document &doc)
     const rapidjson::Value& objects = doc["objects"];
     for(rapidjson::SizeType i = 0; i < objects.Size(); ++i)
     {
-        std::cout << i << ": ";
         const rapidjson::Value& object = objects[i];
 
         if(!object.HasMember("id"))
             throw std::invalid_argument(std::to_string(i) + ": Object must have id");
         id = object["id"].GetUint();
 
-        std::cout << id << " ";
 
         if(!object.HasMember("model_name"))
             throw std::invalid_argument(std::to_string(i) + ": Models name must be specified");
@@ -78,13 +76,11 @@ void ModelingDispatcher::initModels(rapidjson::Document &doc)
         if(factories.find(model_name) == factories.end())
             throw std::runtime_error(std::to_string(i) +  ": Unknown model name '" + model_name + "'");
 
-        std::cout << model_name << std::endl;
 
         if(!object.HasMember("initial_data"))
             throw std::invalid_argument(std::to_string(i) + ": Initial data not found");
 
         log_path = res_dir + PathDelimiter + scenario_name + "_" + model_name + "_" + std::to_string(id) + ".csv";
-        std::cout << log_path << std::endl;
 
         logs[i].open(log_path);
         model = factories[model_name].second->newModel(id, carrier, logs[i]);

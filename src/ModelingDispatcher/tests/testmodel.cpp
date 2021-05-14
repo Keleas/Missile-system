@@ -9,22 +9,15 @@ TestModelBase::TestModelBase(id_type id, MsgChannelCarrier &carrier, std::ostrea
  */
 void TestModelBase::printQueue()
 {
-    log << "int:\n";
+    setLogHeader("from", "int", "str");
     while(!int_queue.empty())
     {
-        log << "\tfrom: " << int_queue.front().source_id;
-        log << "\ttime: " << int_queue.front().time;
-        log << "\tmessage: " << int_queue.front().message;
-        log << std::endl;
+        writeLog(int_queue.front().time, int_queue.front().source_id, int_queue.front().message, "NULL");
         int_queue.pop_front();
     }
-    log << "str:\n";
     while(!str_queue.empty())
     {
-        log << "\tfrom: " << str_queue.front().source_id;
-        log << "\ttime: " << str_queue.front().time;
-        log << "\tmessage: " << str_queue.front().message;
-        log << std::endl;
+        writeLog(str_queue.front().time, str_queue.front().source_id, "NULL", str_queue.front().message);
         str_queue.pop_front();
     }
 }
@@ -53,6 +46,7 @@ void model1::step(double time)
     t += time;
     send<int>(t, t * 2);
     send<std::string>(t, "model1");
+    send<std::string>(42, t, "model1 полет нормальный");
 }
 
 bool model1::init(const rapidjson::Value &initial_data) {
@@ -84,4 +78,5 @@ void model2::step(double time)
     t += time;
     send<int>(t, t);
     send<std::string>(t, "model2");
+    send<std::string>(42, t, "model2 полет нормальный");
 }
