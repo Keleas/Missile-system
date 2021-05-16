@@ -14,17 +14,23 @@ PBU::~PBU() {}
 bool PBU::init(const rapidjson::Value &initial_data)
 {
     pbu_coords = std::vector<double>({initial_data["x"].GetDouble(),
-                                     initial_data["y"].GetDouble(),
-                                     initial_data["z"].GetDouble()});
+                                      initial_data["y"].GetDouble(),
+                                      initial_data["z"].GetDouble()});
 
     return true;
 }
 
-void PBU::firstStep() {
-    GetRLIfromRadar();
-    FirstStepFromPU();
-    //FindIdenticalTracks();
+void PBU::firstStep()
+{
+     FirstStepFromPU();
 
+}
+
+void PBU::step(double time)
+{
+    GetIdZur();                                                             // получить ID пущенных ЗУР если такие имеются
+    GetRLIfromRadar();                                                      // получение информации о целях
+    TargetDistribution();                                                   // целераспределение
 }
 
 void PBU::Target::CalculateParametrs()
@@ -65,16 +71,22 @@ bool PBU::CheckTrack(const RLCMsg& t1, const Target& t2)
             (t1.speed[2] * t1.speed[2]) - (t2.speed[2] * t2.speed[2]) <= 400);
 }
 
-void PBU::AddNewTarget()
+void PBU::UpdateTables(int target_id)
 {
     id_table[std::make_pair(msg_from_rlc.front().source_id,
-                            msg_from_rlc.front().message.target_id)] = target_counter;
+                            msg_from_rlc.front().message.target_id)] = target_id;
 
-    history_id[target_counter].insert(std::make_pair(msg_from_rlc.front().source_id,
+    history_id[target_id].insert(std::make_pair(msg_from_rlc.front().source_id,
                                                      msg_from_rlc.front().message.target_id));
 
     targets_time[std::make_pair(msg_from_rlc.front().source_id,
                                 msg_from_rlc.front().message.target_id)] = msg_from_rlc.front().time;
+}
+
+void PBU::AddNewTarget()
+{
+    UpdateTables(target_counter);
+
     targets.insert({target_counter, Target(target_counter, msg_from_rlc.front().message)});
     ++target_counter;
 }
@@ -82,12 +94,13 @@ void PBU::AddNewTarget()
 
 void PBU::GetRLIfromRadar()
 {
+    time = msg_from_rlc.front().time;
     double step_time = msg_from_rlc.front().time;
     while (!msg_from_rlc.empty())
     {
         if(id_table.empty())
         {
-            void AddNewTarget();            
+            void AddNewTarget();
         }
         else
         {
@@ -98,14 +111,7 @@ void PBU::GetRLIfromRadar()
                 {
                     if(CheckTrack(msg_from_rlc.front().message, target.second))
                     {
-                        id_table[std::make_pair(msg_from_rlc.front().source_id,
-                                                msg_from_rlc.front().message.target_id)] = target.second.ID;
-
-                        history_id[target.second.ID].insert(std::make_pair(msg_from_rlc.front().source_id,
-                                                                           msg_from_rlc.front().message.target_id));
-
-                        targets_time[std::make_pair(msg_from_rlc.front().source_id,
-                                                    msg_from_rlc.front().message.target_id)] = msg_from_rlc.front().time;
+                        UpdateTables(target.second.ID);
 
                         target.second.history_coords.push_back(msg_from_rlc.front().message.coordinates);
                         target.second.history_speed.push_back(msg_from_rlc.front().message.speed);
@@ -118,7 +124,7 @@ void PBU::GetRLIfromRadar()
             else                        // Инфформация о данной цели уже приходила с РЛС k (обнавление данных)
             {
                 id_type My_ID = id_table[std::make_pair(msg_from_rlc.front().source_id,
-                                                       msg_from_rlc.front().message.target_id)];
+                                                        msg_from_rlc.front().message.target_id)];
 
                 targets_time[std::make_pair(msg_from_rlc.front().source_id,
                                             msg_from_rlc.front().message.target_id)] = msg_from_rlc.front().time; // обновляем время
@@ -131,7 +137,7 @@ void PBU::GetRLIfromRadar()
         msg_from_rlc.erase(msg_from_rlc.begin());
     }
 
- /*******************************В этом блоке происходит поиск тех целей, которые не были обнавленны на данном шаге****************************************/
+    /*******************************В этом блоке происходит поиск тех целей, которые не были обнавленны на данном шаге****************************************/
 
     for(auto& item : targets_time) // Смотрим по времени, какие данные обновились за этот шаг
     {
@@ -164,19 +170,40 @@ void PBU::FirstStepFromPU()
     }
 }
 
-double CalculateDistanse(const std::vector<double>& a, const std::vector<double>& b)
+void PBU::TargetDistribution()
 {
-    return sqrt((a[0] - b[0]) * (a[0] - b[0]) +
-            (a[1] - b[1]) * (a[1] - b[1]) +
-            (a[2] - b[2]) * (a[2] - b[2]));
+    for(auto& target: targets)
+    {
+        for(auto& launcher: pu_base)
+        {
+            if(launcher.second.status == true && launcher.second.zur_num > 0)
+            {
+                PBUtoPUMsg msg{{target.second.coords[0],target.second.coords[1],target.second.coords[2]},
+                              {target.second.speed[0],target.second.speed[1],target.second.speed[2]}};
+
+                send<PBUtoPUMsg>(time, msg);
+                --launcher.second.zur_num;
+                break;
+            }
+        }
+    }
 }
 
-void PBU::step(double time)
+void PBU::GetIdZur()
 {
-    //обработка сообщений
-    //моделирование
-    //отправка сообщений
+    while (!msg_from_pu_zur.empty())
+    {
+        PBUtoRLCMsg msg {msg_from_pu_zur.front().message.zur_id};
+        send<PBUtoRLCMsg>(msg_from_pu_zur.front().time, msg);
+        msg_from_pu_zur.erase(msg_from_pu_zur.begin());
+    }
 }
 
+//double CalculateDistanse(const std::vector<double>& a, const std::vector<double>& b)
+//{
+//    return sqrt((a[0] - b[0]) * (a[0] - b[0]) +
+//            (a[1] - b[1]) * (a[1] - b[1]) +
+//            (a[2] - b[2]) * (a[2] - b[2]));
+//}
 
 
