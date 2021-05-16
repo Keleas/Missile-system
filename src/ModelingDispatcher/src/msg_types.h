@@ -35,6 +35,10 @@ struct RLCMsg
     std::vector<double> speed; 				//v_x, v_y, v_z
     double time;  				            //временная метка
 };
+struct PBUtoRLCMsg
+{
+    id_type zur_id;
+};
 
 struct PUtoPBUstartMsg
 {
@@ -53,6 +57,7 @@ struct PUtoBPUMsg
 struct PBUtoPUMsg
 {
     vec3 target_coord;
+    vec3 target_speed;
 };
 
 struct PUtoPBUzurIDMsg

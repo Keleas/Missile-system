@@ -17,17 +17,14 @@ public:
 
     void firstStep() override final;
 
-    void step(double time) final;
-
-    void GetRLIfromRadar();  // Третичная обработка
+    void step(double time) final;    
 
 private:
-    MessageQueue<RLCMsg> msg_from_rlc;                   // очередь сообщений от РЛС
+    MessageQueue<RLCMsg> msg_from_rlc;                  // очередь сообщений от РЛС
 
-    MessageQueue<PUtoPBUstartMsg> msg_from_pu_start;     // очередь сообщений от ПУ (для FirstStep)
-    MessageQueue<PUtoPBUzurIDMsg> msg_from_pu;           // очередь сообщений от ПУ (обновление данных о состояниии ПУi)
-    MessageQueue<PUtoPBUstartMsg> msg_from_pu_zur;       // очередь сообщений от ПУ (получения ID ЗУР)
-
+    MessageQueue<PUtoPBUstartMsg> msg_from_pu_start;    // очередь сообщений от ПУ (для FirstStep)
+    MessageQueue<PUtoPBUzurIDMsg> msg_from_pu_zur;      // очередь сообщений от ПУ (получения ID ЗУР)
+    MessageQueue<PUtoPBUstartMsg> msg_from_pu;          // очередь сообщений от ПУ (обновление данных о состояниии ПУi)
 
     class Target
     {
@@ -61,34 +58,37 @@ private:
               coords({msg.coord[0], msg.coord[0], msg.coord[0]})
         {}
 
-
-
         int zur_num;
         bool status;
         std::vector<double> coords;
-
     };
 
-    double CalculateDistanse(const std::vector<double>& a, const std::vector<double>& b);
+    /*double CalculateDistanse(const std::vector<double>& a,
+                             const std::vector<double>& b);*/
 
-    bool CheckTrack(const RLCMsg& t1, const Target& t2);
+    void GetRLIfromRadar();                                         // Третичная обработка
+    bool CheckTrack(const RLCMsg& t1, const Target& t2);            // Критерий сравнения целей
+
+    void UpdateTables(int target_id);                               // обновление id_table, history_id, targets_time
     void AddNewTarget();
 
-    void FirstStepFromPU();
+    void FirstStepFromPU();                                         //На первом шаге мод. получить от пу координаты и id
 
-    void TargetDistribution();
+    void GetIdZur();                                                //Получить от ПУ id запущенного ЗУР
+    void TargetDistribution();                                      //Дать команду об уничтожении цели i устаноке j
 
 
     std::map<std::pair<id_type, id_type>, int> id_table;            // key - <first - rls_id, second - target_id>, value - My_id
     std::map<int, std::map<id_type, id_type>> history_id;           // key - My_id, value - <first - rls_id, second - target_id>
     std::map<std::pair<id_type, id_type>, double> targets_time;     // key - <first - rls_id, second - target_id>, value - time
     std::map<id_type, Target> targets;                              // key - My_id, value - Target
-    int target_counter = 1;
+    int target_counter = 1;                                         // счетчик целей
 
-    std::map<id_type, PU> pu_base;                                  // key - My_id, value - Target
+    std::map<id_type, PU> pu_base;                                  // key - My_id, value - PU
     std::map<id_type, std::vector<double>> pu_coords;
 
     std::vector<double> pbu_coords;
+    double time;                                                    // время данного шага, используется для отправки сообщений
 };
 
 #endif //MISSILESYSTEM_PBU_H
