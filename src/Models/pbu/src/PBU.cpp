@@ -22,7 +22,7 @@ bool PBU::init(const rapidjson::Value &initial_data)
 
 void PBU::firstStep()
 {
-     FirstStepFromPU();
+    FirstStepFromPU();
 
 }
 
@@ -77,7 +77,7 @@ void PBU::UpdateTables(int target_id)
                             msg_from_rlc.front().message.target_id)] = target_id;
 
     history_id[target_id].insert(std::make_pair(msg_from_rlc.front().source_id,
-                                                     msg_from_rlc.front().message.target_id));
+                                                msg_from_rlc.front().message.target_id));
 
     targets_time[std::make_pair(msg_from_rlc.front().source_id,
                                 msg_from_rlc.front().message.target_id)] = msg_from_rlc.front().time;
@@ -100,7 +100,7 @@ void PBU::GetRLIfromRadar()
     {
         if(id_table.empty())
         {
-            void AddNewTarget();
+            AddNewTarget();
         }
         else
         {
@@ -119,7 +119,7 @@ void PBU::GetRLIfromRadar()
                         break;
                     }
                 }
-                void AddNewTarget();    // Такой цели не было обнаружено другими РЛС
+                AddNewTarget();         // Такой цели не было обнаружено другими РЛС
             }
             else                        // Инфформация о данной цели уже приходила с РЛС k (обнавление данных)
             {
@@ -179,7 +179,7 @@ void PBU::TargetDistribution()
             if(launcher.second.status == true && launcher.second.zur_num > 0)
             {
                 PBUtoPUMsg msg{{target.second.coords[0],target.second.coords[1],target.second.coords[2]},
-                              {target.second.speed[0],target.second.speed[1],target.second.speed[2]}};
+                               {target.second.speed[0],target.second.speed[1],target.second.speed[2]}};
 
                 send<PBUtoPUMsg>(time, msg);
                 --launcher.second.zur_num;
