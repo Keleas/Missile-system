@@ -33,7 +33,7 @@ private:
         Target(int id, const RLCMsg& msg)
             : coords({{msg.coordinates[0],msg.coordinates[1],msg.coordinates[2]}}),
               speed({{msg.speed[0],msg.speed[1],msg.speed[2]}}),
-              ID(ID),
+              ID(id),
               time(msg.time)
         {}
         //        Target& operator=(const RLCMsg& msg);
