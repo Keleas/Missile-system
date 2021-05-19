@@ -174,6 +174,12 @@ inline double angeleBetween(Vector3D const& a, Vector3D const& b){
 inline Vector3D GeoToPBU(GeocentricCoodinates GC0, GeocentricCoodinates GC)
 {
     EarthEllipsoid ellipsoid;
+    /*
+    ellipsoid.a = 100000000000000000;
+    ellipsoid.b = ellipsoid.a;
+    ellipsoid.e = sqrt(ellipsoid.a*ellipsoid.a - ellipsoid.b*ellipsoid.b) / ellipsoid.a;
+    ellipsoid.f = (ellipsoid.a-ellipsoid.b) / ellipsoid.a;*/
+
     GeodezicCoodinates GD0 = GeocentricToGeodezic(GC0).toRadians();
     double sinB = sin(GD0.latitude);
     double N = ellipsoid.a / sqrt(1 - pow(ellipsoid.e, 2) * pow(sinB, 2));
@@ -194,6 +200,12 @@ inline Vector3D GeoToPBU(GeocentricCoodinates GC0, GeocentricCoodinates GC)
 inline GeocentricCoodinates PBUToGeo(GeocentricCoodinates GC0, Vector3D PBU)
 {
     EarthEllipsoid ellipsoid;
+    /*
+    ellipsoid.a = 100000000000000000;
+    ellipsoid.b = ellipsoid.a;
+    ellipsoid.e = sqrt(ellipsoid.a*ellipsoid.a - ellipsoid.b*ellipsoid.b) / ellipsoid.a;
+    ellipsoid.f = (ellipsoid.a-ellipsoid.b) / ellipsoid.a;*/
+
     GeodezicCoodinates GD0 = GeocentricToGeodezic(GC0).toRadians();
     double sinB = sin(GD0.latitude);
     double N = ellipsoid.a / sqrt(1 - pow(ellipsoid.e, 2) * pow(sinB, 2));
