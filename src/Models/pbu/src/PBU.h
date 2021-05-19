@@ -14,10 +14,11 @@ public:
     ~PBU() override;
 
     bool init(const rapidjson::Value& initial_data) override final;
-
     void firstStep() override final;
+    void step(double time) override final;
+    void endStep() override final;
 
-    void step(double time) final;    
+    //void write_to_file(std::string file_name);
 
 private:
     MessageQueue<RLCMsg> msg_from_rlc;                  // очередь сообщений от РЛС
@@ -33,8 +34,7 @@ private:
         Target(int id, const RLCMsg& msg)
             : coords({{msg.coordinates[0],msg.coordinates[1],msg.coordinates[2]}}),
               speed({{msg.speed[0],msg.speed[1],msg.speed[2]}}),
-              ID(id),
-              time(msg.time)
+              ID(id), time(msg.time), first_step(true)
         {}
         //        Target& operator=(const RLCMsg& msg);
 
@@ -48,6 +48,7 @@ private:
 
         id_type ID;
         double time = 0;
+        bool first_step;
         };
 
     class PU{

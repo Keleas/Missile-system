@@ -16,14 +16,15 @@ bool PBU::init(const rapidjson::Value &initial_data)
     pbu_coords = std::vector<double>({initial_data["x"].GetDouble(),
                                       initial_data["y"].GetDouble(),
                                       initial_data["z"].GetDouble()});
-
     return true;
 }
 
 void PBU::firstStep()
 {
-    FirstStepFromPU();
+    setLogHeader("Id", "X", "Y", "Z",
+                 "X", "Y", "Z", "Vx", "Vy", "Vz", "time", "target_id");
 
+    FirstStepFromPU();
 }
 
 void PBU::step(double time)
@@ -31,32 +32,67 @@ void PBU::step(double time)
     GetIdZur();                                                             // получить ID пущенных ЗУР если такие имеются
     GetRLIfromRadar();                                                      // получение информации о целях
     TargetDistribution();                                                   // целераспределение
+
+    for(const auto& it : targets)
+    {
+        writeLog(id, pbu_coords[0], pbu_coords[1], pbu_coords[2],
+                it.second.coords[0], it.second.coords[1], it.second.coords[2],
+                it.second.speed[0], it.second.speed[1], it.second.speed[2],
+                it.second.time, it.second.ID);
+    }
 }
 
 void PBU::Target::CalculateParametrs()
 {
     if(history_coords.empty() && history_speed.empty())
-        return;
-
-    for(size_t i = 0; i < history_coords.size(); i++)
     {
-        for(size_t j = 0; j < 3; j++ )
+        if(first_step)
+            first_step = false;                                     // для первого шага
+
+        return;
+    }
+
+    if(first_step)
+    {
+        for(size_t i = 0; i < history_coords.size(); i++)
         {
-            coords[j] += history_coords[i][j];
-            speed[j] += history_speed[i][j];
+            for(size_t j = 0; j < 3; j++ )
+            {
+                coords[j] += history_coords[i][j];
+                speed[j] += history_speed[i][j];
+            }
+        }
+        for(size_t i = 0; i < history_coords.size(); i++)
+        {
+            coords[i] /= (history_coords.size() + 1);
+            speed[i]  /= (history_speed.size() + 1);
+        }
+        first_step = false;
+    }
+    else
+    {
+        coords.clear();
+        coords.resize(3);
+        speed.clear();
+        speed.resize(3);
+
+        for(size_t i = 0; i < history_coords.size(); i++)
+        {
+            for(size_t j = 0; j < 3; j++ )
+            {
+                coords[j] += history_coords[i][j];
+                speed[j] += history_speed[i][j];
+            }
+        }
+        for(size_t i = 0; i < history_coords.size(); i++)
+        {
+            coords[i] /= (history_coords.size() + 1);
+            speed[i]  /= (history_speed.size() + 1);
         }
     }
-    for(size_t i = 0; i < history_coords.size(); i++)
-    {
-        coords[i] = (coords[i] / history_coords.size());
-        speed[i] = (speed[i] / history_speed.size());
-    }
 
-    history_coords.erase(history_coords.begin(), history_coords.end());
-    history_speed.erase(history_speed.begin(), history_speed.end());
-
-    history_coords.resize(0);
-    history_speed.resize(0);
+    history_coords.clear();
+    history_speed.clear();
 }
 
 bool PBU::CheckTrack(const RLCMsg& t1, const Target& t2)
@@ -134,7 +170,7 @@ void PBU::GetRLIfromRadar()
                 targets[My_ID].history_speed.push_back(msg_from_rlc.front().message.speed);
             }
         }
-        msg_from_rlc.erase(msg_from_rlc.begin());
+        msg_from_rlc.pop_front();
     }
 
     /*******************************В этом блоке происходит поиск тех целей, которые не были обнавленны на данном шаге****************************************/
@@ -166,7 +202,7 @@ void PBU::FirstStepFromPU()
     while (!msg_from_pu_start.empty())
     {
         pu_base[msg_from_pu_start.front().source_id] = msg_from_pu_start.front().message;
-        msg_from_pu_start.erase(msg_from_pu_start.begin());
+        msg_from_pu_start.pop_front();
     }
 }
 
@@ -195,9 +231,11 @@ void PBU::GetIdZur()
     {
         PBUtoRLCMsg msg {msg_from_pu_zur.front().message.zur_id};
         send<PBUtoRLCMsg>(msg_from_pu_zur.front().time, msg);
-        msg_from_pu_zur.erase(msg_from_pu_zur.begin());
+        msg_from_pu_zur.pop_front();
     }
 }
+
+
 
 //double CalculateDistanse(const std::vector<double>& a, const std::vector<double>& b)
 //{
