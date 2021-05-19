@@ -21,8 +21,14 @@ const std::string scenario = "{"
                              "      ]"
                              "}";
 
+void print_msg(id_type from, double time, std::string const& msg)
+{
+    std::cout << "Message from " << from << " at " << time << ": " << msg << std::endl;
+}
+
 int main()
 {
+    setlocale(LC_ALL, "Russian");
     std::map<std::string, std::pair<int, ModelFactory*> > factories;
     std::pair<int, ModelFactory*> fac1 = {1, new model1Factory()};
     std::pair<int, ModelFactory*> fac2 = {2, new model2Factory()};
@@ -31,6 +37,11 @@ int main()
 
     ModelingDispatcher md(1.0, factories);
 
+    md.msgSubscribe<std::string>(print_msg);
+
     md.run(scenario);
+
+    for(auto& it : factories)
+        delete it.second.second;
     return 0;
 }
