@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
     factories["AirTarget"] = fac1;
 
     ModelingDispatcher md(0.01, factories);
-    md.getChannel<TargetMsg>().subscribe(printMSG);
+    md.msgSubscribe<TargetMsg>(printMSG);
     std::cout << "Starting...\n";
     md.run(scenario);
     std::cout << "finished!\n";

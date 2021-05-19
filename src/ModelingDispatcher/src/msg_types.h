@@ -8,6 +8,8 @@ typedef std::array<double, 3> vec3;
 
 enum class TargetStatus {is_not_fly, is_fly, is_destroy, is_done};
 
+enum class ZurStatus {is_not_fly, is_fly, is_done, is_not_done};
+
 struct Entity
 {
     std::string name;

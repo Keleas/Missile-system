@@ -11,20 +11,27 @@
 
 constexpr double g = 9.81;
 
-struct AirTargetParams
+struct AbstractTargetParams
 {
     double MAX_TRANSVERSE_OVERLOAD;
     double MAX_NORMAL_OVERLOAD;
     double MAX_MAH;
     double MIN_TRANSVERSE_OVERLOAD;
+    double PRACTICAL_ROOF;
 };
 
-class AirTarget : public Model
+class AbstractTarget : public Model
+{
+public:
+    void calculate(double dt);
+    virtual Vector3D get_coords() = 0;
+    virtual void write_to_csv(bool fisrt_time=false) = 0;
+};
+
+class AirTarget : public AbstractTarget
 {
 public:
     AirTarget(id_type id, MsgChannelCarrier& carrier, std::ostream& log);
-
-    void calculate(double dt);
 
     bool init(const rapidjson::Value &initial_data) override final;
     void firstStep() override final;
@@ -32,18 +39,18 @@ public:
     void endStep() override final {write_to_file("target_crd.txt", control_points);};
 
     TargetStatus get_status();
-    Vector3D get_coords();
+    Vector3D get_coords() override final;
 
     void set_status(TargetStatus trg);
 
     int num_point_passed = 0;
     void write_to_file(std::string file_name, std::vector<TrajectoryPoint> points = {});
-    void write_to_csv(bool fisrt_time=false);
+    void write_to_csv(bool fisrt_time=false) override final;
 
 private:
     std::string targetName;
     std::string targetModelType;
-    AirTargetParams param;
+    AbstractTargetParams param;
     MessageQueue<Explosion> recieve_msg;
     Vector3D coords;
     TargetStatus status = TargetStatus::is_not_fly;

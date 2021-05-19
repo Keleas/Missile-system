@@ -101,7 +101,7 @@ void AirTarget::step(double time)
     send<TargetMsg>(data.times.back(), msg);
 }
 
-void AirTarget::calculate(double dt)
+void AbstractTarget::calculate(double dt)
 {
     std::vector<Vector3D> _points;
     std::vector<Vector3D> _vels;
