@@ -13,17 +13,16 @@ bool PU::init(const rapidjson::Value& initial_data)
                  initial_data["Y"].GetDouble(),
                  initial_data["Z"].GetDouble()};
 
-    rocket_count = initial_data["Rocket_count"].GetDouble();
+    rocket_count = initial_data["Rocket_count"].GetUint();
     range = initial_data["Range"].GetDouble();
     launch_time = initial_data["Colldown"].GetDouble();
+    pbu_id = initial_data["PBU_ID"].GetUint();
 
     for (auto& v : initial_data["ZUR_ids"].GetArray())
     {
-        zur_ids.push_back(v["ZUR_id"].GetInt());
+        zur_ids.push_back(v.GetUint());
     }
     return true;
-
-
 }
 
 void PU::firstStep()
@@ -32,8 +31,9 @@ void PU::firstStep()
     launch_cooldown=0;
     prev_time=0;
     PUtoPBUstartMsg msg{id, pu_coords, rocket_count, ready};
-    send<PUtoPBUstartMsg>(0,msg);
-    write_to_csv(true);
+    send<PUtoPBUstartMsg>(pbu_id,0,msg);
+//    write_to_csv(true);
+    setLogHeader("pu_id", "X", "Y", "Z", "Rocket count", "Range", "Ready");
 }
 
 void PU::step(double time)
@@ -42,15 +42,16 @@ void PU::step(double time)
     is_ready();
     launch_ZUR(time);
     step_msg(time);
-    write_to_csv(false);
+//    write_to_csv(false);
     prev_time = time ;
+    writeLog(time, id, pu_coords.at(0), pu_coords.at(1), pu_coords.at(2), rocket_count, range, ready);
 }
 
 
 
 void PU::endStep()
 {
-    write_to_csv(false);
+//    write_to_csv(false);
 }
 
 
@@ -71,13 +72,15 @@ void PU::launch_ZUR(double time)
 {
     if (launch_cooldown<=0 &&  !msg_target_params.empty())
     {
-        id_type zur_id=zur_ids.at(rocket_count);
+        id_type zur_id=zur_ids.back();
+        zur_ids.pop_back();
         PUtoPBUzurIDMsg msg_pbu_launch{zur_id};
-        PUtoZURMsg msg_zur_launch{msg_target_params.front().message.target_coord,
-                                  msg_target_params.front().message.target_speed,
-                                  {pu_coords.at(1),pu_coords.at(2),pu_coords.at(3)}};
+        PUtoZURMsg msg_zur_launch;
+        msg_zur_launch.target_coord = msg_target_params.front().message.target_coord;
+        msg_zur_launch.target_speed = msg_target_params.front().message.target_speed;
+        msg_zur_launch.pu_coord = {pu_coords.at(0),pu_coords.at(1),pu_coords.at(2)};
 
-        send<PUtoPBUzurIDMsg>(time, msg_pbu_launch);
+        send<PUtoPBUzurIDMsg>(pbu_id, time, msg_pbu_launch);
         send<PUtoZURMsg>(zur_id, time, msg_zur_launch);
         rocket_count -= 1;
 
@@ -89,5 +92,5 @@ void PU::launch_ZUR(double time)
 void PU::step_msg(double time)
 {
     PUtoBPUMsg msg{rocket_count, ready};
-    send<PUtoBPUMsg>(time, msg);
+    send<PUtoBPUMsg>(pbu_id, time, msg);
 }

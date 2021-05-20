@@ -9,13 +9,6 @@
 #include "msg_types.h"
 #include <map>
 
-struct PU_Params
-{
-    double COORDS;
-    int ROCKETS_AMOUNT;
-    bool IS_READY;
-};
-
 class PU : public Model
 {
 public:
@@ -26,10 +19,10 @@ public:
     void firstStep() override final;
     void step(double time) override final;
     void endStep() override final;
-    void write_to_csv(bool fisrt_time);
+//    void write_to_csv(bool fisrt_time);
 
 private:
-    id_type id;
+    id_type pbu_id;
     vec3 pu_coords;
     int rocket_count;
     double range;
@@ -50,31 +43,27 @@ private:
     void step_msg(double time);
 };
 
-inline void PU::write_to_csv(bool fisrt_time)
-{
-    std::string sep = ", ";
-
-    if (fisrt_time)
-    {
-        log << "pu_id" << sep
-            << "X" << sep
-            << "Y" << sep
-            << "Z" << sep
-            << "Rocket count" << sep
-            << "Range" << sep
-            << "Ready" << "\n";
-    }
-    else
-    {
-        log << id << sep
-            << pu_coords.at(1) << sep
-            << pu_coords.at(2) << sep
-            << pu_coords.at(3) << sep
-            << rocket_count << sep
-            << range << sep
-            << ready << "\n";
-    }
-}
+//inline void PU::write_to_csv(bool fisrt_time)
+//{
+//
+//    std::string sep = ", ";
+//
+//    if (fisrt_time)
+//    {
+//
+//    }
+//    else
+//    {
+//
+//        log << id << sep
+//            << pu_coords.at(1) << sep
+//            << pu_coords.at(2) << sep
+//            << pu_coords.at(3) << sep
+//            << rocket_count << sep
+//            << range << sep
+//            << ready << "\n";
+//    }
+//}
 
 DEFAULT_MODEL_FACTORY(PU)
 
