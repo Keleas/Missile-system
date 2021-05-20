@@ -67,4 +67,41 @@ struct Fire
     vec3 pu_target_coords;
 };
 
+struct RLCMsg
+{
+    id_type target_id;
+    std::vector<double> coordinates;
+    std::vector<double> speed; 				//v_x, v_y, v_z
+    double time;  				            //временная метка
+};
+struct PBUtoRLCMsg
+{
+    id_type zur_id;
+};
+
+struct PUtoPBUstartMsg
+{
+    id_type launcher_id;
+    vec3 coord;
+    int zur_num;
+    bool status;
+};
+
+struct PUtoBPUMsg
+{
+    int zur_num;
+    bool status;
+};
+
+struct PBUtoPUMsg
+{
+    vec3 target_coord;
+    vec3 target_speed;
+};
+
+struct PUtoPBUzurIDMsg
+{
+    id_type zur_id;
+};
+
 #endif //MISSILESYSTEM_MSG_TYPES_H

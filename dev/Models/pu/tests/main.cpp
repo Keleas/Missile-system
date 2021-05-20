@@ -12,10 +12,10 @@ const std::string scenario = "{"
                              "              \"id\": 1,"
                              "              \"model_name\": \"PU\","
                              "              \"initial_data\":"
-                             "                  { \"coords\": 1.2,"
-                             "                   \"rockets_amount\": 3,"
-                             "                   \"is_ready\": true"
-"                                               }"
+                             "                  { \"X\": 1.2,"
+                             "                    \"Y\": 1.3,"
+                             "                    \"Z\": 1.5"
+                             "                  }"
                              "          }"
                              "      ]"
                              "}";
@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
     factories["PU"] = fac1;
 
     ModelingDispatcher md(0.01, factories);
-    md.getChannel<is_ready>().subscribe(printMSG);
+    //md.getChannel<is_ready>().subscribe(printMSG);
     std::cout << "Starting...\n";
     md.run(scenario);
     std::cout << "finished!\n";
