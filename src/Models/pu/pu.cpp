@@ -21,7 +21,7 @@ bool PU::init(const rapidjson::Value& initial_data)
     {
         zur_ids.push_back(v["ZUR_id"].GetInt());
     }
-    return 0;
+    return true;
 
 
 }
