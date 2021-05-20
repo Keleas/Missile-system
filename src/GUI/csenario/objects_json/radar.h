@@ -3,36 +3,28 @@
 
 #include <QJsonObject>
 #include <QTreeWidget>
+#include <QtSql>
 
 class Radar
 {
 public:
     Radar(QJsonObject initData);
     Radar();
-    Radar(int id,
-          double x,
-          double y,
-          double z,
-          int model,
-          int count_channels_targets,
-          int count_channels_zurs,
-//          double rotate_x,
-//          double rotate_y,
-//          double rotate_z,
-          double radius);
+
 
     QJsonObject toJsonObject();
 
-    QTreeWidgetItem *get_item();
+    QTreeWidgetItem *get_item(int count);
 
     void set_id(int id);
     void set_coordinates(double x,
                          double y,
                          double z);
-    void set_model(int model);
-    void set_properties(int count_channels_targets,
-                        int count_channels_zurs,
-                        double radius);
+    void set_model(QString model);
+    void set_pisets_kolya(QString model,QSqlDatabase db);
+    void set_rotates(double _rotate_x,
+                     double _rotate_y,
+                     double _rotate_z);
 
 private:
 
@@ -40,13 +32,17 @@ private:
     double x;
     double y;
     double z;
-    int model;
-    int count_channels_targets;
-    int count_channels_zurs;
-//    double rotate_x;
-//    double rotate_y;
-//    double rotate_z;
-    double radius;
+    double rotate_x;
+    double rotate_y;
+    double rotate_z;
+
+    QString model;
+
+    double lambda,Dmax,Dmin,Tscan,Timp,V_res,asimres,elevres,asimrestracecf,
+    elevrestracecf,elev1,elev2,Nasim,Nelev,Bandwidth, Noise, Gain, P_peak, Tr;
+
+    int count_channels_targets; ///Ntraj
+    int count_channels_zurs; ///Nmissiles;
 };
 
 

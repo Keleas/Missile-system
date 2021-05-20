@@ -5,6 +5,7 @@
 #include <QVector>
 #include <QString>
 #include <QJsonArray>
+#include <QTreeWidget>
 
 class Point
 {
@@ -22,7 +23,7 @@ public:
                          double z);
     void set_velocity(double velocity);
 
-
+    QTreeWidgetItem *get_item(int count);
 private:
     int point;
     double x;
@@ -58,6 +59,8 @@ public:
     void set_points(QVector<Point> points);
 
     void append_point(Point _point);
+
+    QTreeWidgetItem *get_item(int count);
 
 private:
 

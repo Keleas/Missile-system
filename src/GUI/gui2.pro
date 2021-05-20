@@ -1,4 +1,4 @@
-QT       += core gui sql datavisualization
+QT       += core gui sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
@@ -15,6 +15,8 @@ res_dir = $${prj_dir}/res
 INCLUDEPATH += $${src_dir}
 INCLUDEPATH += $${src_dir}/csenario
 INCLUDEPATH += $${src_dir}/csenario/objects_json
+INCLUDEPATH += $${src_dir}/modeling
+INCLUDEPATH += $${src_dir}/modeling/objects_modeling
 INCLUDEPATH += $${src_dir}/libraries
 
 
@@ -43,3 +45,5 @@ win32 {
 }
 
 #RESOURCES += res.qrc
+
+

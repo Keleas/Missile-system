@@ -4,6 +4,7 @@
 #include <QJsonObject>
 #include <QVector>
 #include "launcher.h"
+#include <QTreeWidget>
 
 class CombatControlPoint
 {
@@ -21,6 +22,9 @@ public:
                          double y,
                          double z);
     void clearData();
+    double get_x(){return x;}
+    double get_y(){return y;}
+    QList<QTreeWidgetItem *> get_item();
 private:
     int id;
     double x;

@@ -1,0 +1,452 @@
+{
+    "end_time": "1256",
+    "objects": [
+        {
+            "id": 0,
+            "initial_data": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "model_name": "PBU"
+        },
+        {
+            "id": 11,
+            "initial_data": {
+                "Bandwidth": 400000,
+                "Dmax": 100000,
+                "Dmin": 8244.3,
+                "Gain": 31056,
+                "Nasim": 297,
+                "Nelev": 35,
+                "Nmissiles": 64,
+                "Noise": 1.7617e-15,
+                "Ntraj": 64,
+                "P_peak": 12146000,
+                "Timp": 5e-05,
+                "Tr": 6,
+                "Tscan": 0.00066713,
+                "V_res": 20,
+                "asim_res": 0.0213,
+                "asim_res_trace_cf": 0.1,
+                "elev1": 0,
+                "elev2": 0.5236,
+                "elev_res": 0.0152,
+                "elev_res_trace_cf": 0.1,
+                "lambda": 0.03,
+                "rotate_x": 0,
+                "rotate_y": 0,
+                "rotate_z": 1,
+                "x": 3802.81690140845,
+                "y": -1218.7958883994122,
+                "z": 0
+            },
+            "model": "Прожора",
+            "model_name": "RLS"
+        },
+        {
+            "id": 18,
+            "initial_data": {
+                "Bandwidth": 444440,
+                "Dmax": 75000,
+                "Dmin": 7419.9,
+                "Gain": 21961,
+                "Nasim": 267,
+                "Nelev": 55,
+                "Nmissiles": 64,
+                "Noise": 1.9574e-15,
+                "Ntraj": 64,
+                "P_peak": 9488400,
+                "Timp": 4.5e-05,
+                "Tr": 6,
+                "Tscan": 0.00050035,
+                "V_res": 20,
+                "asim_res": 0.0237,
+                "asim_res_trace_cf": 0.1,
+                "elev1": 0,
+                "elev2": 1.0472,
+                "elev_res": 0.0194,
+                "elev_res_trace_cf": 0.1,
+                "lambda": 0.03,
+                "rotate_x": 0,
+                "rotate_y": 0,
+                "rotate_z": 1,
+                "x": -1596.2441314553987,
+                "y": 4361.233480176212,
+                "z": 0
+            },
+            "model": "Пышка",
+            "model_name": "RLS"
+        },
+        {
+            "id": 12,
+            "initial_data": {
+                "target_max_M": 206,
+                "target_max_Nx": 186,
+                "target_max_Ny": 180,
+                "target_min_Nx": 179,
+                "target_model_type": "F-86 Sabre",
+                "target_name": "plane_0",
+                "target_points": [
+                    {
+                        "vel": 4242,
+                        "x": 1244.13145539906,
+                        "y": 5036.710719530102,
+                        "z": 32
+                    },
+                    {
+                        "vel": 4242,
+                        "x": -3356.8075117370886,
+                        "y": -5477.239353891336,
+                        "z": 242
+                    },
+                    {
+                        "vel": 4242,
+                        "x": 4272.300469483567,
+                        "y": -7562.408223201174,
+                        "z": 242
+                    },
+                    {
+                        "vel": 424,
+                        "x": 7582.159624413145,
+                        "y": -895.7415565345084,
+                        "z": 4242
+                    }
+                ],
+                "target_practical_roof": 75
+            },
+            "model_name": "AirTarget"
+        },
+        {
+            "id": 19,
+            "initial_data": {
+                "target_max_M": 213,
+                "target_max_Nx": 155,
+                "target_max_Ny": 118,
+                "target_min_Nx": 229,
+                "target_model_type": "Stone",
+                "target_name": "plane_1",
+                "target_points": [
+                    {
+                        "vel": 42342,
+                        "x": 4671.361502347418,
+                        "y": 6710.719530102791,
+                        "z": 4242
+                    },
+                    {
+                        "vel": 4242,
+                        "x": 2957.74647887324,
+                        "y": -3186.4904552129224,
+                        "z": 4242
+                    },
+                    {
+                        "vel": 242,
+                        "x": -2957.74647887324,
+                        "y": -5712.187958883994,
+                        "z": 2442
+                    },
+                    {
+                        "vel": 242,
+                        "x": -6737.089201877934,
+                        "y": -7151.248164464024,
+                        "z": 2442
+                    },
+                    {
+                        "vel": 24242,
+                        "x": -7441.314553990611,
+                        "y": -1042.5844346549195,
+                        "z": 24424
+                    }
+                ],
+                "target_practical_roof": 281
+            },
+            "model_name": "AirTarget"
+        },
+        {
+            "id": 20,
+            "initial_data": {
+                "target_max_M": 105,
+                "target_max_Nx": 197,
+                "target_max_Ny": 119,
+                "target_min_Nx": 90,
+                "target_model_type": "Bf.109G",
+                "target_name": "plane_2",
+                "target_points": [
+                    {
+                        "vel": 2433,
+                        "x": 8661.971830985914,
+                        "y": 7444.933920704846,
+                        "z": 42
+                    },
+                    {
+                        "vel": 6456,
+                        "x": 7394.366197183098,
+                        "y": -6828.193832599119,
+                        "z": 35
+                    },
+                    {
+                        "vel": 646,
+                        "x": 469.4835680751175,
+                        "y": -7738.619676945668,
+                        "z": 6354
+                    },
+                    {
+                        "vel": 646,
+                        "x": 8990.610328638497,
+                        "y": 895.7415565345084,
+                        "z": 6456
+                    },
+                    {
+                        "vel": 64565,
+                        "x": -4248.826291079812,
+                        "y": 6798.825256975037,
+                        "z": 6456
+                    },
+                    {
+                        "vel": 64,
+                        "x": -2957.74647887324,
+                        "y": -1101.3215859030834,
+                        "z": 6456
+                    }
+                ],
+                "target_practical_roof": 219
+            },
+            "model_name": "AirTarget"
+        },
+        {
+            "id": 1,
+            "initial_data": {
+                "cooldown": 10,
+                "radius": 100,
+                "rockets_amount": 4,
+                "x": -4366.197183098591,
+                "y": 2305.4331864904552,
+                "z": 0,
+                "zur_id": [
+                    {
+                        "id": 2,
+                        "name": "zur_1"
+                    },
+                    {
+                        "id": 3,
+                        "name": "zur_2"
+                    },
+                    {
+                        "id": 4,
+                        "name": "zur_3"
+                    },
+                    {
+                        "id": 5,
+                        "name": "zur_4"
+                    }
+                ]
+            },
+            "model_name": "PU"
+        },
+        {
+            "id": 2,
+            "initial_data": {
+                "target_max_M": 212,
+                "target_max_Nx": 120,
+                "target_max_Ny": 138,
+                "target_min_Nx": 93,
+                "target_name": "zur_1",
+                "target_practical_roof": 257
+            },
+            "model_name": "ZUR"
+        },
+        {
+            "id": 3,
+            "initial_data": {
+                "target_max_M": 212,
+                "target_max_Nx": 120,
+                "target_max_Ny": 138,
+                "target_min_Nx": 93,
+                "target_name": "zur_2",
+                "target_practical_roof": 257
+            },
+            "model_name": "ZUR"
+        },
+        {
+            "id": 4,
+            "initial_data": {
+                "target_max_M": 212,
+                "target_max_Nx": 120,
+                "target_max_Ny": 138,
+                "target_min_Nx": 93,
+                "target_name": "zur_3",
+                "target_practical_roof": 257
+            },
+            "model_name": "ZUR"
+        },
+        {
+            "id": 5,
+            "initial_data": {
+                "target_max_M": 212,
+                "target_max_Nx": 120,
+                "target_max_Ny": 138,
+                "target_min_Nx": 93,
+                "target_name": "zur_4",
+                "target_practical_roof": 257
+            },
+            "model_name": "ZUR"
+        },
+        {
+            "id": 6,
+            "initial_data": {
+                "cooldown": 10,
+                "radius": 100,
+                "rockets_amount": 4,
+                "x": -6995.305164319248,
+                "y": -4390.602055800294,
+                "z": 0,
+                "zur_id": [
+                    {
+                        "id": 7,
+                        "name": "zur_5"
+                    },
+                    {
+                        "id": 8,
+                        "name": "zur_6"
+                    },
+                    {
+                        "id": 9,
+                        "name": "zur_7"
+                    },
+                    {
+                        "id": 10,
+                        "name": "zur_8"
+                    }
+                ]
+            },
+            "model_name": "PU"
+        },
+        {
+            "id": 7,
+            "initial_data": {
+                "target_max_M": 212,
+                "target_max_Nx": 120,
+                "target_max_Ny": 138,
+                "target_min_Nx": 93,
+                "target_name": "zur_5",
+                "target_practical_roof": 257
+            },
+            "model_name": "ZUR"
+        },
+        {
+            "id": 8,
+            "initial_data": {
+                "target_max_M": 212,
+                "target_max_Nx": 120,
+                "target_max_Ny": 138,
+                "target_min_Nx": 93,
+                "target_name": "zur_6",
+                "target_practical_roof": 257
+            },
+            "model_name": "ZUR"
+        },
+        {
+            "id": 9,
+            "initial_data": {
+                "target_max_M": 212,
+                "target_max_Nx": 120,
+                "target_max_Ny": 138,
+                "target_min_Nx": 93,
+                "target_name": "zur_7",
+                "target_practical_roof": 257
+            },
+            "model_name": "ZUR"
+        },
+        {
+            "id": 10,
+            "initial_data": {
+                "target_max_M": 212,
+                "target_max_Nx": 120,
+                "target_max_Ny": 138,
+                "target_min_Nx": 93,
+                "target_name": "zur_8",
+                "target_practical_roof": 257
+            },
+            "model_name": "ZUR"
+        },
+        {
+            "id": 13,
+            "initial_data": {
+                "cooldown": 10,
+                "radius": 100,
+                "rockets_amount": 4,
+                "x": 7089.2018779342725,
+                "y": 4038.179148311307,
+                "z": 0,
+                "zur_id": [
+                    {
+                        "id": 14,
+                        "name": "zur_9"
+                    },
+                    {
+                        "id": 15,
+                        "name": "zur_10"
+                    },
+                    {
+                        "id": 16,
+                        "name": "zur_11"
+                    },
+                    {
+                        "id": 17,
+                        "name": "zur_12"
+                    }
+                ]
+            },
+            "model_name": "PU"
+        },
+        {
+            "id": 14,
+            "initial_data": {
+                "target_max_M": 212,
+                "target_max_Nx": 120,
+                "target_max_Ny": 138,
+                "target_min_Nx": 93,
+                "target_name": "zur_9",
+                "target_practical_roof": 257
+            },
+            "model_name": "ZUR"
+        },
+        {
+            "id": 15,
+            "initial_data": {
+                "target_max_M": 212,
+                "target_max_Nx": 120,
+                "target_max_Ny": 138,
+                "target_min_Nx": 93,
+                "target_name": "zur_10",
+                "target_practical_roof": 257
+            },
+            "model_name": "ZUR"
+        },
+        {
+            "id": 16,
+            "initial_data": {
+                "target_max_M": 212,
+                "target_max_Nx": 120,
+                "target_max_Ny": 138,
+                "target_min_Nx": 93,
+                "target_name": "zur_11",
+                "target_practical_roof": 257
+            },
+            "model_name": "ZUR"
+        },
+        {
+            "id": 17,
+            "initial_data": {
+                "target_max_M": 212,
+                "target_max_Nx": 120,
+                "target_max_Ny": 138,
+                "target_min_Nx": 93,
+                "target_name": "zur_12",
+                "target_practical_roof": 257
+            },
+            "model_name": "ZUR"
+        }
+    ],
+    "scenario_name": "05-21-01_config"
+}

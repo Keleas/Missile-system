@@ -86,26 +86,26 @@ private:
     QVector<QTreeWidgetItem*> vector_item_pu,
     vector_item_radar,
     vector_item_aircraft,
-    vector_item_pbu;
-    /// \brief Вектор, содержащий информацию о ПУ
-    QVector<QString> vector_data_pu,
-    /// \brief Вектора, содержащий информацию о РЛС
-    vector_data_radar,
-    /// \brief Вектора, содержащий информацию о ПБУ
-    vector_data_pbu,
-    /// \brief Вектора, содержащий информацию о единичном ЛА
-    vector_data_aircraft;
-    /// \brief Вектор, содержащий вектора с данными о всех ЛА
-    QVector<QVector<QString>> vector_data_aircraft_all;
-
+    vector_item_pbu,
+    vector_item_zur;
+//    /// \brief Вектор, содержащий информацию о ПУ
+//    QVector<QString> vector_data_pu,
+//    /// \brief Вектора, содержащий информацию о РЛС
+//    vector_data_radar,
+//    /// \brief Вектора, содержащий информацию о ПБУ
+//    vector_data_pbu,
+//    /// \brief Вектора, содержащий информацию о единичном ЛА
+//    vector_data_aircraft;
+//    /// \brief Вектор, содержащий вектора с данными о всех ЛА
+//    QVector<QVector<QString>> vector_data_aircraft_all;
+    /// \brief Вектор классов с информацию о РЛС
     QVector<Radar*> vector_radars;
+    /// \brief Вектор классов с информацию о ЛА
     QVector<Aircraft*> vector_aircrafts;
+    /// \brief Класс с информацией о ПБУ
     CombatControlPoint ccp_pbu;
+    /// \brief Вектор классов с информацию о ПУ
     QVector<Launcher*> vector_launchers;
-
-
-
-
     /// \brief Флаг поставленной начальной точки траектории ЛА
     bool item_aircraft_added = false;
     /// \brief Имя конфиг. файла
@@ -140,9 +140,12 @@ private:
 
     ///
     /// \brief Функция, удаляющая элементы в дереве
-    /// \param[in] QTreeWidgetItem* - указатель на главный элемент дерева
     ///
     void remove_tree_items();
+    ///
+    /// \brief Функция, добавляющая элементы в дереве
+    ///
+    void set_tree_items();
     ///
     /// \brief Функция, добавляющая дочерний элемент ПУ в дерево с информацией
     /// и заполняющая vector_data_pu
@@ -171,7 +174,7 @@ private:
     /// \param[in] y - координата Y
     /// \param[in] QTreeWidgetItem* - указатель на элемент ЛА в дереве
     ///
-    void add_children_items_aircraft(double x, double y,
+    void add_point_items_aircraft(double x, double y,
                                      QTreeWidgetItem *_item);
     ///
     /// \brief Функция, вызывающая диалог для заполнения информации точки
@@ -188,7 +191,7 @@ private:
     /// \brief Функция, вызывающая диалог для заполнения доп. информации РЛС
     /// \return лист с доп. информацией о РЛС
     ///
-    QList<QString> input_dialog_radar();
+    QList<QString> input_propertes_radar(QString model, Radar *rls);
     ///
     /// \brief Функция, вызывающая диалог для выбора модели объекта
     /// \param[in] _state - тип объекта
@@ -230,6 +233,8 @@ private:
     ///
     void deserialization_json(QString _config_name);
 
+    void set_properties_antiaircraft(Antiaircraft *antiaircraft);
+
 private slots:
     ///
     /// \brief Слот, обработки нажатия клавиши мыши на полотно
@@ -270,6 +275,7 @@ private slots:
     /// \brief Слот, обработки нажатия кнопки "Открыть сценарий"
     ///
     void on_pushButton_open_clicked();
+    void on_change_pushButton_clicked();
 };
 
 #endif // WIDGET_MODELSET_H

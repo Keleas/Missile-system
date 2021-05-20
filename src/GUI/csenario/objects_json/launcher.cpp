@@ -1,38 +1,142 @@
 #include "launcher.h"
 
+Antiaircraft::Antiaircraft()
+{
+
+}
+
+
+Antiaircraft::Antiaircraft(QJsonObject initData, QSqlDatabase db)
+{
+    id = initData["id"].toInt();
+    name =initData["name"].toString();
+
+    QSqlQuery query(db);
+    QString select = "SELECT nx_max, ny_max, nx_min, m_max, "
+                     "practical_roof FROM aircrafts WHERE type = 'ЗУР'";
+
+    if(!query.exec(select))
+    {
+        qDebug()<<query.lastError()<<"select ЗУР";
+    }
+    query.exec(select);
+    while (query.next())
+    {
+        max_Nx = query.value(0).toDouble();
+        max_Ny= query.value(1).toDouble();
+        min_Nx= query.value(2).toDouble();
+        max_M= query.value(3).toDouble();
+        roof=query.value(4).toDouble();
+    }
+
+}
+
+QJsonObject Antiaircraft::toJsonObject(QSqlDatabase db)
+{
+
+    QSqlQuery query(db);
+    QString select = "SELECT nx_max, ny_max, nx_min, m_max, "
+                     "practical_roof FROM aircrafts WHERE type = 'ЗУР'";
+
+    if(!query.exec(select))
+    {
+        qDebug()<<query.lastError()<<"select ЗУР";
+    }
+    query.exec(select);
+    while (query.next())
+    {
+        max_Nx = query.value(0).toDouble();
+        max_Ny= query.value(1).toDouble();
+        min_Nx= query.value(2).toDouble();
+        max_M= query.value(3).toDouble();
+        roof=query.value(4).toDouble();
+    }
+
+    QJsonObject launcherJsonObj
+    {
+        {"id", id},
+        {"model_name", "ZUR"}
+    };
+    QJsonObject launcherJsonInitData
+    {
+        {"target_name",name},
+        {"target_max_Nx",max_Nx},
+        {"target_max_Ny",max_Ny},
+        {"target_min_Nx",min_Nx},
+        {"target_max_M",max_M},
+        {"target_practical_roof",roof}
+    };
+    launcherJsonObj.insert("initial_data", QJsonValue(launcherJsonInitData));
+    return launcherJsonObj;
+}
+
+void Antiaircraft::set_id(int _id)
+{
+    id = _id;
+}
+
+
+void Antiaircraft::set_name(QString _name)
+{
+    name = _name;
+}
+
+void Antiaircraft::set_properties(double _max_Nx,
+                                  double _max_Ny,
+                                  double _min_Nx,
+                                  double _max_M,
+                                  double _roof)
+{
+    max_Nx = _max_Nx;
+    max_Ny = _max_Ny;
+    min_Nx = _min_Nx;
+    max_M =_max_M;
+    roof =_roof;
+}
+
+QTreeWidgetItem* Antiaircraft::get_item(int count)
+{
+//    QStringList list;
+//    list<<"ID: "+QString::number(id)
+//       <<"x: "+QString::number(x)
+//      <<"y: "+QString::number(y)
+//     <<"z: "+QString::number(z);
+//    list.append("Радиус действия (км): "+QString::number(radius));
+//    list.append("Количество ЗУР: "+QString::number(count_ammo));
+//    list.append("Время перезарядки (c): "+QString::number(cooldown));
+//    //    list.append("Направление оси вращения РЛС _X: 0");
+//    //    list.append("Направление оси вращения РЛС _Y: 0");
+//    //    list.append("Направление оси вращения РЛС _Z: 0");
+    QTreeWidgetItem *item = new QTreeWidgetItem();
+//    item->setText(0, "ПУ_"+QString::number(count));
+//    for (int ii=0;ii<list.size() ; ++ii)
+//    {
+//        QTreeWidgetItem* item_child = new QTreeWidgetItem();
+//        item->addChild(item_child);
+//        item_child->setText(0,list.at(ii));
+//    }
+//    QTreeWidgetItem* item_child = new QTreeWidgetItem();
+//    item->addChild(item_child);
+//    item_child->setText(0,"ЗУР");
+//    for (Antiaircraft* ii : rokets)
+//    {
+//        QTreeWidgetItem* item_roket = new QTreeWidgetItem();
+//        item_child->addChild(item_roket);
+//        item_roket->setText(0,ii->get_name()+": ID_"+ii->get_id());
+//    }
+
+    return item;
+}
+
+//--------------------------------------------------
+
 Launcher::Launcher()
 {
-//    id = 354341;
-//    x =  3546;
-//    y =  87;
-//    z =  3124;
-//    radius = 635;
-//    count_ammo = 8796;
-//    cooldown = 134;
-    //rokets.append(1000);rokets.append(1001);rokets.append(1002);rokets.append(1003);
+
 }
 
-Launcher::Launcher(int id,
-                   double x,
-                   double y,
-                   double z,
-                   double radius,
-                   int count_ammo,
-                   int cooldown//,
-                   //QVector<int> rokets
-                   )
-{
-    this->id = id;
-    this->x =  x;
-    this->y =  y;
-    this->z =  z;
-    this->radius = radius;
-    this->count_ammo = count_ammo;
-    this->cooldown = cooldown;
-    //this->rokets = rokets;
-}
-
-Launcher::Launcher(QJsonObject initData)
+///@note доделать
+Launcher::Launcher(QJsonObject initData, QSqlDatabase db)
 {
     id = initData["id"].toInt();
     x =  initData["x"].toDouble();
@@ -42,11 +146,12 @@ Launcher::Launcher(QJsonObject initData)
     count_ammo = initData["rockets_amount"].toInt();
     cooldown = initData["cooldown"].toInt();
 
-//    QJsonArray array = initData["zur_id"].toArray();
-//    for (QJsonValue value : array)
-//    {
-//        rokets.append(value.toInt());
-//    }
+    QJsonArray array = initData["zur_id"].toArray();
+    for (QJsonValue value : array)
+    {
+       Antiaircraft *p = new Antiaircraft(value.toObject(),db);
+       rokets.append(p);
+    }
 }
 
 QJsonObject Launcher::toJsonObject()
@@ -56,21 +161,26 @@ QJsonObject Launcher::toJsonObject()
         {"id", id},
         {"model_name", "PU"}
     };
-//    QJsonArray zur_id;
-//    for (int roket_id : rokets)
-//    {
-//        zur_id.append(roket_id);
-//    }
+    QJsonArray zur_id;
+    for (Antiaircraft *roket : rokets)
+    {
+        QJsonObject zur
+        {
+            {"name", roket->get_name()},
+            {"id", roket->get_id()}
+        };
+        zur_id.append(QJsonValue(zur));
+    }
+    ///@note переделать
     QJsonObject launcherJsonInitData
     {
-        //{"id", vector_data_pu.at(ii)},
         {"x",x},
         {"y",y},
         {"z",z},
         {"radius",radius},
         {"rockets_amount",count_ammo},
         {"cooldown",cooldown},
-//        {"zur_id",QJsonValue(zur_id)}
+        {"zur_id",QJsonValue(zur_id)}
     };
     launcherJsonObj.insert("initial_data", QJsonValue(launcherJsonInitData));
     return launcherJsonObj;
@@ -99,61 +209,44 @@ void Launcher::set_properties(double _radius,
     cooldown=_cooldown;
 }
 
-//--------------------------------------------------
-Antiaircraft::Antiaircraft(int id,
-                           QString target_model_name,
-                           double max_Nx,
-                           double max_Ny,
-                           double min_Nx,
-                           double max_M,
-                           double roof)
+void Launcher::append_zur(Antiaircraft *roket)
 {
-    //this->target_name = target_model_name;
-    this->target_model_name = target_model_name;
-    this->id = id;
-    this->max_Nx = max_Nx;
-    this->max_Ny = max_Ny;
-    this->min_Nx = min_Nx;
-    this->max_M = max_M;
-    this->roof = roof;
-    //this->points = points;
+    rokets.append(roket);
 }
 
-Antiaircraft::Antiaircraft(QJsonObject initData)
+QTreeWidgetItem* Launcher::get_item(int count)
 {
-    //target_name = initData["target_name"].toString();;
-    target_model_name = initData["target_model_type"].toString();
-    id = initData["id"].toInt();
-    max_Nx = initData["target_max_Nx"].toDouble();
-    max_Ny= initData["target_max_Ny"].toDouble();
-    min_Nx= initData["target_min_Nx"].toDouble();
-    max_M= initData["target_max_M"].toDouble();
-    roof= initData["target_practical_roof"].toDouble();
-}
-
-QJsonObject Antiaircraft::toJsonObject()
-{
-    QJsonObject launcherJsonObj
-    {
-        {"id", QString::number(id)},
-        {"model_name", "launcher"}
-    };
-//    QJsonArray zur_id;
-//    for (int roket_id : rokets)
+//    QStringList list;
+//    list<<"ID: "+QString::number(id)
+//       <<"x: "+QString::number(x)
+//      <<"y: "+QString::number(y)
+//     <<"z: "+QString::number(z);
+//    list.append("Радиус действия (км): "+QString::number(radius));
+//    list.append("Количество ЗУР: "+QString::number(count_ammo));
+//    list.append("Время перезарядки (c): "+QString::number(cooldown));
+    //    list.append("Направление оси вращения РЛС _X: 0");
+    //    list.append("Направление оси вращения РЛС _Y: 0");
+    //    list.append("Направление оси вращения РЛС _Z: 0");
+    QTreeWidgetItem *item = new QTreeWidgetItem();
+//    item->setText(0, "ПУ_"+QString::number(count));
+//    for (int ii=0;ii<list.size() ; ++ii)
 //    {
-//        zur_id.append(roket_id);
+//        QTreeWidgetItem* item_child = new QTreeWidgetItem();
+//        item->addChild(item_child);
+//        item_child->setText(0,list.at(ii));
 //    }
-//    QJsonObject launcherJsonInitData
+//    QTreeWidgetItem* item_child = new QTreeWidgetItem();
+//    item->addChild(item_child);
+//    item_child->setText(0,"ЗУР");
+//    for (Antiaircraft* ii : rokets)
 //    {
-//        //{"id", vector_data_pu.at(ii)},
-//        {"target_name", target_name},
-//        {"target_model_type", target_model_name},
-//        {"target_max_Nx",max_Nx},
-//        {"target_max_Ny",max_Ny},
-//        {"target_min_Nx",min_Nx},
-//        {"target_max_M",max_M},
-//        {"target_practical_roof",roof}
-//    };
-//    launcherJsonObj.insert("initial_data", QJsonValue(launcherJsonInitData));
-    return launcherJsonObj;
+//        QTreeWidgetItem* item_roket = new QTreeWidgetItem();
+//        item_child->addChild(item_roket);
+//        item_roket->setText(0,ii->get_name()+": ID_"+ii->get_id());
+//    }
+
+    return item;
 }
+
+
+

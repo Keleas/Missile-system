@@ -4,22 +4,42 @@
 #include <QJsonObject>
 #include <QVector>
 #include <QJsonArray>
+#include <QTreeWidget>
+#include <QtSql>
+
+
+class Antiaircraft
+{
+public:
+    Antiaircraft(QJsonObject initData,QSqlDatabase db);
+    Antiaircraft();
+    QJsonObject toJsonObject(QSqlDatabase db);
+    QTreeWidgetItem *get_item(int count);
+    void set_properties(double max_Nx,
+                        double max_Ny,
+                        double min_Nx,
+                        double max_M,
+                        double roof);
+    void set_id(int id);
+    void set_name(QString name);
+    QString get_name(){return name;};
+    int get_id(){return id;};
+private:
+    QString name;
+    int id;
+    double max_Nx;
+    double max_Ny;
+    double min_Nx;
+    double max_M;
+    double roof;
+};
 
 class Launcher
 {
 public:
-    Launcher(QJsonObject initData);
+    Launcher(QJsonObject initData, QSqlDatabase db);
     Launcher();
-    Launcher(int id,
-             double x,
-             double y,
-             double z,
-             double radius,
-             int count_ammo,
-             int cooldown
-             //,
-             //QVector<int> rokets
-             );
+
     QJsonObject toJsonObject();
 
     void set_id(int id);
@@ -29,6 +49,11 @@ public:
     void set_properties(double radius,
                         int count_ammo,
                         int cooldown);
+    void append_zur(Antiaircraft* roket);
+    QTreeWidgetItem *get_item(int count);
+    int count_zur(){return count_ammo;};
+    QVector<Antiaircraft*> get_zurs(){return rokets;};
+
 private:
     int id;
     double x;
@@ -37,32 +62,10 @@ private:
     double radius;
     int count_ammo;
     int cooldown;
-    //QVector<int> rokets;
+    QVector<Antiaircraft*> rokets;
+
 };
 
-class Antiaircraft
-{
-public:
-    Antiaircraft(QJsonObject initData);
-    Antiaircraft();
-    Antiaircraft(int id,
-                 //QString target_name,
-                 QString target_model_name,
-                 double max_Nx,
-                 double max_Ny,
-                 double min_Nx,
-                 double max_M,
-                 double roof);
-    QJsonObject toJsonObject();
-private:
-    //QString target_name = "plane_";
-    QString target_model_name;
-    int id;
-    double max_Nx;
-    double max_Ny;
-    double min_Nx;
-    double max_M;
-    double roof;
-};
+
 
 #endif // LAUNCHER_H

@@ -71,3 +71,22 @@ void CombatControlPoint::clearData()
     z=0;
     id=0;
 }
+
+QList<QTreeWidgetItem*> CombatControlPoint::get_item()
+{
+    QStringList list;
+    list<<"ID: "+QString::number(id)
+       <<"x: "+QString::number(x)
+      <<"y: "+QString::number(y)
+     <<"z: "+QString::number(z);
+
+    QList<QTreeWidgetItem*> list_items;
+    for (int ii=0;ii<list.size() ; ++ii)
+    {
+        QTreeWidgetItem* item_child = new QTreeWidgetItem();
+        item_child->setText(0,list.at(ii));
+        list_items.append(item_child);
+
+    }
+    return list_items;
+}

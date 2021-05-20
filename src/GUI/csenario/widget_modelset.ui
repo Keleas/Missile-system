@@ -67,13 +67,6 @@
       <string/>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
-      <item row="4" column="0" colspan="2">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Время моделирования</string>
-        </property>
-       </widget>
-      </item>
       <item row="3" column="3">
        <widget class="QPushButton" name="pushButton_aircraft">
         <property name="maximumSize">
@@ -84,6 +77,67 @@
         </property>
         <property name="text">
          <string>ЛА</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0" colspan="2">
+       <widget class="QPushButton" name="pushButton_clear">
+        <property name="text">
+         <string>Очистить</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QPushButton" name="pushButton_radar">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>60</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>200</width>
+          <height>200</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>РЛС</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0" colspan="4">
+       <widget class="QTreeWidget" name="treeWidget">
+        <property name="minimumSize">
+         <size>
+          <width>350</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="tabKeyNavigation">
+         <bool>false</bool>
+        </property>
+        <column>
+         <property name="text">
+          <string notr="true">Объекты</string>
+         </property>
+        </column>
+       </widget>
+      </item>
+      <item row="7" column="2" colspan="2">
+       <widget class="QPushButton" name="save_pushButton">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>Сохранить</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0" colspan="2">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Время моделирования</string>
         </property>
        </widget>
       </item>
@@ -109,40 +163,13 @@
         </property>
        </widget>
       </item>
-      <item row="6" column="0" colspan="4">
-       <widget class="QTreeWidget" name="treeWidget">
-        <property name="minimumSize">
-         <size>
-          <width>350</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="tabKeyNavigation">
-         <bool>false</bool>
-        </property>
-        <column>
-         <property name="text">
-          <string notr="true">Объекты</string>
-         </property>
-        </column>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QPushButton" name="pushButton_radar">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>60</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>200</width>
-          <height>200</height>
-         </size>
+      <item row="8" column="0" colspan="4">
+       <widget class="QPushButton" name="change_pushButton">
+        <property name="enabled">
+         <bool>true</bool>
         </property>
         <property name="text">
-         <string>РЛС</string>
+         <string>Моделировать</string>
         </property>
        </widget>
       </item>
@@ -168,6 +195,9 @@
       </item>
       <item row="3" column="2">
        <widget class="QPushButton" name="pushButton_pbu">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -185,40 +215,13 @@
         </property>
        </widget>
       </item>
-      <item row="7" column="0" colspan="2">
-       <widget class="QPushButton" name="pushButton_clear">
-        <property name="text">
-         <string>Очистить</string>
-        </property>
-       </widget>
-      </item>
-      <item row="7" column="2" colspan="2">
-       <widget class="QPushButton" name="save_pushButton">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="text">
-         <string>Сохранить</string>
-        </property>
-       </widget>
-      </item>
-      <item row="8" column="0" colspan="4">
-       <widget class="QPushButton" name="change_pushButton">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="text">
-         <string>Моделировать</string>
-        </property>
-       </widget>
-      </item>
      </layout>
     </widget>
    </item>
    <item row="1" column="2">
     <widget class="QLabel" name="label_name_config">
      <property name="text">
-      <string>                       </string>
+      <string/>
      </property>
     </widget>
    </item>
@@ -231,7 +234,7 @@
   <customwidget>
    <class>QCustomPlot</class>
    <extends>QWidget</extends>
-   <header>qcustomplot.h</header>
+   <header location="global">qcustomplot.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

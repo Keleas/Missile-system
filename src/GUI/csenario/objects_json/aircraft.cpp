@@ -2,22 +2,7 @@
 
 Point::Point()
 {
-    //point = 5665;
-//    x =  12;
-//    y =  32;
-//    z =  3453;
-//    velocity = 76567564;
-}
 
-Point::Point(double x,
-             double y,
-             double z,
-             double velocity)
-{
-    this->x=x;
-    this->x=y;
-    this->x=z;
-    this->x=velocity;
 }
 
 Point::Point(QJsonObject initData)
@@ -64,37 +49,9 @@ void Point::set_velocity(double _velocity)
 
 Aircraft::Aircraft()
 {
-//    target_name = "10";
-//    target_model_name = "initData[].toString()";
-//    id = 666;
-//    max_Nx = 333;
-//    max_Ny= 444;
-//    min_Nx= 555;
-//    max_M= 666;
-//    roof= 777;
-//    points.append(Point());
+
 }
 
-//Aircraft::Aircraft(QString target_name,
-//                   QString target_model_name,
-//                   int id,
-//                   double max_Nx,
-//                   double max_Ny,
-//                   double min_Nx,
-//                   double max_M,
-//                   double roof,
-//                   QVector<Point> points)
-//{
-//    this->target_name = target_name;
-//    this->target_model_name = target_model_name;
-//    this->id = id;
-//    this->max_Nx = max_Nx;
-//    this->max_Ny = max_Ny;
-//    this->min_Nx = min_Nx;
-//    this->max_M = max_M;
-//    this->roof = roof;
-//    this->points = points;
-//}
 
 Aircraft::Aircraft(QJsonObject initData)
 {
@@ -112,6 +69,38 @@ Aircraft::Aircraft(QJsonObject initData)
         Point p(value.toObject());
         points.append(p);
     }
+
+
+//    craft->set_id(value.toObject()["id"].toInt());
+//    craft->set_model(value.toObject()["initial_data"].
+//            toObject()["target_model_type"].toString());
+//    craft->set_name(value.toObject()["initial_data"].
+//            toObject()["target_name"].toString());
+//    craft->set_properties(
+//                value.toObject()["initial_data"].
+//            toObject()["target_max_Nx"].toDouble(),
+//            value.toObject()["initial_data"].
+//            toObject()["target_max_Ny"].toDouble(),
+//            value.toObject()["initial_data"].
+//            toObject()["target_min_Nx"].toDouble(),
+//            value.toObject()["initial_data"].
+//            toObject()["target_max_M"].toDouble(),
+//            value.toObject()["initial_data"].
+//            toObject()["target_practical_roof"].toDouble());
+//    QJsonArray array_points = value.toObject()["initial_data"].
+//            toObject()["target_points"].toArray();
+//    for (QJsonValue value_point : array_points)
+//    {
+//        Point p;
+//        p.set_coordinates(
+//                    value_point.toObject()["x"].toDouble(),
+//                    value_point.toObject()["y"].toDouble(),
+//                    value_point.toObject()["z"].toDouble());
+//        p.set_velocity(value_point.toObject()["vel"].toDouble());
+//        craft->append_point(p);
+//    }
+
+
 }
 
 QJsonObject Aircraft::toJsonObject()
@@ -175,4 +164,28 @@ void Aircraft::set_points(QVector<Point> _points)
 void Aircraft::append_point(Point _point)
 {
     points.append(_point);
+}
+
+QTreeWidgetItem* Aircraft::get_item(int count)
+{
+    QStringList list;
+//    list<<"ID: "+QString::number(id)
+//       <<"x: "+QString::number(x)
+//      <<"y: "+QString::number(y)
+//     <<"z: "+QString::number(z);
+//    list.append("Радиус действия (км): "+QString::number(radius));
+//    list.append("Количество ЗУР: "+QString::number(count_ammo));
+//    list.append("Время перезарядки (c): "+QString::number(cooldown));
+    //    list.append("Направление оси вращения РЛС _X: 0");
+    //    list.append("Направление оси вращения РЛС _Y: 0");
+    //    list.append("Направление оси вращения РЛС _Z: 0");
+    QTreeWidgetItem *item = new QTreeWidgetItem();
+    item->setText(0, "ПУ_"+QString::number(count));
+    for (int ii=0;ii<list.size() ; ++ii)
+    {
+        QTreeWidgetItem* item_child = new QTreeWidgetItem();
+        item->addChild(item_child);
+        item_child->setText(0,list.at(ii));
+    }
+    return item;
 }
