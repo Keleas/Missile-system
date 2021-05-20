@@ -86,8 +86,8 @@ void PBU::Target::CalculateParametrs()
         }
         for(size_t i = 0; i < history_coords.size(); i++)
         {
-            coords[i] /= (history_coords.size() + 1);
-            speed[i]  /= (history_speed.size() + 1);
+            coords[i] /= history_coords.size();
+            speed[i]  /= history_speed.size();
         }
     }
 
