@@ -15,7 +15,7 @@ bool PU::init(const rapidjson::Value& initial_data)
 
     rocket_count = initial_data["Rocket_count"].GetUint();
     range = initial_data["Range"].GetDouble();
-    launch_time = initial_data["Colldown"].GetDouble();
+    launch_time = initial_data["Cooldown"].GetDouble();
     pbu_id = initial_data["PBU_ID"].GetUint();
 
     for (auto& v : initial_data["ZUR_ids"].GetArray())
@@ -28,9 +28,9 @@ bool PU::init(const rapidjson::Value& initial_data)
 void PU::firstStep()
 {
     ready = true;
-    launch_cooldown=0;
-    prev_time=0;
-    PUtoPBUstartMsg msg{id, pu_coords, rocket_count, ready};
+    launch_cooldown = 0;
+    prev_time = 0;
+    PUtoPBUstartMsg msg{id, pu_coords, range, rocket_count, ready};
     send<PUtoPBUstartMsg>(pbu_id,0,msg);
 //    write_to_csv(true);
     setLogHeader("pu_id", "X", "Y", "Z", "Rocket count", "Range", "Ready");
@@ -45,6 +45,49 @@ void PU::step(double time)
 //    write_to_csv(false);
     prev_time = time ;
     writeLog(time, id, pu_coords.at(0), pu_coords.at(1), pu_coords.at(2), rocket_count, range, ready);
+
+    if (time > 0.045 && time <0.055)
+    {
+        PBUtoPUMsg pbumsg;
+        pbumsg.target_coord = {100,101,102};
+        pbumsg.target_speed = {10};
+        pbumsg.target_id=6;
+        send<PBUtoPUMsg>(id,time,pbumsg);
+    }
+
+    if (time > 0.065 && time < 0.075)
+    {
+        PBUtoPUMsg pbumsg;
+        pbumsg.target_coord = {100,101,102};
+        pbumsg.target_speed = {10};
+        pbumsg.target_id=6;
+        send<PBUtoPUMsg>(id,time,pbumsg);
+    }
+
+    if (time > 1.995 && time < 2.005)
+    {
+        PBUtoPUMsg pbumsg;
+        pbumsg.target_coord = {100,101,102};
+        pbumsg.target_speed = {10};
+        pbumsg.target_id=6;
+        send<PBUtoPUMsg>(id,time,pbumsg);
+    }
+    if (time > 2.555 && time < 2.565)
+    {
+        PBUtoPUMsg pbumsg;
+        pbumsg.target_coord = {100,101,102};
+        pbumsg.target_speed = {10};
+        pbumsg.target_id=6;
+        send<PBUtoPUMsg>(id,time,pbumsg);
+    }
+    if (time > 2.855 && time < 2.865)
+    {
+        PBUtoPUMsg pbumsg;
+        pbumsg.target_coord = {100,101,102};
+        pbumsg.target_speed = {10};
+        pbumsg.target_id=6;
+        send<PBUtoPUMsg>(id,time,pbumsg);
+    }
 }
 
 
@@ -63,23 +106,26 @@ void PU::is_ready()
 void PU::cooldown(double dt)
 {
     if (launch_cooldown > 0)
-        launch_cooldown -=dt;
+        launch_cooldown -= dt;
     if (launch_cooldown < 0)
         launch_cooldown = 0;
 }
 
 void PU::launch_ZUR(double time)
 {
-    if (launch_cooldown<=0 &&  !msg_target_params.empty())
+    if (launch_cooldown<=0 &&  !msg_target_params.empty() && rocket_count > 0)
     {
-        id_type zur_id=zur_ids.back();
-        zur_ids.pop_back();
-        PUtoPBUzurIDMsg msg_pbu_launch{zur_id};
+        id_type zur_id=zur_ids.front();
+
+        zur_ids.pop_front();
+        PUtoPBUzurIDMsg msg_pbu_launch;
+        msg_pbu_launch.zur_id = zur_id;
+        msg_pbu_launch.target_id = msg_target_params.front().message.target_id;
         PUtoZURMsg msg_zur_launch;
         msg_zur_launch.target_coord = msg_target_params.front().message.target_coord;
         msg_zur_launch.target_speed = msg_target_params.front().message.target_speed;
         msg_zur_launch.pu_coord = {pu_coords.at(0),pu_coords.at(1),pu_coords.at(2)};
-
+        msg_target_params.pop_front();
         send<PUtoPBUzurIDMsg>(pbu_id, time, msg_pbu_launch);
         send<PUtoZURMsg>(zur_id, time, msg_zur_launch);
         rocket_count -= 1;

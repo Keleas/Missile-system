@@ -30,12 +30,13 @@ void PBU::step(double time)
 {
     GetIdZur();                                                             // получить ID пущенных ЗУР если такие имеются
     GetRLIfromRadar();                                                      // получение информации о целях
-    TargetDistribution(time);                                                   // целераспределение
+    UpdatePuStatus();
+    TargetDistribution(time);                                               // целераспределение
 
     for(const auto& it : targets)
     {
         writeLog(time, it.first,
-                it.second.coords[0], it.second.coords[1], it.second.coords[2],
+                 it.second.coords[0], it.second.coords[1], it.second.coords[2],
                 it.second.speed[0], it.second.speed[1], it.second.speed[2],
                 it.second.time);
     }
@@ -178,7 +179,7 @@ void PBU::GetRLIfromRadar()
 
         for(auto& item : targets_time) // Смотрим по времени, какие данные обновились за этот шаг
         {
-            if(item.second != step_time)
+            if(item.second < step_time)
             {
                 std::pair<id_type, id_type> ID_from_rlc = item.first;
                 int  My_ID = id_table[item.first];
@@ -199,6 +200,17 @@ void PBU::GetRLIfromRadar()
     }
 }
 
+void PBU::UpdatePuStatus()
+{
+    while (!msg_from_pu.empty())
+    {
+        pu_base[msg_from_pu.front().source_id].zur_num = msg_from_pu.front().message.zur_num;
+        pu_base[msg_from_pu.front().source_id].status = msg_from_pu.front().message.status;
+        msg_from_pu.pop_front();
+    }
+}
+
+
 void PBU::FirstStepFromPU()
 {
     while (!msg_from_pu_start.empty())
@@ -212,16 +224,30 @@ void PBU::TargetDistribution(double time)
 {
     for(auto& target: targets)
     {
-        for(auto& launcher: pu_base)
+        if(target.second.ID_zur != 0)
         {
-            if(launcher.second.status == true && launcher.second.zur_num > 0)
+            PBUtoZURMsg msg;
+            msg.target_coord = {target.second.coords[0],target.second.coords[1],target.second.coords[2]};
+            msg.target_speed = TargetAbsVelocity({target.second.speed[0],target.second.speed[1],target.second.speed[2]});
+            send<PBUtoZURMsg>(target.second.ID_zur,time, msg);
+        }
+        else
+        {
+            for(auto& launcher: pu_base)
             {
-                PBUtoPUMsg msg{{target.second.coords[0],target.second.coords[1],target.second.coords[2]},
-                               {target.second.speed[0],target.second.speed[1],target.second.speed[2]}};
+                if(launcher.second.status == true &&  launcher.second.zur_num > 0 &&
+                        CheckRange(target.second.coords, launcher.second.coords, launcher.second.range))
+                {
+                    PBUtoPUMsg msg;
+                    msg.target_coord = {target.second.coords[0],target.second.coords[1],target.second.coords[2]};
+                    msg.target_speed = TargetAbsVelocity({target.second.speed[0],target.second.speed[1],target.second.speed[2]});
+                    msg.target_id = target.first;
 
-                send<PBUtoPUMsg>(launcher.first, time, msg);
-                --launcher.second.zur_num;
-                break;
+                    send<PBUtoPUMsg>(launcher.first, time, msg);
+                    launcher.second.status = false;
+
+                    break;
+                }
             }
         }
     }
@@ -231,6 +257,8 @@ void PBU::GetIdZur()
 {
     while (!msg_from_pu_zur.empty())
     {
+        targets[msg_from_pu_zur.front().message.target_id].ID_zur = msg_from_pu_zur.front().message.zur_id;
+
         PBUtoRLCMsg msg {msg_from_pu_zur.front().message.zur_id};
         send<PBUtoRLCMsg>(msg_from_pu_zur.front().time, msg);
         msg_from_pu_zur.pop_front();
@@ -238,11 +266,23 @@ void PBU::GetIdZur()
 }
 void PBU::endStep() {}
 
-//double CalculateDistanse(const std::vector<double>& a, const std::vector<double>& b)
-//{
-//    return sqrt((a[0] - b[0]) * (a[0] - b[0]) +
-//            (a[1] - b[1]) * (a[1] - b[1]) +
-//            (a[2] - b[2]) * (a[2] - b[2]));
-//}
+double PBU::TargetAbsVelocity(std::vector<double> speed)
+{
+    return sqrt((speed[0] * speed[0]) +
+            (speed[1] * speed[1]) +
+            (speed[2] * speed[2]));
+}
+
+bool PBU::CheckRange(const std::vector<double>& a, const std::vector<double>& b, double range)
+{
+    return CalculateDistanse(a, b) <= range;
+}
+
+double PBU::CalculateDistanse(const std::vector<double>& a, const std::vector<double>& b)
+{
+    return sqrt((a[0] - b[0]) * (a[0] - b[0]) +
+            (a[1] - b[1]) * (a[1] - b[1]) +
+            (a[2] - b[2]) * (a[2] - b[2]));
+}
 
 

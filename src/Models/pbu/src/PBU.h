@@ -26,7 +26,7 @@ private:
 
     MessageQueue<PUtoPBUstartMsg> msg_from_pu_start;    // очередь сообщений от ПУ (для FirstStep)
     MessageQueue<PUtoPBUzurIDMsg> msg_from_pu_zur;      // очередь сообщений от ПУ (получения ID ЗУР)
-    MessageQueue<PUtoPBUstartMsg> msg_from_pu;          // очередь сообщений от ПУ (обновление данных о состояниии ПУi)
+    MessageQueue<PUtoBPUMsg> msg_from_pu;                // очередь сообщений от ПУ (обновление данных о состояниии ПУi)
 
     class Target
     {
@@ -50,26 +50,28 @@ private:
         id_type ID;
         double time = 0;
         bool first_step;
+
+        id_type ID_zur = 0;
         };
 
     class PU{
     public:
         PU(){}
         PU(const PUtoPBUstartMsg& msg)
-            : zur_num(msg.zur_num), status(msg.status),
+            : zur_num(msg.zur_num), status(msg.status), range(msg.range),
               coords({msg.coord[0], msg.coord[0], msg.coord[0]})
         {}
 
         int zur_num;
         bool status;
+        double range;
         std::vector<double> coords;
     };
 
-    /*double CalculateDistanse(const std::vector<double>& a,
-                             const std::vector<double>& b);*/
 
     void GetRLIfromRadar();                                         // Третичная обработка
     bool CheckTrack(const RLCMsg& t1, const Target& t2);            // Критерий сравнения целей
+    void UpdatePuStatus();
 
     void UpdateTables(int target_id);                               // обновление id_table, history_id, targets_time
     void AddNewTarget();
@@ -77,7 +79,12 @@ private:
     void FirstStepFromPU();                                         //На первом шаге мод. получить от пу координаты и id
 
     void GetIdZur();                                                //Получить от ПУ id запущенного ЗУР
-    void TargetDistribution(double time);                                      //Дать команду об уничтожении цели i устаноке j
+    void TargetDistribution(double time);                            //Дать команду об уничтожении цели i устаноке j
+    double TargetAbsVelocity(std::vector<double> speed);
+    bool CheckRange(const std::vector<double>& a,
+                         const std::vector<double>& b, double range);
+    double CalculateDistanse(const std::vector<double>& a,
+                             const std::vector<double>& b);
 
 
     std::map<std::pair<id_type, id_type>, int> id_table;            // key - <first - rls_id, second - target_id>, value - My_id

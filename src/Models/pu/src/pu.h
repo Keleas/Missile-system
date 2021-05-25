@@ -28,10 +28,10 @@ private:
     double range;
     bool ready;
 
-    std::vector<id_type> zur_ids;
+    std::list<id_type> zur_ids;
 
-    float launch_cooldown;
-    float launch_time;
+    double launch_cooldown;
+    double launch_time;
     double prev_time;
 
     MessageQueue<PBUtoPUMsg> msg_target_params;

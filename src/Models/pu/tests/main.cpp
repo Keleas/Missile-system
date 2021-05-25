@@ -13,20 +13,52 @@ const std::string scenario = "{"
                              "              \"model_name\": \"PU\","
                              "              \"initial_data\": "
                              "                   {"
-                                 "                  \"X\" : 3,"
-                                 "                  \"Y\" : 4,"
-                                 "                  \"Z\" : 0,"
-                                 "                  \"Range\" : 100,"
-                                 "                  \"Rocket_count\" : 4,"
-                                 "                  \"Cooldown\" : 5,"
-                                 "                   \"ZUR_ids\": "
-                                 "                      [1001, 1002, 1003, 1004],"
-                                 "                   \"PBU_ID\": 10"
+                             "                  \"X\" : 3,"
+                             "                  \"Y\" : 4,"
+                             "                  \"Z\" : 0,"
+                             "                  \"Range\" : 100,"
+                             "                  \"Rocket_count\" : 4,"
+                             "                  \"Cooldown\" : 0.05,"
+                             "                   \"ZUR_ids\": "
+                             "                      [1001, 1002, 1003, 1004],"
+                             "                   \"PBU_ID\": 10"
                              "                    }"
                              "          }"
                              "      ]"
                              "}";
 
+//class PBU : public Model
+//{
+//public:
+//    PBU(id_type id, MsgChannelCarrier& carrier, std::ostream& log)
+//        : Model(id, carrier, log) {}
+//    ~PBU() override {}
+
+//    bool init(const rapidjson::Value& initial_data) override final{}
+
+//    void firstStep() override final
+//    {
+
+//    }
+//    void step(double time) override final
+//    {
+//        PBUtoPUMsg pbumsg;
+//        pbumsg.target_coord = {100,101,102};
+//        pbumsg.target_speed = {10,11,12};
+
+//        PBUtoPUMsg msg;
+//        msg.target_coord = {100,101,102};
+//        msg.target_speed = {1,11,12};
+//        if (time == 0.05)
+//        {
+//            send<PBUtoPUMsg>(1,time,pbumsg);
+//            send<PBUtoPUMsg>(1,time,msg);
+//        }
+//    }
+//    void endStep() override final {}
+//};
+
+//DEFAULT_MODEL_FACTORY(PBU)
 std::ostream & operator<<(std::ostream& os, PUtoBPUMsg m)
 {
     os << "(STATUS: " << m.status << ", ZUR_NUM: " << m.zur_num << ")";

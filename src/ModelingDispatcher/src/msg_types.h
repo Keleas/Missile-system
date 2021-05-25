@@ -42,8 +42,9 @@ struct PBUtoRLCMsg
 
 struct PUtoPBUstartMsg
 {
-    id_type launcher_id;
+    id_type launcher_id;    
     vec3 coord;
+    double range;
     int zur_num;
     bool status;
 };
@@ -57,13 +58,18 @@ struct PUtoBPUMsg
 struct PUMSGS
 {
     vec3 target_coord;
-    vec3 target_speed;
+    double target_speed;
 };
 
-struct PBUtoPUMsg : public PUMSGS {};
+struct PBUtoPUMsg : public PUMSGS
+{
+    id_type target_id;
+//    PBUtoPUMsg(vec3 target_coord, vec3 target_speed){}
+};
 
 struct PUtoPBUzurIDMsg
 {
+    id_type target_id;
     id_type zur_id;
 };
 
@@ -72,6 +78,10 @@ struct PUtoZURMsg : public PUMSGS
     vec3 pu_coord;
 };
 
+struct PBUtoZURMsg : public PUMSGS
+{
+
+};
 
 struct Explosion
 {
