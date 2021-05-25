@@ -68,7 +68,7 @@ widget_modelset::widget_modelset(QWidget *parent) :
     ui->treeWidget->addTopLevelItem(top_item_aircraft);
     top_item_aircraft->setText(0,"ЛА");
 
-
+    ui->pushButton_modelling->setDisabled(true);
 
     //set_properties_antiaircraft();
 }
@@ -705,7 +705,7 @@ QList<QString> widget_modelset::input_propertes_radar(QString model, Radar* rls)
         results<<"Dmax: "+query.value(1).toString()
          <<"Dmin: "+query.value(2).toString();
     }
-    rls->set_pisets_kolya(model, db);
+    rls->set_is_pisets_kolya(model, db);
 
     return results;
 }
@@ -807,7 +807,8 @@ void widget_modelset::on_save_pushButton_clicked()
     {
         QMessageBox msgBox;
         name=lineEdit_name->text() + "_config.json";
-        name_config = name.toStdString().c_str();
+        name_std_config = name.toStdString().c_str();
+        name_config = lineEdit_name->text() + "_config.json";
         serialization_json(name);
         ui->label_name_config->setText(name);
 
@@ -815,6 +816,7 @@ void widget_modelset::on_save_pushButton_clicked()
         msgBox.exec();
     }
     ui->label_name_config->setText(name);
+    ui->pushButton_modelling->setDisabled(false);
 }
 
 void widget_modelset::serialization_json(QString _config_name)
@@ -865,6 +867,10 @@ void widget_modelset::deserialization_json(QString _config_name)
 
     QString name = j_object["scenario_name"].toString();
     ui->time_modelinglineEdit->setText(j_object["end_time"].toString());
+
+    name_config = _config_name;
+    name_std_config = _config_name.toStdString();
+    ui->label_name_config->setText(name);
 
     //set_properties_antiaircraft();
 
@@ -922,6 +928,7 @@ void widget_modelset::on_pushButton_open_clicked()
     clearData();
     deserialization_json(filename);
     set_tree_items();
+    ui->pushButton_modelling->setDisabled(false);
 }
 ///@note дописать для ЛА и точек
 void widget_modelset::set_tree_items()
@@ -946,8 +953,7 @@ void widget_modelset::set_tree_items()
     }
 }
 
-
-void widget_modelset::on_change_pushButton_clicked()
+void widget_modelset::on_pushButton_modelling_clicked()
 {
-
+    emit set_json(name_config);
 }

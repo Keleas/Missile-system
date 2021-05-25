@@ -8,6 +8,7 @@
 #include "launcher.h"
 #include "combatcontrolpoint.h"
 #include "aircraft.h"
+#include "modeling.h"
 
 namespace Ui {
 class widget_modelset;
@@ -29,14 +30,20 @@ public:
     /// \brief Функция возвращает имя конфиг. файла
     /// \return имя файла
     ///
-    std::string get_name_config() const{return name_config;}
+    std::string get_name_std_config() const{return name_std_config;}
 
     QSqlDatabase get_db() const{return  db;};
+
+signals:
+    void set_json(QString);
+
 
 private:
     Ui::widget_modelset *ui;
     /// \brief объект подключения к бд
     QSqlDatabase db;
+
+    QString name_config;
     ///
     /// \brief Вектора, содержащие координаты всех ПУ на полотне
     ///
@@ -109,7 +116,7 @@ private:
     /// \brief Флаг поставленной начальной точки траектории ЛА
     bool item_aircraft_added = false;
     /// \brief Имя конфиг. файла
-    std::string name_config;
+    std::string name_std_config;
     ///
     /// \brief Функция, добавляющая координаты в вектора объекта
     /// \param[in] x - координата Х
@@ -275,7 +282,8 @@ private slots:
     /// \brief Слот, обработки нажатия кнопки "Открыть сценарий"
     ///
     void on_pushButton_open_clicked();
-    void on_change_pushButton_clicked();
+
+    void on_pushButton_modelling_clicked();
 };
 
 #endif // WIDGET_MODELSET_H

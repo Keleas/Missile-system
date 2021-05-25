@@ -10,16 +10,14 @@ void abs_moving_model::set_id(int id)
     this->id = id;
 }
 
-void abs_moving_model::set_point(double x,
-                                 double y,
-                                 double z)
+void abs_moving_model::append_point(double x,
+                                    double y,
+                                    double z)
 {
-    Point point;
-    point.x = x;
-    point.y = y;
-    point.z = z;
-    point.horizontal_range = sqrt(pow(x,2)+pow(y,2));
-    points.append(point);
+    vector_x.append(x);
+    vector_y.append(y);
+    vector_z.append(z);
+    vector_horizontal_range.append(sqrt(pow(x,2)+pow(y,2)));
 }
 
 void abs_moving_model::set_name(QString name)

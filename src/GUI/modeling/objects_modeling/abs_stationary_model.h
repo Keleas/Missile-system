@@ -1,6 +1,7 @@
 #ifndef ABS_STATIONARY_MODEL_H
 #define ABS_STATIONARY_MODEL_H
 #include <QString>
+#include <QJsonObject>
 
 class abs_stationary_model
 {
@@ -12,6 +13,12 @@ public:
                          double y,
                          double z);
     void set_name(QString name);
+
+    double get_x(){return x;}
+    double get_y(){return y;}
+    double get_z(){return z;}
+    double get_range(){return horizontal_range;}
+
 protected:
     QString name;
     int id;

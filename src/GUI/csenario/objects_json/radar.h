@@ -21,7 +21,7 @@ public:
                          double y,
                          double z);
     void set_model(QString model);
-    void set_pisets_kolya(QString model,QSqlDatabase db);
+    void set_is_pisets_kolya(QString model,QSqlDatabase db);
     void set_rotates(double _rotate_x,
                      double _rotate_y,
                      double _rotate_z);
@@ -41,8 +41,8 @@ private:
     double lambda,Dmax,Dmin,Tscan,Timp,V_res,asimres,elevres,asimrestracecf,
     elevrestracecf,elev1,elev2,Nasim,Nelev,Bandwidth, Noise, Gain, P_peak, Tr;
 
-    int count_channels_targets; ///Ntraj
-    int count_channels_zurs; ///Nmissiles;
+    double count_channels_targets; ///Ntraj
+    double count_channels_zurs; ///Nmissiles;
 };
 
 

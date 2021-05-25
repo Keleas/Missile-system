@@ -37,8 +37,8 @@ Radar::Radar(QJsonObject initData)
     P_peak = initData["P_peak"].toDouble();
     Tr = initData["Tr"].toDouble();
 
-    count_channels_targets = initData["Ntraj"].toInt();
-    count_channels_zurs = initData["Nmissiles"].toInt();
+    count_channels_targets = initData["Ntraj"].toDouble();
+    count_channels_zurs = initData["Nmissiles"].toDouble();
 }
 
 QJsonObject Radar::toJsonObject()
@@ -134,7 +134,7 @@ void Radar::set_model(QString _model)
     model = _model;
 }
 
-void Radar::set_pisets_kolya(QString _model, QSqlDatabase db)
+void Radar::set_is_pisets_kolya(QString _model, QSqlDatabase db)
 {
     QSqlQuery query(db);
     QString select = "SELECT lambda,Dmax,Dmin,Tscan,Timp,V_res,asimres,elevres,"

@@ -6,6 +6,8 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    connect(ui->tab_2, SIGNAL(set_json(QString)),
+              ui->tab, SLOT(set_name_json(QString)));
 }
 
 MainWindow::~MainWindow()

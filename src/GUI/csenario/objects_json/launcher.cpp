@@ -135,7 +135,7 @@ Launcher::Launcher()
 
 }
 
-///@note доделать
+///@note доделать ???
 Launcher::Launcher(QJsonObject initData, QSqlDatabase db)
 {
     id = initData["id"].toInt();
