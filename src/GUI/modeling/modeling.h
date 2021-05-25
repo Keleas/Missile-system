@@ -26,7 +26,7 @@ public:
 
 public slots:
 
-    void set_name_json(QString);
+    void accept_json(QString);
 
 private slots:
 //  void titleDoubleClick(QMouseEvent *event);

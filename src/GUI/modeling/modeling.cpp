@@ -179,7 +179,7 @@ void modeling::set_data(QString _config_name)
 
 //}
 
-void modeling::set_name_json(QString _name_json)
+void modeling::accept_json(QString _name_json)
 {
     name_config = _name_json;
     set_data(_name_json);
@@ -320,7 +320,7 @@ void modeling::set_pen(int index)
     pen_line.setColor(color);
     ui->customPlot_1->graph(index)->
             setScatterStyle(QCPScatterStyle::ssCircle);
-    ui->customPlot_1->graph(index)->setLineStyle(QCPGraph::lsNone);
+    ui->customPlot_1->graph(index)->setLineStyle(QCPGraph::lsLine);
     ui->customPlot_1->graph(index)->setPen(pen_line);
 
     ui->customPlot_2->graph(index)->
@@ -470,8 +470,8 @@ void modeling::read_pbu_csv(QString name_csv)
         while (!in.atEnd())
         {
             line = in.readLine();
+            id=line.split(',').at(2).toInt();
 
-            id=line.split(',').at(11).toInt();
             craft->set_id(id);
             craft->append_point(line.split(',').at(4).toDouble(),
                                 line.split(',').at(5).toDouble(),

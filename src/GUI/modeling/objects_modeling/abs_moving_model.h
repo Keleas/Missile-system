@@ -33,6 +33,16 @@ protected:
 
     int number_graph;
 
+    struct Point
+    {
+        double x,
+        y,
+        z,
+        horizontal_range;
+        int status;
+    };
+
+    QMap<double, Point*> *points;
 
     QVector<double> vector_x,
     vector_y,

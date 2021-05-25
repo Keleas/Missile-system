@@ -18,7 +18,14 @@ void abs_moving_model::append_point(double x,
     vector_y.append(y);
     vector_z.append(z);
     vector_horizontal_range.append(sqrt(pow(x,2)+pow(y,2)));
+//    Point* p;
+//    p->horizontal_range=sqrt(pow(x,2)+pow(y,2));
+//    p->x=x;
+//    p->y=y;
+//    p->z=z;
+    //points->append(step,p);
 }
+
 
 void abs_moving_model::set_name(QString name)
 {
