@@ -54,15 +54,22 @@ struct PUtoBPUMsg
     bool status;
 };
 
-struct PBUtoPUMsg
+struct PUMSGS
 {
     vec3 target_coord;
     vec3 target_speed;
 };
 
+struct PBUtoPUMsg : public PUMSGS {};
+
 struct PUtoPBUzurIDMsg
 {
     id_type zur_id;
+};
+
+struct PUtoZURMsg : public PUMSGS
+{
+    vec3 pu_coord;
 };
 
 
