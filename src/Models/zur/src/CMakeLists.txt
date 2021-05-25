@@ -19,7 +19,7 @@ add_library(${projectName}
 
 target_include_directories(${projectName} INTERFACE
         ${PROJECT_ROOT}/ModelingDispatcher/src
-        ${PROJECT_ROOT}/Models/target/src
+        PUBLIC ${PROJECT_ROOT}/Models/target/src
         )
 
 target_link_libraries(${projectName} INTERFACE

@@ -24,6 +24,20 @@ struct BasePhysicsEntity : public Entity
 
 struct TargetMsg : public BasePhysicsEntity {std::string type_model;};
 
+struct ZurMSG : public Entity
+{
+    vec3 crd_zur;
+    vec3 vels_zur;
+    ZurStatus status;
+};
+
+struct PuToZurMsg : public Entity
+{
+    vec3 crd_pu;
+    vec3 crd_target;
+    double vel_target;
+};
+
 struct RocketMsg : public BasePhysicsEntity
 {
     bool is_explosion;

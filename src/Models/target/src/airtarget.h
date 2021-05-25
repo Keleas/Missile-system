@@ -20,15 +20,7 @@ struct AbstractTargetParams
     double PRACTICAL_ROOF;
 };
 
-class AbstractTarget : public Model
-{
-public:
-    void calculate(double dt);
-    virtual Vector3D get_coords() = 0;
-    virtual void write_to_csv(bool fisrt_time=false) = 0;
-};
-
-class AirTarget : public AbstractTarget
+class AirTarget : public Model
 {
 public:
     AirTarget(id_type id, MsgChannelCarrier& carrier, std::ostream& log);
@@ -38,20 +30,24 @@ public:
     void step(double time) override final;
     void endStep() override final {write_to_file("target_crd.txt", control_points);};
 
-    TargetStatus get_status();
-    Vector3D get_coords() override final;
+    void write_to_csv(bool fisrt_time=false);
+    void write_to_file(std::string file_name, std::vector<TrajectoryPoint> points = {});
 
+    TargetStatus get_status();
+    Vector3D get_coords();
     void set_status(TargetStatus trg);
 
-    int num_point_passed = 0;
-    void write_to_file(std::string file_name, std::vector<TrajectoryPoint> points = {});
-    void write_to_csv(bool fisrt_time=false) override final;
+    MessageQueue<Explosion> recieve_msg;
 
 private:
+    void calculate(double dt);
+
     std::string targetName;
     std::string targetModelType;
+
+    int num_point_passed = 0;
+
     AbstractTargetParams param;
-    MessageQueue<Explosion> recieve_msg;
     Vector3D coords;
     TargetStatus status = TargetStatus::is_not_fly;
 
@@ -61,9 +57,6 @@ private:
     Vector3D NuCurNext;
 
     GeodezicCoodinates GD_Msc = GeodezicCoodinates(55, 37, 0); //ךמסעûûûûכü
-
-    void TransformForCalculate();
-
 };
 
 inline void AirTarget::write_to_file(std::string file_name, std::vector<TrajectoryPoint> points)
