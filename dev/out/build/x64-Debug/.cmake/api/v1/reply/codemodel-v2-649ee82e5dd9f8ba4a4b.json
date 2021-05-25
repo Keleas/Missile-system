@@ -1,0 +1,610 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						4,
+						7,
+						20
+					],
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.19"
+					},
+					"projectIndex" : 0,
+					"source" : "."
+				},
+				{
+					"build" : "MessageManager",
+					"childIndexes" : 
+					[
+						2,
+						3
+					],
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.19"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "MessageManager"
+				},
+				{
+					"build" : "MessageManager/src",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.19"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 1,
+					"source" : "MessageManager/src",
+					"targetIndexes" : 
+					[
+						1
+					]
+				},
+				{
+					"build" : "MessageManager/tests",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.19"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 2,
+					"source" : "MessageManager/tests",
+					"targetIndexes" : 
+					[
+						3
+					]
+				},
+				{
+					"build" : "ModelingDispatcher",
+					"childIndexes" : 
+					[
+						5,
+						6
+					],
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.19"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "ModelingDispatcher"
+				},
+				{
+					"build" : "ModelingDispatcher/src",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.19"
+					},
+					"parentIndex" : 4,
+					"projectIndex" : 3,
+					"source" : "ModelingDispatcher/src",
+					"targetIndexes" : 
+					[
+						2
+					]
+				},
+				{
+					"build" : "ModelingDispatcher/tests",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.19"
+					},
+					"parentIndex" : 4,
+					"projectIndex" : 4,
+					"source" : "ModelingDispatcher/tests",
+					"targetIndexes" : 
+					[
+						0
+					]
+				},
+				{
+					"build" : "Models",
+					"childIndexes" : 
+					[
+						8,
+						11,
+						14,
+						17
+					],
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.19"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "Models"
+				},
+				{
+					"build" : "Models/pbu",
+					"childIndexes" : 
+					[
+						9,
+						10
+					],
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.19"
+					},
+					"parentIndex" : 7,
+					"projectIndex" : 0,
+					"source" : "Models/pbu"
+				},
+				{
+					"build" : "Models/pbu/src",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.19"
+					},
+					"parentIndex" : 8,
+					"projectIndex" : 5,
+					"source" : "Models/pbu/src",
+					"targetIndexes" : 
+					[
+						4
+					]
+				},
+				{
+					"build" : "Models/pbu/tests",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.19"
+					},
+					"parentIndex" : 8,
+					"projectIndex" : 6,
+					"source" : "Models/pbu/tests",
+					"targetIndexes" : 
+					[
+						5
+					]
+				},
+				{
+					"build" : "Models/target",
+					"childIndexes" : 
+					[
+						12,
+						13
+					],
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.19"
+					},
+					"parentIndex" : 7,
+					"projectIndex" : 0,
+					"source" : "Models/target"
+				},
+				{
+					"build" : "Models/target/src",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.19"
+					},
+					"parentIndex" : 11,
+					"projectIndex" : 7,
+					"source" : "Models/target/src",
+					"targetIndexes" : 
+					[
+						11
+					]
+				},
+				{
+					"build" : "Models/target/tests",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.19"
+					},
+					"parentIndex" : 11,
+					"projectIndex" : 8,
+					"source" : "Models/target/tests",
+					"targetIndexes" : 
+					[
+						12
+					]
+				},
+				{
+					"build" : "Models/rls",
+					"childIndexes" : 
+					[
+						15,
+						16
+					],
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.19"
+					},
+					"parentIndex" : 7,
+					"projectIndex" : 0,
+					"source" : "Models/rls"
+				},
+				{
+					"build" : "Models/rls/src",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.19"
+					},
+					"parentIndex" : 14,
+					"projectIndex" : 9,
+					"source" : "Models/rls/src",
+					"targetIndexes" : 
+					[
+						9
+					]
+				},
+				{
+					"build" : "Models/rls/tests",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.19"
+					},
+					"parentIndex" : 14,
+					"projectIndex" : 10,
+					"source" : "Models/rls/tests",
+					"targetIndexes" : 
+					[
+						10
+					]
+				},
+				{
+					"build" : "Models/pu",
+					"childIndexes" : 
+					[
+						18,
+						19
+					],
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.19"
+					},
+					"parentIndex" : 7,
+					"projectIndex" : 0,
+					"source" : "Models/pu"
+				},
+				{
+					"build" : "Models/pu/src",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.19"
+					},
+					"parentIndex" : 17,
+					"projectIndex" : 11,
+					"source" : "Models/pu/src",
+					"targetIndexes" : 
+					[
+						7
+					]
+				},
+				{
+					"build" : "Models/pu/tests",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.19"
+					},
+					"parentIndex" : 17,
+					"projectIndex" : 12,
+					"source" : "Models/pu/tests",
+					"targetIndexes" : 
+					[
+						8
+					]
+				},
+				{
+					"build" : "tests",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.19"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 13,
+					"source" : "tests",
+					"targetIndexes" : 
+					[
+						6
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12,
+						13
+					],
+					"directoryIndexes" : 
+					[
+						0,
+						1,
+						4,
+						7,
+						8,
+						11,
+						14,
+						17
+					],
+					"name" : "MissileSystem"
+				},
+				{
+					"directoryIndexes" : 
+					[
+						2
+					],
+					"name" : "message_dispatcher",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						1
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						3
+					],
+					"name" : "msg_test",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						3
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						5
+					],
+					"name" : "modeling_dispatcher",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						2
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						6
+					],
+					"name" : "disp_test",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						0
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						9
+					],
+					"name" : "pbu_model",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						4
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						10
+					],
+					"name" : "pbu_test",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						5
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						12
+					],
+					"name" : "target_model",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						11
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						13
+					],
+					"name" : "target_test",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						12
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						15
+					],
+					"name" : "rls_model",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						9
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						16
+					],
+					"name" : "rls_test",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						10
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						18
+					],
+					"name" : "pu_model",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						7
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						19
+					],
+					"name" : "pu_test",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						8
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						20
+					],
+					"name" : "project_test",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						6
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 6,
+					"id" : "disp_test::@a4b280f40e7ee22894cb",
+					"jsonFile" : "target-disp_test-Debug-a5a5bf6d9ae3fe986d8f.json",
+					"name" : "disp_test",
+					"projectIndex" : 4
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "message_dispatcher::@c990af31c4fafcc67ea2",
+					"jsonFile" : "target-message_dispatcher-Debug-e5e4ab47fdbc38858d31.json",
+					"name" : "message_dispatcher",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "modeling_dispatcher::@8c5e793988d04af90853",
+					"jsonFile" : "target-modeling_dispatcher-Debug-eeb6e348de3ca290289e.json",
+					"name" : "modeling_dispatcher",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "msg_test::@bc365dee08f77787a9bd",
+					"jsonFile" : "target-msg_test-Debug-62008105591bb72ea83a.json",
+					"name" : "msg_test",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 9,
+					"id" : "pbu_model::@b0ca6fa7371e6809286a",
+					"jsonFile" : "target-pbu_model-Debug-606f68518310b6538b7d.json",
+					"name" : "pbu_model",
+					"projectIndex" : 5
+				},
+				{
+					"directoryIndex" : 10,
+					"id" : "pbu_test::@7013e1582cf5260a7046",
+					"jsonFile" : "target-pbu_test-Debug-376c478e21beab3a34e0.json",
+					"name" : "pbu_test",
+					"projectIndex" : 6
+				},
+				{
+					"directoryIndex" : 20,
+					"id" : "project_test::@a44f0ac069e85531cdee",
+					"jsonFile" : "target-project_test-Debug-9819e394b1974d7117dc.json",
+					"name" : "project_test",
+					"projectIndex" : 13
+				},
+				{
+					"directoryIndex" : 18,
+					"id" : "pu_model::@33ab5c0654f3daf84c64",
+					"jsonFile" : "target-pu_model-Debug-2f11bc7f08de63c2b4c1.json",
+					"name" : "pu_model",
+					"projectIndex" : 11
+				},
+				{
+					"directoryIndex" : 19,
+					"id" : "pu_test::@a199720f9c6b229fde73",
+					"jsonFile" : "target-pu_test-Debug-a9532bae0ca5527c385d.json",
+					"name" : "pu_test",
+					"projectIndex" : 12
+				},
+				{
+					"directoryIndex" : 15,
+					"id" : "rls_model::@92458f8df5080ae46272",
+					"jsonFile" : "target-rls_model-Debug-38dc3b0b305c61fdf60e.json",
+					"name" : "rls_model",
+					"projectIndex" : 9
+				},
+				{
+					"directoryIndex" : 16,
+					"id" : "rls_test::@165e55b0afdabfdc2f70",
+					"jsonFile" : "target-rls_test-Debug-ab3cd0a175ed0d5afe2e.json",
+					"name" : "rls_test",
+					"projectIndex" : 10
+				},
+				{
+					"directoryIndex" : 12,
+					"id" : "target_model::@c73892183a7ccc89622a",
+					"jsonFile" : "target-target_model-Debug-a8abf8f879a0aef7bd98.json",
+					"name" : "target_model",
+					"projectIndex" : 7
+				},
+				{
+					"directoryIndex" : 13,
+					"id" : "target_test::@2c714a23191db034f6bb",
+					"jsonFile" : "target-target_test-Debug-bb3dfe70b5409e44c064.json",
+					"name" : "target_test",
+					"projectIndex" : 8
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/DanilMakhotkin/Documents/Homeworks/almaz/dev/Missile-system/dev/out/build/x64-Debug",
+		"source" : "C:/Users/DanilMakhotkin/Documents/Homeworks/almaz/dev/Missile-system/dev"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 2
+	}
+}

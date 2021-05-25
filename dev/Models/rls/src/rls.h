@@ -8,13 +8,18 @@
 #include "modelfactory.h"
 #include "msg_types.h"
 
+#include <cstddef>
+#include <cstdlib>
+#include "rtwtypes.h"
+#include "omp.h"
+#include "MFR_V2_Cycle_types.h"
+#include "MFR_V2_Cycle.h"
+#include "MFR_V2_Cycle_emxAPI.h"
+#include "MFR_V2_Cycle_terminate.h"
+#include "MFR_V2_GenerateMFRType.h"
+#include "MFR_V2_GenerateTrajectoryType.h"
+#include "rt_nonfinite.h"
 
-struct RLS_Params
-{
-    double COORDS;
-    double OBSERVATION_PARAMS;
-    double DISPERSION;
-};
 
 class RLS : public Model
 {
@@ -31,9 +36,12 @@ public:
 
 private:
     int id;
-    RLS_Params param;
     MessageQueue<Rocket_Start> recieve_pbu_msg;
     MessageQueue<TargetMsg> recieve_target_msg;
+
+    struct2_T MSG;
+    struct0_T TG;
+    struct1_T MFR;
 };
 
 inline void RLS::write_to_csv()
