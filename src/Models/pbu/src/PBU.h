@@ -3,6 +3,7 @@
 
 #include "channel_carrier.h"
 #include "abstractmodel.h"
+#include "modelfactory.h"
 #include "msg_types.h"
 #include <cmath>
 #include <map>
@@ -30,7 +31,7 @@ private:
     class Target
     {
     public:
-        Target();
+        Target(){}
         Target(int id, const RLCMsg& msg)
             : coords({{msg.coordinates[0],msg.coordinates[1],msg.coordinates[2]}}),
               speed({{msg.speed[0],msg.speed[1],msg.speed[2]}}),
@@ -53,7 +54,7 @@ private:
 
     class PU{
     public:
-        PU();
+        PU(){}
         PU(const PUtoPBUstartMsg& msg)
             : zur_num(msg.zur_num), status(msg.status),
               coords({msg.coord[0], msg.coord[0], msg.coord[0]})
@@ -76,7 +77,7 @@ private:
     void FirstStepFromPU();                                         //На первом шаге мод. получить от пу координаты и id
 
     void GetIdZur();                                                //Получить от ПУ id запущенного ЗУР
-    void TargetDistribution();                                      //Дать команду об уничтожении цели i устаноке j
+    void TargetDistribution(double time);                                      //Дать команду об уничтожении цели i устаноке j
 
 
     std::map<std::pair<id_type, id_type>, int> id_table;            // key - <first - rls_id, second - target_id>, value - My_id
@@ -89,7 +90,9 @@ private:
     std::map<id_type, std::vector<double>> pu_coords;
 
     std::vector<double> pbu_coords;
-    double time;                                                    // время данного шага, используется для отправки сообщений
+    //double time;                                                    // время данного шага, используется для отправки сообщений
 };
+
+DEFAULT_MODEL_FACTORY(PBU);
 
 #endif //MISSILESYSTEM_PBU_H

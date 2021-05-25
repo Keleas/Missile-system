@@ -1,7 +1,7 @@
 #include "PBU.h"
 
 PBU::PBU(id_type id, MsgChannelCarrier& carrier, std::ostream& log)
-    : Model{id, carrier, log}
+    : Model{ id, carrier, log}
 {
     declareteQueue(msg_from_rlc);
     declareteQueue(msg_from_pu_start);
@@ -21,8 +21,7 @@ bool PBU::init(const rapidjson::Value &initial_data)
 
 void PBU::firstStep()
 {
-    setLogHeader("Id", "X", "Y", "Z",
-                 "X", "Y", "Z", "Vx", "Vy", "Vz", "time", "target_id");
+    setLogHeader("target_id", "X", "Y", "Z", "Vx", "Vy", "Vz", "time_detect");
 
     FirstStepFromPU();
 }
@@ -31,14 +30,14 @@ void PBU::step(double time)
 {
     GetIdZur();                                                             // получить ID пущенных ЗУР если такие имеются
     GetRLIfromRadar();                                                      // получение информации о целях
-    TargetDistribution();                                                   // целераспределение
+    TargetDistribution(time);                                                   // целераспределение
 
     for(const auto& it : targets)
     {
-        writeLog(id, pbu_coords[0], pbu_coords[1], pbu_coords[2],
+        writeLog(time, it.first,
                 it.second.coords[0], it.second.coords[1], it.second.coords[2],
                 it.second.speed[0], it.second.speed[1], it.second.speed[2],
-                it.second.time, it.second.ID);
+                it.second.time);
     }
 }
 
@@ -97,10 +96,9 @@ void PBU::Target::CalculateParametrs()
 
 bool PBU::CheckTrack(const RLCMsg& t1, const Target& t2)
 {
-
     return ((t1.coordinates[0] - t2.coords[0]) * (t1.coordinates[0] - t2.coords[0]) +
             (t1.coordinates[1] - t2.coords[1]) * (t1.coordinates[1] - t2.coords[1]) +
-            (t1.coordinates[2] - t2.coords[2]) * (t1.coordinates[2] - t2.coords[2]) <= 2500) ||
+            (t1.coordinates[2] - t2.coords[2]) * (t1.coordinates[2] - t2.coords[2]) <= 2500) &&
 
             ((t1.speed[0] * t1.speed[0]) - (t2.speed[0] * t2.speed[0]) +
             (t1.speed[1] * t1.speed[1]) - (t2.speed[1] * t2.speed[1]) +
@@ -130,71 +128,75 @@ void PBU::AddNewTarget()
 
 void PBU::GetRLIfromRadar()
 {
-    time = msg_from_rlc.front().time;
-    double step_time = msg_from_rlc.front().time;
-    while (!msg_from_rlc.empty())
+    std::cout<<"*********************"<<'\n';
+    if(!msg_from_rlc.empty())
     {
-        if(id_table.empty())
+        double step_time = msg_from_rlc.front().time;
+
+        while (!msg_from_rlc.empty())
         {
-            AddNewTarget();
-        }
-        else
-        {
-            if(id_table.count(std::make_pair(msg_from_rlc.front().source_id,
-                                             msg_from_rlc.front().message.target_id)) == 0) // Если данные о цели с РЛС k еще не приходили
+            if(id_table.empty())
             {
-                for(auto& target : targets) // Если цель была обнаружена другими РЛС
+                AddNewTarget();
+            }
+            else
+            {
+                if(id_table.count(std::make_pair(msg_from_rlc.front().source_id,
+                                                 msg_from_rlc.front().message.target_id)) == 0) // Если данные о цели с РЛС k еще не приходили
                 {
-                    if(CheckTrack(msg_from_rlc.front().message, target.second))
+                    for(auto& target : targets) // Если цель была обнаружена другими РЛС
                     {
-                        UpdateTables(target.second.ID);
+                        if(CheckTrack(msg_from_rlc.front().message, target.second))
+                        {
+                            UpdateTables(target.second.ID);
 
-                        target.second.history_coords.push_back(msg_from_rlc.front().message.coordinates);
-                        target.second.history_speed.push_back(msg_from_rlc.front().message.speed);
+                            target.second.history_coords.push_back(msg_from_rlc.front().message.coordinates);
+                            target.second.history_speed.push_back(msg_from_rlc.front().message.speed);
 
-                        break;
+                            break;
+                        }
                     }
+                    AddNewTarget();         // Такой цели не было обнаружено другими РЛС
                 }
-                AddNewTarget();         // Такой цели не было обнаружено другими РЛС
+                else                        // Инфформация о данной цели уже приходила с РЛС k (обнавление данных)
+                {
+                    id_type My_ID = id_table[std::make_pair(msg_from_rlc.front().source_id,
+                                                            msg_from_rlc.front().message.target_id)];
+
+                    targets_time[std::make_pair(msg_from_rlc.front().source_id,
+                                                msg_from_rlc.front().message.target_id)] = msg_from_rlc.front().time; // обновляем время
+
+
+                    targets[My_ID].history_coords.push_back(msg_from_rlc.front().message.coordinates);
+                    targets[My_ID].history_speed.push_back(msg_from_rlc.front().message.speed);
+                }
             }
-            else                        // Инфформация о данной цели уже приходила с РЛС k (обнавление данных)
-            {
-                id_type My_ID = id_table[std::make_pair(msg_from_rlc.front().source_id,
-                                                        msg_from_rlc.front().message.target_id)];
-
-                targets_time[std::make_pair(msg_from_rlc.front().source_id,
-                                            msg_from_rlc.front().message.target_id)] = msg_from_rlc.front().time; // обновляем время
-
-
-                targets[My_ID].history_coords.push_back(msg_from_rlc.front().message.coordinates);
-                targets[My_ID].history_speed.push_back(msg_from_rlc.front().message.speed);
-            }
+            msg_from_rlc.pop_front();
         }
-        msg_from_rlc.pop_front();
-    }
 
-    /*******************************В этом блоке происходит поиск тех целей, которые не были обнавленны на данном шаге****************************************/
+        /*******************************В этом блоке происходит поиск тех целей, которые не были обнавленны на данном шаге****************************************/
 
-    for(auto& item : targets_time) // Смотрим по времени, какие данные обновились за этот шаг
-    {
-        if(item.second != step_time)
+        for(auto& item : targets_time) // Смотрим по времени, какие данные обновились за этот шаг
         {
-            std::pair<id_type, id_type> ID_from_rlc = item.first;
-            int  My_ID = id_table[item.first];
-
-            id_table.erase(ID_from_rlc);      // удаляем умоминания из таблицы соответсвия
-
-            history_id[My_ID].erase(ID_from_rlc.first);
-            if(history_id.count(My_ID) == 0)
+            if(item.second != step_time)
             {
-                targets.erase(My_ID);
-            }
+                std::pair<id_type, id_type> ID_from_rlc = item.first;
+                int  My_ID = id_table[item.first];
 
-            targets_time.erase(item.first);
+                id_table.erase(ID_from_rlc);      // удаляем умоминания из таблицы соответсвия
+
+                history_id[My_ID].erase(ID_from_rlc.first);
+                if(history_id.count(My_ID) == 0)
+                {
+                    targets.erase(My_ID);
+                }
+
+                targets_time.erase(item.first);
+            }
         }
+        for(auto& item : targets)
+            item.second.CalculateParametrs();                       // Пересчитываем координаты
     }
-    for(auto& item : targets)
-        item.second.CalculateParametrs();                       // Пересчитываем координаты
 }
 
 void PBU::FirstStepFromPU()
@@ -206,7 +208,7 @@ void PBU::FirstStepFromPU()
     }
 }
 
-void PBU::TargetDistribution()
+void PBU::TargetDistribution(double time)
 {
     for(auto& target: targets)
     {
@@ -217,7 +219,7 @@ void PBU::TargetDistribution()
                 PBUtoPUMsg msg{{target.second.coords[0],target.second.coords[1],target.second.coords[2]},
                                {target.second.speed[0],target.second.speed[1],target.second.speed[2]}};
 
-                send<PBUtoPUMsg>(time, msg);
+                send<PBUtoPUMsg>(launcher.first, time, msg);
                 --launcher.second.zur_num;
                 break;
             }
@@ -234,8 +236,7 @@ void PBU::GetIdZur()
         msg_from_pu_zur.pop_front();
     }
 }
-
-
+void PBU::endStep() {}
 
 //double CalculateDistanse(const std::vector<double>& a, const std::vector<double>& b)
 //{
