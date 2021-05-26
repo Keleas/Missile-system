@@ -9,8 +9,9 @@ set(TARGET_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/target)
 
 add_subdirectory(pbu)
 add_subdirectory(target)
+add_subdirectory(zur)
 add_subdirectory(pu)
 
-if(BUILD_TESTS)
-    add_subdirectory(pu_pbu_test)
-endif()
+#if(BUILD_TESTS)
+#    add_subdirectory(pu_pbu_test)
+#endif()

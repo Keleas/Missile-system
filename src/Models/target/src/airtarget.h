@@ -11,12 +11,13 @@
 
 constexpr double g = 9.81;
 
-struct AirTargetParams
+struct AbstractTargetParams
 {
     double MAX_TRANSVERSE_OVERLOAD;
     double MAX_NORMAL_OVERLOAD;
     double MAX_MAH;
     double MIN_TRANSVERSE_OVERLOAD;
+    double PRACTICAL_ROOF;
 };
 
 class AirTarget : public Model
@@ -24,27 +25,29 @@ class AirTarget : public Model
 public:
     AirTarget(id_type id, MsgChannelCarrier& carrier, std::ostream& log);
 
-    void calculate(double dt);
-
     bool init(const rapidjson::Value &initial_data) override final;
     void firstStep() override final;
     void step(double time) override final;
     void endStep() override final {write_to_file("target_crd.txt", control_points);};
 
+    void write_to_csv(bool fisrt_time=false);
+    void write_to_file(std::string file_name, std::vector<TrajectoryPoint> points = {});
+
     TargetStatus get_status();
     Vector3D get_coords();
-
     void set_status(TargetStatus trg);
 
-    int num_point_passed = 0;
-    void write_to_file(std::string file_name, std::vector<TrajectoryPoint> points = {});
-    void write_to_csv(bool fisrt_time=false);
+    MessageQueue<Explosion> recieve_msg;
 
 private:
+    void calculate(double dt);
+
     std::string targetName;
     std::string targetModelType;
-    AirTargetParams param;
-    MessageQueue<Explosion> recieve_msg;
+
+    int num_point_passed = 0;
+
+    AbstractTargetParams param;
     Vector3D coords;
     TargetStatus status = TargetStatus::is_not_fly;
 
@@ -54,9 +57,6 @@ private:
     Vector3D NuCurNext;
 
     GeodezicCoodinates GD_Msc = GeodezicCoodinates(55, 37, 0); //ךמסעûûûûכü
-
-    void TransformForCalculate();
-
 };
 
 inline void AirTarget::write_to_file(std::string file_name, std::vector<TrajectoryPoint> points)

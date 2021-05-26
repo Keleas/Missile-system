@@ -43,6 +43,7 @@ bool AirTarget::init(const rapidjson::Value& initial_data)
     param.MAX_NORMAL_OVERLOAD =  initial_data["target_max_Ny"].GetDouble();
     param.MAX_MAH =  initial_data["target_max_M"].GetDouble();
     param.MIN_TRANSVERSE_OVERLOAD =  initial_data["target_min_Nx"].GetDouble();
+    param.PRACTICAL_ROOF = initial_data["target_practical_roof"].GetDouble();
 
     for (auto& v : initial_data["target_points"].GetArray())
     {
