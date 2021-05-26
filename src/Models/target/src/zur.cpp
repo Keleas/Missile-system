@@ -20,7 +20,8 @@ bool zur::init(const rapidjson::Value& initial_data)
 void zur::firstStep()
 {
     status = ZurStatus::is_fly;
-    write_to_csv(true);
+    setLogHeader("target_id", "X", "Y", "Z", "Vx", "Vy", "Vz", "Elevation", "Azimuth", "Status");
+    //write_to_csv(true);
 }
 
 void zur::step(double time)
@@ -60,6 +61,8 @@ void zur::step(double time)
     else
         dt = time;
 
+    dt = 0.01;
+
     if (!is_tossed)
     {
         toss_rocket(dt);
@@ -81,18 +84,24 @@ void zur::step(double time)
         calculate(dt, points_rocket);
     }
 
-    ZurMSG msg;
-    GeocentricCoodinates GC(data.xPos.back(), data.yPos.back(), data.zPos.back());
-    Vector3D crd = GeoToPBU(GeodezicToGeoCentric(GD_Msc), GC);
-    msg.crd_zur = {crd.x, crd.y, crd.z};
-    msg.vels_zur = {data.xVel.back(), data.yVel.back(), data.zVel.back()};
-    msg.status = status;
+    if (!recieve_msg_PBU.empty() || !recieve_msg_PU.empty())
+    {
+        ZurMSG msg;
+        GeocentricCoodinates GC(data.xPos.back(), data.yPos.back(), data.zPos.back());
+        Vector3D crd = GeoToPBU(GeodezicToGeoCentric(GD_Msc), GC);
+        msg.crd_zur = {crd.x, crd.y, crd.z};
+        msg.vels_zur = {data.xVel.back(), data.yVel.back(), data.zVel.back()};
+        msg.status = status;
 
-    //writeLog();
+        writeLog(dt, id, msg.crd_zur[0], msg.crd_zur[1], msg.crd_zur[2],
+                msg.vels_zur[0], msg.vels_zur[1], msg.vels_zur[2],
+                data.angle_horizontal_plane.back(), data.wayAngle.back(),
+                status);
 
-    write_to_csv();
+        write_to_csv();
 
-    send<ZurMSG>(data.times.back(), msg);
+        send<ZurMSG>(data.times.back(), msg);
+    }
 }
 
 ZurStatus zur::get_status()

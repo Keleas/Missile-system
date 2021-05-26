@@ -64,7 +64,10 @@ bool AirTarget::init(const rapidjson::Value& initial_data)
 void AirTarget::firstStep()
 {
     status = TargetStatus::is_fly;
-    write_to_csv(true);
+
+    setLogHeader("target_model", "target_id", "X", "Y", "Z", "Vx", "Vy", "Vz", "Elevation", "Azimuth", "Status");
+
+    //write_to_csv(true);
 }
 
 void AirTarget::step(double time)
@@ -99,7 +102,11 @@ void AirTarget::step(double time)
     msg.vels = {data.xVel.back(), data.yVel.back(), data.zVel.back()};
     msg.status = status;
 
-    write_to_csv();
+    writeLog(dt, targetModelType, id, msg.coord[0], msg.coord[1], msg.coord[2],
+            msg.vels[0], msg.vels[1], msg.vels[2],
+            data.angle_horizontal_plane.back(), data.wayAngle.back(), status);
+
+    //write_to_csv();
 
     send<TargetMsg>(data.times.back(), msg);
 }
