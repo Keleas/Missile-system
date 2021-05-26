@@ -43,27 +43,6 @@ private:
     void step_msg(double time);
 };
 
-//inline void PU::write_to_csv(bool fisrt_time)
-//{
-//
-//    std::string sep = ", ";
-//
-//    if (fisrt_time)
-//    {
-//
-//    }
-//    else
-//    {
-//
-//        log << id << sep
-//            << pu_coords.at(1) << sep
-//            << pu_coords.at(2) << sep
-//            << pu_coords.at(3) << sep
-//            << rocket_count << sep
-//            << range << sep
-//            << ready << "\n";
-//    }
-//}
 
 DEFAULT_MODEL_FACTORY(PU)
 
