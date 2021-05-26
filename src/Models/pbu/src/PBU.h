@@ -20,7 +20,6 @@ public:
     void endStep() override final;
 
     //void write_to_file(std::string file_name);
-
 private:
     MessageQueue<RLCMsg> msg_from_rlc;                      // очередь сообщений от РЛС
 
@@ -67,7 +66,6 @@ private:
         double range;
         std::vector<double> coords;
     };
-
 
     void GetRLIfromRadar();                                         // Третичная обработка
     bool CheckTrack(const RLCMsg& t1, const Target& t2);            // Критерий сравнения целей

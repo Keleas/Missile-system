@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "PBU.h"
+#include "pu.h"
 #include "ModelingDispatcher.h"
 #include <QFile>
 #include <QTextStream>
@@ -64,6 +65,8 @@ public:
             send<RLCMsg>(target3.front().time,target3.front());
             target3.pop_front();
         }
+
+
     }
     void endStep() override final {}
 
@@ -99,13 +102,16 @@ DEFAULT_MODEL_FACTORY(RLS)
 
 
 
+
 int main()
 {
     std::map<std::string, std::pair<int, ModelFactory*> > factories;
-    std::pair<int, ModelFactory*> fac1 = {1, new PBUFactory()};
+    std::pair<int, ModelFactory*> fac1 = {2, new PBUFactory()};
     std::pair<int, ModelFactory*> fac2 = {1, new RLSFactory()};
+    std::pair<int, ModelFactory*> fac3 = {3, new PUFactory()};
     factories["PBU"] = fac1;
     factories["RLC"] = fac2;
+    factories["PU"] = fac3;
 
     ModelingDispatcher md(0.01, factories);
     md.run(scenario);
