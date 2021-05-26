@@ -109,7 +109,7 @@ Vector3D zur::get_coords()
     return Vector3D(x, y, z);
 }
 
-void AirTarget::set_status(TargetStatus trg)
+void zur::set_status(ZurStatus trg)
 {
     status = trg;
 }

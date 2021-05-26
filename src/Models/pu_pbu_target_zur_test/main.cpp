@@ -4,9 +4,8 @@
 
 #include "PBU.h"
 #include "pu.h"
-//#include "airtarget.h"
 #include "airtarget.h"
-//#include "zur.h"
+#include "zur.h"
 #include "rlc_stub.h"
 #include "ModelingDispatcher.h"
 
@@ -23,15 +22,14 @@ int main()
     std::pair<int, ModelFactory*> fac1 = {3, new PBUFactory()};
     std::pair<int, ModelFactory*> fac2 = {2, new RLCstubFactory()};
     std::pair<int, ModelFactory*> fac3 = {4, new PUFactory()};
-    AirTarget a;
-//    std::pair<int, ModelFactory*> fac4 = {1, new };
-//    std::pair<int, ModelFactory*> fac5 = {1, new zurFactory()};
+    std::pair<int, ModelFactory*> fac4 = {1, new AirTargetFactory()};
+    std::pair<int, ModelFactory*> fac5 = {1, new zurFactory()};
 
     factories["PBU"] = fac1;
     factories["RLS"] = fac2;
     factories["PU"] = fac3;
-//    factories["AirTarget"] = fac4;
-//    factories["ZUR"] = fac5;
+    factories["AirTarget"] = fac4;
+    factories["ZUR"] = fac5;
 
     ModelingDispatcher md(0.01, factories);
     md.run(scenario);
