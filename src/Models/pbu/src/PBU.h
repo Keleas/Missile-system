@@ -22,11 +22,11 @@ public:
     //void write_to_file(std::string file_name);
 
 private:
-    MessageQueue<RLCMsg> msg_from_rlc;                  // очередь сообщений от РЛС
+    MessageQueue<RLCMsg> msg_from_rlc;                      // очередь сообщений от РЛС
 
-    MessageQueue<PUtoPBUstartMsg> msg_from_pu_start;    // очередь сообщений от ПУ (для FirstStep)
-    MessageQueue<PUtoPBUzurIDMsg> msg_from_pu_zur;      // очередь сообщений от ПУ (получения ID ЗУР)
-    MessageQueue<PUtoBPUMsg> msg_from_pu;                // очередь сообщений от ПУ (обновление данных о состояниии ПУi)
+    MessageQueue<PUtoPBUstartMsg> msg_from_pu_start;        // очередь сообщений от ПУ (для FirstStep)
+    MessageQueue<PUtoPBUzurIDMsg> msg_from_pu_zur;          // очередь сообщений от ПУ (получения ID ЗУР)
+    MessageQueue<PUtoBPUMsg> msg_from_pu;                   // очередь сообщений от ПУ (обновление данных о состояниии ПУi)
 
     class Target
     {
@@ -48,10 +48,10 @@ private:
         std::vector<double> speed;
 
         id_type ID;
-        double time = 0;
+        double time = 0;                                      //время обнаружения
         bool first_step;
 
-        id_type ID_zur = 0;
+        id_type ID_zur = 0;                                   //id ЗУР назначенного для данной цели
         };
 
     class PU{
@@ -96,8 +96,7 @@ private:
     std::map<id_type, PU> pu_base;                                  // key - My_id, value - PU
     std::map<id_type, std::vector<double>> pu_coords;
 
-    std::vector<double> pbu_coords;
-    //double time;                                                    // время данного шага, используется для отправки сообщений
+    std::vector<double> pbu_coords;                                                       
 };
 
 DEFAULT_MODEL_FACTORY(PBU);

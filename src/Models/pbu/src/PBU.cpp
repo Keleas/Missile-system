@@ -30,7 +30,7 @@ void PBU::step(double time)
 {
     GetIdZur();                                                             // получить ID пущенных ЗУР если такие имеются
     GetRLIfromRadar();                                                      // получение информации о целях
-    UpdatePuStatus();
+    UpdatePuStatus();                                                       // обновление информации о аусковой установке
     TargetDistribution(time);                                               // целераспределение
 
     for(const auto& it : targets)
@@ -39,6 +39,27 @@ void PBU::step(double time)
                  it.second.coords[0], it.second.coords[1], it.second.coords[2],
                 it.second.speed[0], it.second.speed[1], it.second.speed[2],
                 it.second.time);
+    }
+}
+
+void PBU::FirstStepFromPU()
+{
+    while (!msg_from_pu_start.empty())
+    {
+        pu_base[msg_from_pu_start.front().source_id] = msg_from_pu_start.front().message;
+        msg_from_pu_start.pop_front();
+    }
+}
+
+void PBU::GetIdZur()
+{
+    while (!msg_from_pu_zur.empty())
+    {
+        targets[msg_from_pu_zur.front().message.target_id].ID_zur = msg_from_pu_zur.front().message.zur_id;
+
+        PBUtoRLCMsg msg {msg_from_pu_zur.front().message.zur_id};
+        send<PBUtoRLCMsg>(msg_from_pu_zur.front().time, msg);
+        msg_from_pu_zur.pop_front();
     }
 }
 
@@ -129,7 +150,6 @@ void PBU::AddNewTarget()
 
 void PBU::GetRLIfromRadar()
 {
-    std::cout<<"*********************"<<'\n';
     if(!msg_from_rlc.empty())
     {
         double step_time = msg_from_rlc.front().time;
@@ -210,16 +230,6 @@ void PBU::UpdatePuStatus()
     }
 }
 
-
-void PBU::FirstStepFromPU()
-{
-    while (!msg_from_pu_start.empty())
-    {
-        pu_base[msg_from_pu_start.front().source_id] = msg_from_pu_start.front().message;
-        msg_from_pu_start.pop_front();
-    }
-}
-
 void PBU::TargetDistribution(double time)
 {
     for(auto& target: targets)
@@ -253,19 +263,6 @@ void PBU::TargetDistribution(double time)
     }
 }
 
-void PBU::GetIdZur()
-{
-    while (!msg_from_pu_zur.empty())
-    {
-        targets[msg_from_pu_zur.front().message.target_id].ID_zur = msg_from_pu_zur.front().message.zur_id;
-
-        PBUtoRLCMsg msg {msg_from_pu_zur.front().message.zur_id};
-        send<PBUtoRLCMsg>(msg_from_pu_zur.front().time, msg);
-        msg_from_pu_zur.pop_front();
-    }
-}
-void PBU::endStep() {}
-
 double PBU::TargetAbsVelocity(std::vector<double> speed)
 {
     return sqrt((speed[0] * speed[0]) +
@@ -284,5 +281,7 @@ double PBU::CalculateDistanse(const std::vector<double>& a, const std::vector<do
             (a[1] - b[1]) * (a[1] - b[1]) +
             (a[2] - b[2]) * (a[2] - b[2]));
 }
+
+void PBU::endStep() {}
 
 
