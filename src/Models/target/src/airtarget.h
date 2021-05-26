@@ -28,7 +28,7 @@ public:
     bool init(const rapidjson::Value &initial_data) override final;
     void firstStep() override final;
     void step(double time) override final;
-    void endStep() override final {write_to_file("target_crd.txt", control_points);};
+    void endStep() override final {write_to_file("target_crd.txt", control_points);}
 
     void write_to_csv(bool fisrt_time=false);
     void write_to_file(std::string file_name, std::vector<TrajectoryPoint> points = {});
@@ -56,8 +56,10 @@ private:
 
     Vector3D NuCurNext;
 
-    GeodezicCoodinates GD_Msc = GeodezicCoodinates(55, 37, 0); //ÍÓÒÚ˚˚˚˚Î¸
+    GeodezicCoodinates GD_Msc = GeodezicCoodinates(55, 37, 0); //–∫–æ—Å—Ç—ã—ã—ã—ã–ª—å
 };
+
+DEFAULT_MODEL_FACTORY(AirTarget)
 
 inline void AirTarget::write_to_file(std::string file_name, std::vector<TrajectoryPoint> points)
 {
@@ -114,8 +116,6 @@ inline void AirTarget::write_to_csv(bool fisrt_time)
             << data.wayAngle.back() << sep << int(status) << "\n";
     }
 }
-
-DEFAULT_MODEL_FACTORY(AirTarget)
 
 Vector3D GeoToLocal(GeodezicCoodinates GD, GeocentricCoodinates GC, GeocentricCoodinates GC0);
 GeocentricCoodinates LocalToGeo(GeodezicCoodinates GD, Vector3D Loc, GeocentricCoodinates GC0);

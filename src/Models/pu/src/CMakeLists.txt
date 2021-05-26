@@ -17,10 +17,6 @@ add_library(${projectName}
         ${SOURCES}
         )
 
-target_include_directories(${projectName} INTERFACE
-        ${PROJECT_ROOT}/ModelingDispatcher/src
-        )
-
 target_link_libraries(${projectName} INTERFACE
         modeling_dispatcher
         )

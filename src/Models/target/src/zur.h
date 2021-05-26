@@ -13,7 +13,7 @@ public:
     bool init(const rapidjson::Value &initial_data) override final;
     void firstStep() override final;
     void step(double time) override final;
-    void endStep() override final {write_to_file("rocket_crd.txt");};
+    void endStep() override final {write_to_file("rocket_crd.txt");}
 
     void write_to_file(std::string file_name);
     void write_to_csv(bool fisrt_time=false);
@@ -49,5 +49,7 @@ private:
     bool is_tossed = false;
 
 };
+
+DEFAULT_MODEL_FACTORY(zur)
 
 #endif // ZUR_H
