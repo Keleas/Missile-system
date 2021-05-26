@@ -66,14 +66,12 @@ public:
     void clear(); /// Очистка моделей
 
     template <typename MT>
-
     /**
      * @brief Подписаться на сообщение заданного типа
      * Позволяет следить за сообщениями от различных моделей в процессе моделирования
      * @tparam MT тип сообщения
      * @param callback функция обработчик
      */
-
     void msgSubscribe(typename MsgChannel<MT>::callback_type&& callback);
 
 private:

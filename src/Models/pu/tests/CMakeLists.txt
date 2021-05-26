@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.19)
 
-set(projectName target_test)
+set(projectName pu_test)
 
 project(${projectName})
 
@@ -17,9 +17,9 @@ add_executable(${projectName}
         )
 
 target_include_directories(${projectName} PRIVATE
-        ${TARGET_ROOT}/src
+        ${PU_ROOT}/src
         )
 
 target_link_libraries(${projectName} PRIVATE
-        target_model
+        pu_model
         )

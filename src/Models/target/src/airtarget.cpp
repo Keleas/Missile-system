@@ -2,6 +2,7 @@
 
 #define square_destroy_range 2500
 
+
 AirTarget::AirTarget(id_type id, MsgChannelCarrier &carrier, std::ostream& log)
     : Model{id, carrier, log}
 {
@@ -56,6 +57,7 @@ bool AirTarget::init(const rapidjson::Value& initial_data)
         p.initialVel = v["vel"].GetDouble();
         control_points.push_back(p);
     }
+    return true;
 }
 
 void AirTarget::firstStep()

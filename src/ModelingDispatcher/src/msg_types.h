@@ -44,6 +44,61 @@ struct RocketMsg : public BasePhysicsEntity
     bool is_target_destroyed;
 };
 
+struct RLCMsg
+{
+    id_type target_id;
+    std::vector<double> coordinates;
+    std::vector<double> speed; 				//v_x, v_y, v_z
+    double time;  				            //временная метка
+};
+struct PBUtoRLCMsg
+{
+    id_type zur_id;
+};
+
+struct PUtoPBUstartMsg
+{
+    id_type launcher_id;    
+    vec3 coord;
+    double range;
+    int zur_num;
+    bool status;
+};
+
+struct PUtoBPUMsg
+{
+    int zur_num;
+    bool status;
+};
+
+struct PUMSGS
+{
+    vec3 target_coord;
+    double target_speed;
+};
+
+struct PBUtoPUMsg : public PUMSGS
+{
+    id_type target_id;
+//    PBUtoPUMsg(vec3 target_coord, vec3 target_speed){}
+};
+
+struct PUtoPBUzurIDMsg
+{
+    id_type target_id;
+    id_type zur_id;
+};
+
+struct PUtoZURMsg : public PUMSGS
+{
+    vec3 pu_coord;
+};
+
+struct PBUtoZURMsg : public PUMSGS
+{
+
+};
+
 struct Explosion
 {
     vec3 crd_rct;

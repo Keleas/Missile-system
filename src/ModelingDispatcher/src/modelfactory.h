@@ -10,7 +10,7 @@ class ModelFactory
 {
 public:
     ModelFactory() = default;
-    ~ModelFactory() {}
+    virtual ~ModelFactory() {}
 
     /**
      * Фабричный метод
