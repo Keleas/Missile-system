@@ -1,6 +1,5 @@
 #include "pu.h"
 
-
 PU::PU(id_type id, MsgChannelCarrier &carrier, std::ostream& log)
     : Model{id, carrier, log}
 {
@@ -44,53 +43,8 @@ void PU::step(double time)
     step_msg(time);
 //    write_to_csv(false);
     prev_time = time ;
-    writeLog(time, id, pu_coords.at(0), pu_coords.at(1), pu_coords.at(2), rocket_count, range, ready);
-
-    if (time > 0.045 && time <0.055)
-    {
-        PBUtoPUMsg pbumsg;
-        pbumsg.target_coord = {100,101,102};
-        pbumsg.target_speed = {10};
-        pbumsg.target_id=6;
-        send<PBUtoPUMsg>(id,time,pbumsg);
-    }
-
-    if (time > 0.065 && time < 0.075)
-    {
-        PBUtoPUMsg pbumsg;
-        pbumsg.target_coord = {100,101,102};
-        pbumsg.target_speed = {10};
-        pbumsg.target_id=6;
-        send<PBUtoPUMsg>(id,time,pbumsg);
-    }
-
-    if (time > 1.995 && time < 2.005)
-    {
-        PBUtoPUMsg pbumsg;
-        pbumsg.target_coord = {100,101,102};
-        pbumsg.target_speed = {10};
-        pbumsg.target_id=6;
-        send<PBUtoPUMsg>(id,time,pbumsg);
-    }
-    if (time > 2.555 && time < 2.565)
-    {
-        PBUtoPUMsg pbumsg;
-        pbumsg.target_coord = {100,101,102};
-        pbumsg.target_speed = {10};
-        pbumsg.target_id=6;
-        send<PBUtoPUMsg>(id,time,pbumsg);
-    }
-    if (time > 2.855 && time < 2.865)
-    {
-        PBUtoPUMsg pbumsg;
-        pbumsg.target_coord = {100,101,102};
-        pbumsg.target_speed = {10};
-        pbumsg.target_id=6;
-        send<PBUtoPUMsg>(id,time,pbumsg);
-    }
+    writeLog(time, id, pu_coords.at(0), pu_coords.at(1), pu_coords.at(2), rocket_count, range, ready);    
 }
-
-
 
 void PU::endStep()
 {

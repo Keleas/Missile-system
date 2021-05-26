@@ -51,8 +51,7 @@ public:
     {
         if(!target1.empty())
         {
-            send<RLCMsg>(target1.front().time, target1.front());
-            std::cout<<"_____________________"<<'\n';
+            send<RLCMsg>(target1.front().time, target1.front());            
             target1.pop_front();
         }
         if(!target2.empty())
@@ -69,7 +68,6 @@ public:
 
     }
     void endStep() override final {}
-
 
     void read_aircraft_csv(QString name_csv, std::list<RLCMsg>& msg_q)
     {
@@ -99,14 +97,8 @@ public:
     std::list<RLCMsg> target2;
     std::list<RLCMsg> target3;
 };
-
 DEFAULT_MODEL_FACTORY(RLS)
 
-
-void test()
-{
-
-}
 
 
 int main()

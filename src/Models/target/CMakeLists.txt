@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.19)
 
-set(TARGET_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
-
 LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/src)
 
 add_subdirectory(src)
