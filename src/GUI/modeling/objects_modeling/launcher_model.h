@@ -16,7 +16,7 @@ private:
     double radius;
     int ammo;
     bool status;
-    QHash <int, zur_model> map_zurs;
+    QMap <int, zur_model> map_zurs;
 };
 
 #endif // LAUNCHER_MODEL_H

@@ -10,13 +10,13 @@ modeling::modeling(QWidget *parent) :
 
     ui->customPlot_1->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes |
                                     QCP::iSelectLegend | QCP::iSelectPlottables);
-    ui->customPlot_1->xAxis->setRange(-1000, 10000);
-    ui->customPlot_1->yAxis->setRange(-1000, 10000);
+    ui->customPlot_1->xAxis->setRange(-1000, 100000);
+    ui->customPlot_1->yAxis->setRange(-1000, 100000);
 
     ui->customPlot_2->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes |
                                     QCP::iSelectLegend | QCP::iSelectPlottables);
-    ui->customPlot_2->xAxis->setRange(-10000, 10000);
-    ui->customPlot_2->yAxis->setRange(-10000, 10000);
+    ui->customPlot_2->xAxis->setRange(-100000, 100000);
+    ui->customPlot_2->yAxis->setRange(-100000, 100000);
 
     //ui->customPlot_2->
     //ui->customPlot_2->axisRect()->setupFullAxesBox();
@@ -27,11 +27,11 @@ modeling::modeling(QWidget *parent) :
 //                                               QFont("sans", 17, QFont::Bold));
 //    ui->customPlot_1->plotLayout()->addElement(0, 0, title);
 
-    ui->customPlot_2->xAxis->setLabel("x, km");
-    ui->customPlot_2->yAxis->setLabel("y, km");
+    ui->customPlot_2->xAxis->setLabel("x, м");
+    ui->customPlot_2->yAxis->setLabel("y, м");
 
-    ui->customPlot_1->xAxis->setLabel("Горизонтальная дальность, км");
-    ui->customPlot_1->yAxis->setLabel("Высота, км");
+    ui->customPlot_1->xAxis->setLabel("Горизонтальная дальность, м");
+    ui->customPlot_1->yAxis->setLabel("Высота, м");
 
     pbu_model pbu;
     x_pbu.append(0);
@@ -174,11 +174,6 @@ void modeling::set_data(QString _config_name)
     fileJson.close();
 }
 
-//void set_data_pbu(int id, double x, double y)
-//{
-
-//}
-
 void modeling::accept_json(QString _name_json)
 {
     name_config = _name_json;
@@ -230,15 +225,15 @@ void modeling::create_stationary_graphs()
     ui->customPlot_2->graph(radar_plot)->setPen(pen);
     //pu
     pen.setColor(Qt::blue);
-    ui->customPlot_1->graph(pu_plot)->setLineStyle(QCPGraph::lsNone);
-    ui->customPlot_1->graph(pu_plot)->
+    ui->customPlot_1->graph(launcher_plot)->setLineStyle(QCPGraph::lsNone);
+    ui->customPlot_1->graph(launcher_plot)->
             setScatterStyle(QCPScatterStyle::ssCircle);
-    ui->customPlot_1->graph(pu_plot)->setPen(pen);
+    ui->customPlot_1->graph(launcher_plot)->setPen(pen);
 
-    ui->customPlot_2->graph(pu_plot)->setLineStyle(QCPGraph::lsNone);
-    ui->customPlot_2->graph(pu_plot)->
+    ui->customPlot_2->graph(launcher_plot)->setLineStyle(QCPGraph::lsNone);
+    ui->customPlot_2->graph(launcher_plot)->
             setScatterStyle(QCPScatterStyle::ssCircle);
-    ui->customPlot_2->graph(pu_plot)->setPen(pen);
+    ui->customPlot_2->graph(launcher_plot)->setPen(pen);
     //pbu
     pen.setColor(Qt::darkMagenta);
     ui->customPlot_1->graph(pbu_plot)->setLineStyle(QCPGraph::lsNone);
@@ -337,6 +332,14 @@ void modeling::set_data_plot()
         plot_1(i->get_graph(),i->get_vector_z(),i->get_vector_range());
         plot_2(i->get_graph(),i->get_vector_x(),i->get_vector_y());
     }
+    for (QMap <int, aircraft_pbu*>::iterator i = map_aircraft_pbu.begin();
+         i != map_aircraft_pbu.end(); ++i)
+    {
+        plot_1(i.value()->get_graph(),i.value()->get_vector_z(),
+               i.value()->get_vector_range());
+        plot_2(i.value()->get_graph(),i.value()->get_vector_x(),
+               i.value()->get_vector_y());
+    }
 }
 
 void modeling::read_csv()
@@ -344,27 +347,59 @@ void modeling::read_csv()
     QDir dir;
     QFileInfoList list = dir.entryInfoList();
     QStringList regexp;
-    regexp << "(1Target3Points_AirTarget_\\d+.csv)"; //0
+    regexp << "("+name_config.split("/").last().split(".").at(0)+"_PBU.csv)"//0
+           << "("+name_config.split("/").last().split(".").at(0)+"_AirTarget_\\d+.csv)"//1
+           << "("+name_config.split("/").last().split(".").at(0)+"_PU_\\d+.csv)" //2
+           << "("+name_config.split("/").last().split(".").at(0)+"_RLS_\\d+.csv)" //3
+           << "("+name_config.split("/").last().split(".").at(0)+"_ZUR_\\d+.csv)";  //4
     QRegExp rx;
 
-   rx.setPattern(regexp[0]);
-
-
-    for (int i = 0; i < list.size(); ++i)
+    for (int ii = 0; ii<regexp.size(); ++ii)
     {
-        QFileInfo fileInfo = list.at(i);
-        if (rx.exactMatch(fileInfo.fileName()))
+        rx.setPattern(regexp[ii]);
+        for (int jj = 0; jj < list.size(); ++jj)
         {
-            read_aircraft_csv(fileInfo.fileName());
-            qDebug() <<fileInfo.fileName()<<" dsfsd";
+            QFileInfo fileInfo = list.at(jj);
+            if (rx.exactMatch(fileInfo.fileName()))
+            {
+                pick_read_method(ii,fileInfo.fileName());
+                qDebug() <<fileInfo.fileName()<<" dsfsd";
+            }
+            qDebug() << qPrintable(QString("%1 %2").arg(fileInfo.size(), 10)
+                                   .arg(fileInfo.fileName()));
         }
-        qDebug() << qPrintable(QString("%1 %2").arg(fileInfo.size(), 10)
-                               .arg(fileInfo.fileName()));
     }
     ////vremenno
     set_data_plot();
 }
 
+void modeling::pick_read_method(int state, QString _name_csv)
+{
+    switch (state)
+    {
+    case rls_read:
+    {
+       // read_radar_csv(_name_csv);
+    }break;
+    case launcher_read:
+    {
+       // read_launcher_csv(_name_csv);
+    }break;
+    case pbu_read:
+    {
+        read_pbu_csv(_name_csv);
+    }break;
+    case aircraft_read:
+    {
+        read_aircraft_csv(_name_csv);
+    }break;
+    case zur_read:
+    {
+        //read_zur_csv(_name_csv);
+    }break;
+    }
+}
+///@note уточнить
 void modeling::read_aircraft_csv(QString name_csv)
 {
     QFile file(name_csv);
@@ -378,21 +413,24 @@ void modeling::read_aircraft_csv(QString name_csv)
         QTextStream in(&file);
         QString line = in.readLine();
         int id;
+        int ii=0;/////временно
         while (!in.atEnd())
         {
+            ++ii; /////временно
             line = in.readLine();
             id=line.split(',').at(1).toInt();
 
-            map_aircraft_m.operator[](id).append_point(line.split(',').at(2).toDouble(),
-                                                  line.split(',').at(3).toDouble(),
-                                                  line.split(',').at(4).toDouble());
-            map_aircraft_m.operator[](id).set_status(line.split(',').at(10).toInt());
+            map_aircraft_m.operator[](id).append_point(ii,
+                                                       line.split(',').at(2).toDouble(),
+                                                       line.split(',').at(3).toDouble(),
+                                                       line.split(',').at(4).toDouble(),
+                                                       line.split(',').at(10).toInt());
         }
         qDebug()<<map_aircraft_m.operator[](id).get_id()<<"id";
         file.close();
     }
 }
-
+///@note уточнить
 void modeling::read_zur_csv(QString name_csv)
 {
     QFile file(name_csv);
@@ -404,21 +442,28 @@ void modeling::read_zur_csv(QString name_csv)
     {
         QTextStream in(&file);
         QString line = in.readLine();
+        int id;
+        int ii=0;/////временно
         while (!in.atEnd())
         {
+            ++ii; /////временно
 
             line = in.readLine();
-            int id=line.split(',').at(0).toInt();
+            id=line.split(',').at(2).toInt();
 
-            map_zurs.take(id).append_point(line.split(',').at(1).toDouble(),
-                                            line.split(',').at(2).toDouble(),
-                                            line.split(',').at(3).toDouble());
+            map_zurs.take(id).append_point(line.split(',').at(0).toDouble(),
+                                           line.split(',').at(2).toDouble(),
+                                           line.split(',').at(3).toDouble(),
+                                           line.split(',').at(4).toDouble(),
+                                           line.split(',').at(9).toInt());
+            ///@note уточнить
             map_zurs.take(id).set_status(line.split(',').at(9).toInt());
 
         }
         file.close();
     }
 }
+///@note уточнить
 void modeling::read_radar_csv(QString name_csv)
 {
     QFile file(name_csv);
@@ -428,28 +473,31 @@ void modeling::read_radar_csv(QString name_csv)
     }
     else
     {
-        QTextStream in(&file);
-        QString line = in.readLine();
-        while (!in.atEnd())
-        {
-            aircraft_pbu *craft = new aircraft_pbu();
-            int id;
-            QTextStream in(&file);
-            line = in.readLine();
-            while (!in.atEnd())
-            {
-                line = in.readLine();
+//        QTextStream in(&file);
+//        QString line = in.readLine();
+//        while (!in.atEnd())
+//        {
+//            aircraft_pbu *craft = new aircraft_pbu();
+//            int id;
+//            QTextStream in(&file);
+//            line = in.readLine();
+//            int ii=0;/////временно
+//            while (!in.atEnd())
+//            {
+//                ++ii; /////временно
+//                line = in.readLine();
 
-                id=line.split(',').at(11).toInt();
-                craft->set_id(id);
-                craft->append_point(line.split(',').at(4).toDouble(),
-                                    line.split(',').at(5).toDouble(),
-                                    line.split(',').at(6).toDouble());
-                craft->set_time_spotted(line.split(',').at(10).toDouble());
-                craft->set_status(line.split(',').at(12).toInt());
-            }
-            map_aircraft_pbu.insert(id,craft);
-        }
+//                id=line.split(',').at(11).toInt();
+//                craft->set_id(id);
+//                craft->append_point(line.split(',').at(4).toDouble(),
+//                                    line.split(',').at(5).toDouble(),
+//                                    line.split(',').at(6).toDouble(),
+//                                    0);
+//                craft->set_time_spotted(line.split(',').at(10).toDouble());
+//                craft->set_status(line.split(',').at(12).toInt());
+//            }
+//            map_aircraft_pbu.insert(id,craft);
+//        }
         file.close();
     }
 }
@@ -465,25 +513,33 @@ void modeling::read_pbu_csv(QString name_csv)
     {
         QTextStream in(&file);
         QString line = in.readLine();
-        aircraft_pbu *craft = new aircraft_pbu();
-        int id;
+        QVector <int> id_pbu_aircrafts;
+        int id =0;
+        id_pbu_aircrafts.append(id);
         while (!in.atEnd())
         {
             line = in.readLine();
-            id=line.split(',').at(2).toInt();
+            id=line.split(',').at(1).toInt();
+            if(id>id_pbu_aircrafts.last())
+            {
+               id_pbu_aircrafts.append(id);
+               aircraft_pbu *craft = new aircraft_pbu();
+               craft->set_id(id);
+               craft->set_time_spotted(line.split(',').last().toDouble());
+               map_aircraft_pbu.insert(id,craft);
+            }
 
-            craft->set_id(id);
-            craft->append_point(line.split(',').at(4).toDouble(),
-                                line.split(',').at(5).toDouble(),
-                                line.split(',').at(6).toDouble());
-            craft->set_time_spotted(line.split(',').at(10).toDouble());
-            craft->set_status(line.split(',').at(12).toInt());
+            map_aircraft_pbu.operator[](id)->append_point(
+                        line.split(',').at(0).toDouble(),
+                        line.split(',').at(2).toDouble(),
+                        line.split(',').at(3).toDouble(),
+                        line.split(',').at(4).toDouble(),
+                        0);
         }
-        map_aircraft_pbu.insert(id,craft);
     }
     file.close();
 }
-
+///@note уточнить
 void modeling::read_launcher_csv(QString name_csv)
 {
     QFile file(name_csv);
@@ -495,8 +551,11 @@ void modeling::read_launcher_csv(QString name_csv)
     {
         QTextStream in(&file);
         QString line = in.readLine();
+        int id;
+        int ii=0;/////временно
         while (!in.atEnd())
         {
+            ++ii; /////временно
             line = in.readLine();
             int id=line.split(',').at(0).toInt();
             map_launchers.take(id).set_ammo(line.split(',').at(4).toInt());

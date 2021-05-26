@@ -16,5 +16,6 @@ launcher_model::launcher_model(QJsonObject initData)
     ammo = initData["rockets_amount"].toInt();
 
 
+
     //QJsonArray array = initData["zur_id"].toArray();
 }

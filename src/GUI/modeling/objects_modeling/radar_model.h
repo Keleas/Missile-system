@@ -17,7 +17,7 @@ private:
     double Dmax;
     double Dmin;
 
-    QHash <int, aircraft_radar*> hash_aircrafts_radar;
+    QMap <int, aircraft_radar*> map_aircrafts_radar;
 };
 
 #endif // RADAR_MODEL_H

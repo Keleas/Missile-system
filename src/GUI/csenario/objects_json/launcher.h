@@ -53,6 +53,10 @@ public:
     QTreeWidgetItem *get_item(int count);
     int count_zur(){return count_ammo;};
     QVector<Antiaircraft*> get_zurs(){return rokets;};
+    void set_name(QString _name){name=_name;}
+    double get_x(){return x;}
+    double get_y(){return y;}
+    int get_id(){return id;};
 
 private:
     int id;
@@ -62,8 +66,8 @@ private:
     double radius;
     int count_ammo;
     int cooldown;
+    QString name;
     QVector<Antiaircraft*> rokets;
-
 };
 
 

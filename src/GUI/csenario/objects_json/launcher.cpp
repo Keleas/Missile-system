@@ -96,19 +96,9 @@ void Antiaircraft::set_properties(double _max_Nx,
 
 QTreeWidgetItem* Antiaircraft::get_item(int count)
 {
-//    QStringList list;
-//    list<<"ID: "+QString::number(id)
-//       <<"x: "+QString::number(x)
-//      <<"y: "+QString::number(y)
-//     <<"z: "+QString::number(z);
-//    list.append("Радиус действия (км): "+QString::number(radius));
-//    list.append("Количество ЗУР: "+QString::number(count_ammo));
-//    list.append("Время перезарядки (c): "+QString::number(cooldown));
-//    //    list.append("Направление оси вращения РЛС _X: 0");
-//    //    list.append("Направление оси вращения РЛС _Y: 0");
-//    //    list.append("Направление оси вращения РЛС _Z: 0");
+
     QTreeWidgetItem *item = new QTreeWidgetItem();
-//    item->setText(0, "ПУ_"+QString::number(count));
+    item->setText(0, "ЗУР_"+QString::number(count)+ ": id: " +QString::number(id));
 //    for (int ii=0;ii<list.size() ; ++ii)
 //    {
 //        QTreeWidgetItem* item_child = new QTreeWidgetItem();
@@ -145,6 +135,7 @@ Launcher::Launcher(QJsonObject initData, QSqlDatabase db)
     radius = initData["radius"].toDouble();
     count_ammo = initData["rockets_amount"].toInt();
     cooldown = initData["cooldown"].toInt();
+    name = initData["name"].toString();
 
     QJsonArray array = initData["zur_id"].toArray();
     for (QJsonValue value : array)
@@ -180,6 +171,7 @@ QJsonObject Launcher::toJsonObject()
         {"radius",radius},
         {"rockets_amount",count_ammo},
         {"cooldown",cooldown},
+        {"name",name},
         {"zur_id",QJsonValue(zur_id)}
     };
     launcherJsonObj.insert("initial_data", QJsonValue(launcherJsonInitData));
@@ -216,34 +208,25 @@ void Launcher::append_zur(Antiaircraft *roket)
 
 QTreeWidgetItem* Launcher::get_item(int count)
 {
-//    QStringList list;
-//    list<<"ID: "+QString::number(id)
-//       <<"x: "+QString::number(x)
-//      <<"y: "+QString::number(y)
-//     <<"z: "+QString::number(z);
-//    list.append("Радиус действия (км): "+QString::number(radius));
-//    list.append("Количество ЗУР: "+QString::number(count_ammo));
-//    list.append("Время перезарядки (c): "+QString::number(cooldown));
-    //    list.append("Направление оси вращения РЛС _X: 0");
-    //    list.append("Направление оси вращения РЛС _Y: 0");
-    //    list.append("Направление оси вращения РЛС _Z: 0");
-    QTreeWidgetItem *item = new QTreeWidgetItem();
-//    item->setText(0, "ПУ_"+QString::number(count));
-//    for (int ii=0;ii<list.size() ; ++ii)
-//    {
-//        QTreeWidgetItem* item_child = new QTreeWidgetItem();
-//        item->addChild(item_child);
-//        item_child->setText(0,list.at(ii));
-//    }
-//    QTreeWidgetItem* item_child = new QTreeWidgetItem();
-//    item->addChild(item_child);
-//    item_child->setText(0,"ЗУР");
-//    for (Antiaircraft* ii : rokets)
-//    {
-//        QTreeWidgetItem* item_roket = new QTreeWidgetItem();
-//        item_child->addChild(item_roket);
-//        item_roket->setText(0,ii->get_name()+": ID_"+ii->get_id());
-//    }
+    QTreeWidgetItem* item = new QTreeWidgetItem();
+    QList<QString> list;
+    list<<"ID: "+QString::number(id)
+       <<"x: "+QString::number(x)
+      <<"y: "+QString::number(y)
+     <<"z: "+QString::number(z)
+    <<"Радиус действия (км): "+QString::number(radius)
+    <<"Количество ЗУР: "+QString::number(count_ammo)
+    <<"Время перезарядки (c): "+QString::number(cooldown);
+
+    item->setText(0, "ПУ_"+QString::number(count));
+
+    for (int ii=0;ii<list.size() ; ++ii)
+    {
+         QTreeWidgetItem* item_child = new QTreeWidgetItem();
+         item->addChild(item_child);
+         item_child->setText(0,list.at(ii));
+    }
+
 
     return item;
 }

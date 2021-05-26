@@ -13,17 +13,15 @@ widget_modelset::widget_modelset(QWidget *parent) :
     if (!db.open())
         QMessageBox::critical(0,"DB Error",db.lastError().text());
 
-    ui->customPlot->setInteractions(QCP::iSelectAxes |
-                                    QCP::iSelectLegend |
-                                    QCP::iSelectPlottables);
+    ui->customPlot->setInteractions(/*QCP::iRangeDrag |*/ QCP::iRangeZoom);
 
 //    QIcon icon(":/src/images/pu.png");
 
-    ui->customPlot->xAxis->setRange(-10000, 10000);
-    ui->customPlot->yAxis->setRange(-10000, 10000);
+    ui->customPlot->xAxis->setRange(-100000, 100000);
+    ui->customPlot->yAxis->setRange(-100000, 100000);
 
-    ui->customPlot->xAxis->setLabel("x, km");
-    ui->customPlot->yAxis->setLabel("y, km");
+    ui->customPlot->xAxis->setLabel("x, м");
+    ui->customPlot->yAxis->setLabel("y, м");
 
     create_stationary_elements();
 
@@ -285,16 +283,8 @@ void widget_modelset::button_aircraft_toggled(bool state)
         index_aircraft = (ui->customPlot->graphCount())-1;
         vector_x_aircraft.clear();
         vector_y_aircraft.clear();
-        QPen pen_line(Qt::red, 3, Qt::DashDotLine,
-                 Qt::RoundCap, Qt::RoundJoin);
-        QColor color( qrand() % ((255 + 1) - 0) + 0,
-                      qrand() % ((255 + 1) - 0) + 0,
-                      qrand() % ((255 + 1) - 0) + 0, 255 );
-        pen_line.setColor(color);
-        ui->customPlot->graph(index_aircraft)->
-                setScatterStyle(QCPScatterStyle::ssCircle);
-        ui->customPlot->graph(index_aircraft)->setLineStyle(QCPGraph::lsLine);
-        ui->customPlot->graph(index_aircraft)->setPen(pen_line);
+        set_pen_graph(index_aircraft);
+
 //        connect(ui->customPlot, SIGNAL(mouseDoubleClick(QMouseEvent*)),
 //                this, SLOT(add_maneuver(QMouseEvent*)));
         connect(ui->customPlot, SIGNAL(mousePress(QMouseEvent*)),
@@ -447,6 +437,7 @@ void widget_modelset::add_basic_items_aircraft(QTreeWidgetItem* _item)
     craft->set_model(buff);
     craft->set_name("plane_"+
                     QString::number(vector_aircrafts.size()));
+    craft->set_graph(index_aircraft);
 
     list<<"ID: "+QString::number(count_id)/*QString::number(_count)*/
        <<"Модель: "+buff
@@ -474,13 +465,14 @@ void widget_modelset::add_basic_items_aircraft(QTreeWidgetItem* _item)
 void widget_modelset::add_children_items_pu(double x, double y)
 {
     ++count_id;
-
     int count = vector_item_pu.size();
 
     Launcher* pu = new Launcher();
+    pu->set_name("ПУ_"+QString::number(count));
+    pu->set_id(count_id);
+    pu->set_coordinates(x,y,0);
     vector_launchers.append(pu);
-    vector_launchers.last()->set_id(count_id);
-    vector_launchers.last()->set_coordinates(x,y,0);
+
     QTreeWidgetItem* item = new QTreeWidgetItem();
     QList<QString> list;
     list<<"ID: "+QString::number(count_id)
@@ -514,14 +506,14 @@ void widget_modelset::add_children_items_pu(double x, double y)
     ///@note переделать добавление в дерево
     for (int ii = 0; ii<id_zur.size();++ii)
     {
-        QTreeWidgetItem* item_roket = new QTreeWidgetItem();
-        vector_item_zur.append(item_roket);
+        QTreeWidgetItem* item_roket = new QTreeWidgetItem();        
         item_child->addChild(item_roket);
         item_roket->setText(0,"ЗУР_"+QString::number(vector_item_zur.size())+": "
                             +QString::number(id_zur.at(ii)));
         Antiaircraft *zur = new Antiaircraft();
         zur->set_id(id_zur.at(ii));
         zur->set_name("zur_"+QString::number(vector_item_zur.size()));
+        vector_item_zur.append(item_roket);
         pu->append_zur(zur);
     }
 
@@ -539,8 +531,8 @@ void widget_modelset::add_children_items_radar(double x, double y)
     rls->set_coordinates(x,y,0);
     rls->set_id(count_id);
     rls->set_model(str);
+    rls->set_name("РЛС_"+QString::number(count));
     vector_radars.append(rls);
-
 
     QList<QString> list;
     list<<"ID: "+QString::number(count_id)
@@ -562,7 +554,7 @@ void widget_modelset::add_children_items_radar(double x, double y)
          item_child->setText(0,list.at(ii));
 //         vector_data_radar.append(list.at(ii).split(": ").at(1));
     }
-
+    set_radius_radar(rls);
     //qDebug()<<vector_data_radar;
 }
 
@@ -571,9 +563,9 @@ void widget_modelset::add_point_items_aircraft(double x, double y,
 {
     QVector<QString> vector = input_dialog_point_aircraft();
 
-    Point point;
-    point.set_coordinates(x,y,vector.at(0).toDouble());
-    point.set_velocity(vector.at(1).toDouble());
+    Point *point = new Point();
+    point->set_coordinates(x,y,vector.at(0).toDouble());
+    point->set_velocity(vector.at(1).toDouble());
 
     vector_aircrafts.last()->append_point(point);
 
@@ -806,9 +798,9 @@ void widget_modelset::on_save_pushButton_clicked()
     if(result == QDialog::Accepted)
     {
         QMessageBox msgBox;
-        name=lineEdit_name->text() + "_config.json";
+        name=lineEdit_name->text() + ".json";
         name_std_config = name.toStdString().c_str();
-        name_config = lineEdit_name->text() + "_config.json";
+        name_config = lineEdit_name->text() + ".json";
         serialization_json(name);
         ui->label_name_config->setText(name);
 
@@ -927,16 +919,29 @@ void widget_modelset::on_pushButton_open_clicked()
 
     clearData();
     deserialization_json(filename);
-    set_tree_items();
+    set_elements_modelset();
     ui->pushButton_modelling->setDisabled(false);
 }
-///@note дописать для ЛА и точек
+
+
+void widget_modelset::set_elements_modelset()
+{
+    set_tree_items();
+    set_stationary_graphs();
+    set_aircraft_graphs();
+    set_radius_graphs();
+}
+
 void widget_modelset::set_tree_items()
 {
     int count;
     //top_item_pbu->addChildren(ccp_pbu.get_item());
     for (Radar *rls : vector_radars)
     {
+        if(count_id<rls->get_id())
+        {
+            count_id = rls->get_id();
+        }
         count = vector_item_radar.size();
         QTreeWidgetItem* item = new QTreeWidgetItem();
         item = rls->get_item(count);
@@ -945,15 +950,129 @@ void widget_modelset::set_tree_items()
     }
     for (Launcher *pu : vector_launchers)
     {
+        if(count_id<pu->get_zurs().last()->get_id())
+        {
+            count_id = pu->get_zurs().last()->get_id();
+        }
         count = vector_item_pu.size();
         QTreeWidgetItem* item = new QTreeWidgetItem();
         item = pu->get_item(count);
         vector_item_pu.append(item);
         top_item_pu->addChild(item);
+        QTreeWidgetItem* item_child = new QTreeWidgetItem();
+        item_child->setText(0,"ЗУР");
+        for (int ii=0; ii<pu->get_zurs().size();++ii)
+        {
+            QTreeWidgetItem* item_roket = new QTreeWidgetItem();
+            item_roket = pu->get_zurs().at(ii)->get_item(vector_item_zur.size());
+            item_child->addChild(item_roket);
+            vector_item_zur.append(item_roket);
+        }
+        item->addChild(item_child);
     }
+    for (Aircraft *craft : vector_aircrafts)
+    {
+        if(count_id<craft->get_id())
+        {
+            count_id = craft->get_id();
+        }
+        count = vector_item_aircraft.size();
+        QTreeWidgetItem* item = new QTreeWidgetItem();
+        item = craft->get_item(count);
+        vector_item_aircraft.append(item);
+        top_item_aircraft->addChild(item);
+        for (int ii=0;ii<craft->get_points().size() ; ++ii)
+        {
+            item->addChild(craft->get_points().at(ii)->get_item(ii));
+        }
+    }
+}
+
+void widget_modelset::set_stationary_graphs()
+{
+    for (Radar* rls : vector_radars)
+    {
+        vector_x_radar.append(rls->get_x());
+        vector_y_radar.append(rls->get_y());
+    }
+    plot(state_radar,vector_x_radar,vector_y_radar);
+    for (Launcher* pu : vector_launchers)
+    {
+        vector_x_pu.append(pu->get_x());
+        vector_y_pu.append(pu->get_y());
+    }
+    plot(state_pu,vector_x_pu,vector_y_pu);
+}
+
+void widget_modelset::set_aircraft_graphs()
+{
+    index_aircraft = (ui->customPlot->graphCount())-1;
+    for (Aircraft* craft : vector_aircrafts)
+    {
+        ui->customPlot->addGraph();
+        index_aircraft = (ui->customPlot->graphCount())-1;
+        craft->set_graph(index_aircraft);
+        plot(index_aircraft,craft->get_vector_x(), craft->get_vector_y());
+        set_pen_graph(index_aircraft);
+    }
+    ui->customPlot->replot();
+}
+
+void widget_modelset::set_radius_graphs()
+{
+    index_aircraft = (ui->customPlot->graphCount())-1;
+    for (Radar* rls : vector_radars)
+    {
+        ui->customPlot->addGraph();
+        index_aircraft = (ui->customPlot->graphCount())-1;
+        rls->set_graph(index_aircraft);
+        plot(index_aircraft,rls->get_rad_max_x(), rls->get_rad_max_y());
+        set_pen_radius(index_aircraft);
+    }
+    ui->customPlot->replot();
+}
+
+void widget_modelset::set_radius_radar(Radar* rls)
+{
+    //qDebug
+    ui->customPlot->addGraph();
+    index_aircraft = (ui->customPlot->graphCount())-1;
+    rls->set_graph(index_aircraft);
+    plot(index_aircraft,rls->get_rad_max_x(), rls->get_rad_max_y());
+    set_pen_radius(index_aircraft);
+    ui->customPlot->replot();
 }
 
 void widget_modelset::on_pushButton_modelling_clicked()
 {
+    emit start_modelling(0);
     emit set_json(name_config);
+}
+
+void widget_modelset::set_pen_graph(int number)
+{
+    QPen pen_line(Qt::red, 3, Qt::DashDotLine,
+             Qt::RoundCap, Qt::RoundJoin);
+    QColor color( qrand() % ((255 + 1) - 0) + 0,
+                  qrand() % ((255 + 1) - 0) + 0,
+                  qrand() % ((255 + 1) - 0) + 0, 255 );
+    pen_line.setColor(color);
+    ui->customPlot->graph(number)->
+            setScatterStyle(QCPScatterStyle::ssCircle);
+    ui->customPlot->graph(number)->setLineStyle(QCPGraph::lsLine);
+    ui->customPlot->graph(number)->setPen(pen_line);
+}
+
+void widget_modelset::set_pen_radius(int number)
+{
+    QPen pen_line(Qt::red, 3, Qt::DashDotLine,
+             Qt::RoundCap, Qt::RoundJoin);
+    QColor color( qrand() % ((255 + 1) - 0) + 0,
+                  qrand() % ((255 + 1) - 0) + 0,
+                  qrand() % ((255 + 1) - 0) + 0, 255 );
+    pen_line.setColor(color);
+    ui->customPlot->graph(number)->
+            setScatterStyle(QCPScatterStyle::ssDot);
+    ui->customPlot->graph(number)->setLineStyle(QCPGraph::lsNone);
+    ui->customPlot->graph(number)->setPen(pen_line);
 }

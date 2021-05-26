@@ -36,6 +36,7 @@ public:
 
 signals:
     void set_json(QString);
+    void start_modelling(int);
 
 
 private:
@@ -81,7 +82,7 @@ private:
     ///
     int state_buttons;
     ///
-    /// \brief
+    /// \brief общий id
     ///
     int count_id = 0;
     /// \brief Указатель на самый верхний элемент дерева для объектов
@@ -241,6 +242,20 @@ private:
     void deserialization_json(QString _config_name);
 
     void set_properties_antiaircraft(Antiaircraft *antiaircraft);
+
+    void set_stationary_graphs();
+
+    void set_aircraft_graphs();
+
+    void set_radius_graphs();
+
+    void set_elements_modelset();
+
+    void set_pen_graph(int number);
+
+    void set_pen_radius(int number);
+
+    void set_radius_radar(Radar* rls);
 
 private slots:
     ///

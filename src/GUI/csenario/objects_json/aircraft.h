@@ -24,6 +24,9 @@ public:
     void set_velocity(double velocity);
 
     QTreeWidgetItem *get_item(int count);
+
+    double get_x(){return x;}
+    double get_y(){return y;}
 private:
     int point;
     double x;
@@ -56,14 +59,24 @@ public:
                         double min_Nx,
                         double max_M,
                         double roof);
-    void set_points(QVector<Point> points);
 
-    void append_point(Point _point);
+    QVector<Point*> get_points(){return points;}
+
+    void append_point(Point* _point);
 
     QTreeWidgetItem *get_item(int count);
 
+    int get_graph(){return number_graph;}
+    void set_graph(int number){number_graph = number;}
+
+    QVector<double> get_vector_x();
+    QVector<double> get_vector_y();
+
+    int get_id(){return id;};
+
 private:
 
+    int number_graph;
     QString target_name = "plane_";
     QString target_model_name;
     int id;
@@ -71,8 +84,9 @@ private:
     double max_Ny;
     double min_Nx;
     double max_M;
-    double roof;
-    QVector<Point> points;
+    double roof;    
+    QVector<Point*> points;
+
 };
 
 

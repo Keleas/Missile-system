@@ -16,6 +16,7 @@ Radar::Radar(QJsonObject initData)
     rotate_x = initData["rotate_x"].toDouble();
     rotate_y = initData["rotate_y"].toDouble();
     rotate_z = initData["rotate_z"].toDouble();
+    name = initData["name"].toString();
 
     lambda = initData["lambda"].toDouble();
     Dmax = initData["Dmax"].toDouble();
@@ -36,6 +37,7 @@ Radar::Radar(QJsonObject initData)
     Gain = initData["Gain"].toDouble();
     P_peak = initData["P_peak"].toDouble();
     Tr = initData["Tr"].toDouble();
+    calculate_radius(Dmin,Dmax);
 
     count_channels_targets = initData["Ntraj"].toDouble();
     count_channels_zurs = initData["Nmissiles"].toDouble();
@@ -57,6 +59,7 @@ QJsonObject Radar::toJsonObject()
         {"rotate_x",rotate_x},
         {"rotate_y",rotate_y},
         {"rotate_z",rotate_z},
+        {"name",name},
 
         {"Ntraj",count_channels_targets},
         {"Nmissiles",count_channels_zurs},
@@ -171,4 +174,16 @@ void Radar::set_is_pisets_kolya(QString _model, QSqlDatabase db)
     rotate_x = 0;
     rotate_y = 0;
     rotate_z = 1;
+    calculate_radius(Dmin,Dmax);
+}
+
+void Radar::calculate_radius(double radius_min, double radius_max)
+{
+    for (double t=0; t<2*3.14; t+=0.01)
+    {
+        vector_radius_min_x.append(radius_min*(cos(t))+x);
+        vector_radius_min_y.append(radius_min*(sin(t))+y);
+        vector_radius_max_x.append(radius_max*(cos(t))+x);
+        vector_radius_max_y.append(radius_max*(sin(t))+y);
+    }
 }

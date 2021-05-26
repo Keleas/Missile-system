@@ -80,7 +80,16 @@ private:
     {
         pbu_plot, ///< график ПБУ
         radar_plot,///< график РЛС
-        pu_plot,///< график ПУ
+        launcher_plot,///< график ПУ
+    };
+
+    enum num_read_method
+    {
+        pbu_read, ///<
+        aircraft_read,///<
+        launcher_read,///<
+        rls_read,///<
+        zur_read,///<
     };
 
     void clear_data();
@@ -104,9 +113,9 @@ private:
 
     void set_pen(int index);
 
-//    void set_data_pbu(int id, double x, double y);
-
     void read_csv();
+
+    void pick_read_method(int state, QString _name_csv);
 
     void read_aircraft_csv(QString name_csv);
 

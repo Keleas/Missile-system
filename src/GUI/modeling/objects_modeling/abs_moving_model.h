@@ -2,17 +2,30 @@
 #define ABS_MOVING_MODEL_H
 #include <QString>
 #include <QVector>
-#include <QHash>
+#include <QMap>
 #include <QJsonObject>
+//#include <QHash>
+
+
+struct Point_model
+{
+    QVector<double> vector_point_x,
+    vector_point_y,
+    vector_point_z,
+    vector_point_range;
+    int status;
+};
 
 class abs_moving_model
 {
 public:
     abs_moving_model();
     void set_id(int id);
-    void append_point(double x,
-                      double y,
-                      double z);
+    void append_point(double _step,
+                      double _x,
+                      double _y,
+                      double _z,
+                      int _status);
     void set_name(QString name);
     void set_status(int status){status_modeling = status;}
 
@@ -30,19 +43,9 @@ protected:
     QString name;
     int id;
     int status_modeling = 1;
-
     int number_graph;
 
-    struct Point
-    {
-        double x,
-        y,
-        z,
-        horizontal_range;
-        int status;
-    };
-
-    QMap<double, Point*> *points;
+    QMap<double, Point_model*> points;
 
     QVector<double> vector_x,
     vector_y,
