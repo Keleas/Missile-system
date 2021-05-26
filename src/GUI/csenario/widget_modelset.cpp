@@ -872,7 +872,8 @@ void widget_modelset::deserialization_json(QString _config_name)
     QJsonObject j_object = doc.object();
 
     QString name = j_object["scenario_name"].toString();
-    ui->time_modelinglineEdit->setText(j_object["end_time"].toString());
+    ui->time_modelinglineEdit->
+            setText(QString::number(j_object["end_time"].toDouble()));
 
     name_config = _config_name;
     name_std_config = _config_name.toStdString();
