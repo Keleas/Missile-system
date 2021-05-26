@@ -13,6 +13,7 @@ pbu_model::pbu_model(QJsonObject initData)
     x =  initData["x"].toDouble();
     y =  initData["y"].toDouble();
     z =  initData["z"].toDouble();
+    horizontal_range = sqrt(pow(x,2)+pow(y,2));
 }
 
 //void pbu_model::

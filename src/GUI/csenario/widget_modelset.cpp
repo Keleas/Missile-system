@@ -121,6 +121,10 @@ void widget_modelset::clearData()
     set_state_buttons(777);
     count_id=0;
     ui->label_name_config->clear();
+
+    ui->customPlot->xAxis->setRange(-100000, 100000);
+    ui->customPlot->yAxis->setRange(-100000, 100000);
+    ui->customPlot->replot();
 }
 
 void widget_modelset::get_pos_mouse_on_canvas(QMouseEvent *event)
@@ -584,7 +588,7 @@ void widget_modelset::add_point_items_aircraft(double x, double y,
         <<"x[м]: "+QString::number(x)
         <<"y[м]: "+QString::number(y)
         <<"z[м]: "+vector.at(0)
-        <<"Скорость[км/ч]: "+vector.at(1);
+        <<"Скорость[м/с]: "+vector.at(1);
     QTreeWidgetItem* item_child = new QTreeWidgetItem();
     _item->addChild(item_child);
     item_child->setText(0,list.at(0));    
@@ -606,7 +610,7 @@ QVector<QString> widget_modelset::input_dialog_point_aircraft()
     QLineEdit* lineEdit_z = new QLineEdit();
     QLineEdit* lineEdit_velocity = new QLineEdit();
     QLabel* label_z = new QLabel("z[м]");
-    QLabel* label_velocity = new QLabel("Скорость[км/ч]");
+    QLabel* label_velocity = new QLabel("Скорость[м/c]");
     QLabel* label_point = new QLabel("Point #"+
                                      QString::number(vector_x_aircraft.size()));
 
@@ -814,7 +818,7 @@ void widget_modelset::on_save_pushButton_clicked()
         serialization_json(name);
         ui->label_name_config->setText(name);
 
-        msgBox.setText("Данные сохранены в файл: "+name);
+        msgBox.setText("Сценарий сохранен в файл: "+name);
         msgBox.exec();
     }
     ui->label_name_config->setText(name);
@@ -829,7 +833,7 @@ void widget_modelset::serialization_json(QString _config_name)
     QJsonObject rootJsonObj
     {
         {"scenario_name",   _config_name.split(".").at(0)},
-        {"end_time",        ui->time_modelinglineEdit->text()},
+        {"end_time",        ui->time_modelinglineEdit->text().toDouble()},
     };
 
     objArray.append(ccp_pbu.toJsonObject());

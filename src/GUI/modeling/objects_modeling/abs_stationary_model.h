@@ -13,6 +13,7 @@ public:
                          double y,
                          double z);
     void set_name(QString name);
+    QString get_name(){return name;}
 
     double get_x(){return x;}
     double get_y(){return y;}
@@ -20,6 +21,7 @@ public:
     double get_range(){return horizontal_range;}
 
 protected:
+
     QString name;
     int id;
 

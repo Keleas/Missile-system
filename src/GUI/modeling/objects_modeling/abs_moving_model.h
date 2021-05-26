@@ -7,6 +7,7 @@
 //#include <QHash>
 
 
+
 struct Point_model
 {
     QVector<double> vector_point_x,
@@ -34,12 +35,18 @@ public:
 
     int get_id(){return id;}
 
+    QMap<double, Point_model*> get_points(){return points;}
+
     QVector<double> get_vector_x(){return vector_x;}
     QVector<double> get_vector_y(){return vector_y;}
     QVector<double> get_vector_z(){return vector_z;}
     QVector<double> get_vector_range(){return vector_horizontal_range;}
 
+    QString get_name(){return name;}
+
 protected:
+
+
     QString name;
     int id;
     int status_modeling = 1;

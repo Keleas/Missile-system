@@ -1,4 +1,6 @@
 #include "abs_moving_model.h"
+#include <cmath>
+#include <QDebug>
 
 abs_moving_model::abs_moving_model()
 {

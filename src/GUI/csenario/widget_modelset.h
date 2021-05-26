@@ -259,6 +259,10 @@ private:
 
     void set_radius_launcher(Launcher* pu);
 
+public slots:
+
+    void on_pushButton_modelling_clicked();
+
 private slots:
     ///
     /// \brief Слот, обработки нажатия клавиши мыши на полотно
@@ -299,8 +303,6 @@ private slots:
     /// \brief Слот, обработки нажатия кнопки "Открыть сценарий"
     ///
     void on_pushButton_open_clicked();
-
-    void on_pushButton_modelling_clicked();
 
     void get_pos_mouse_on_canvas(QMouseEvent *event);
 };

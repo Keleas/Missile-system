@@ -3,14 +3,18 @@
 
 #include <QWidget>
 #include <QInputDialog>
+#include <QThread>
+#include <QLayout>
 #include "qcustomplot.h"
 #include "aircraft_model.h"
 #include "aircraft_pbu.h"
-#include "aircraft_radar.h"
 #include "launcher_model.h"
 #include "pbu_model.h"
 #include "radar_model.h"
 #include "zur_model.h"
+
+#define _STEP_TIME_ 1
+
 
 namespace Ui {
 class modeling;
@@ -29,18 +33,8 @@ public slots:
     void accept_json(QString);
 
 private slots:
-//  void titleDoubleClick(QMouseEvent *event);
-//  void axisLabelDoubleClick(QCPAxis* axis, QCPAxis::SelectablePart part);
-//  void legendDoubleClick(QCPLegend* legend, QCPAbstractLegendItem* item);
-//  void selectionChanged();
-//  void mousePress();
 
-//  void addRandomGraph();
-//  void removeSelectedGraph();
-//  void removeAllGraphs();
-//  void contextMenuRequest(QPoint pos);
-//  void moveLegend();
-//  void graphClicked(QCPAbstractPlottable *plottable, int dataIndex);
+    void change_step(int index);
 
 private:
     Ui::modeling *ui;
@@ -75,6 +69,8 @@ private:
     pbu_model pbu;
 
     int count_graph = 3;
+
+    double end_time;
 
     enum num_stationary_plots
     {
@@ -113,6 +109,8 @@ private:
 
     void set_pen(int index);
 
+    void set_pen_radius(int number);
+
     void read_csv();
 
     void pick_read_method(int state, QString _name_csv);
@@ -126,6 +124,11 @@ private:
     void read_pbu_csv(QString name_csv);
 
     void read_launcher_csv(QString name_csv);
+
+    void create_dynamic_elements();
+
+    void append_layout_pu();
+
 };
 
 #endif // MODELING_H

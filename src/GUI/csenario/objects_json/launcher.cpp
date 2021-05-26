@@ -59,12 +59,12 @@ QJsonObject Antiaircraft::toJsonObject(QSqlDatabase db)
     };
     QJsonObject launcherJsonInitData
     {
-        {"target_name",name},
-        {"target_max_Nx",max_Nx},
-        {"target_max_Ny",max_Ny},
-        {"target_min_Nx",min_Nx},
-        {"target_max_M",max_M},
-        {"target_practical_roof",roof}
+        {"rocket_name",name},
+        {"rocket_max_Nx",max_Nx},
+        {"rocket_max_Ny",max_Ny},
+        {"rocket_min_Nx",min_Nx},
+        {"rocket_max_M",max_M},
+        {"rocket_practical_roof",roof}
     };
     launcherJsonObj.insert("initial_data", QJsonValue(launcherJsonInitData));
     return launcherJsonObj;
@@ -173,7 +173,8 @@ QJsonObject Launcher::toJsonObject()
         {"rockets_amount",count_ammo},
         {"cooldown",cooldown},
         {"name",name},
-        {"zur_id",QJsonValue(zur_id)}
+        {"zur_id",QJsonValue(zur_id)},
+        {"pbu_id", 0}
     };
     launcherJsonObj.insert("initial_data", QJsonValue(launcherJsonInitData));
     return launcherJsonObj;
