@@ -27,6 +27,7 @@ void zur::firstStep()
 void zur::step(double time)
 {
     GeocentricCoodinates GC_target;
+    bool is_target_init = false;
     Vector3D crd_target;
     double vel_target;
     if (!recieve_msg_PU.empty())
@@ -36,71 +37,90 @@ void zur::step(double time)
 
         Vector3D crd_pu = recieve_msg_PU.front().message.pu_coord;
         start_point.initialPoint = PBUToGeo(GeodezicToGeoCentric(GD_Msc), crd_pu);
-        start_point.initialVel = 1.1 * vel_target;
+        start_point.initialVel = 1.5 * vel_target;
 
         GC_target = PBUToGeo(GeodezicToGeoCentric(GD_Msc), crd_target);
 
         recieve_msg_PU.pop_front();
+
+        start_time = time;
+
+        start_calculate = true;
+        is_target_init = true;
     }
 
     if (!recieve_msg_PBU.empty())
     {
-        crd_target = recieve_msg_PU.front().message.target_coord;
-        vel_target = recieve_msg_PU.front().message.target_speed;
+        crd_target = Vector3D(recieve_msg_PBU.front().message.target_coord);
+        vel_target = recieve_msg_PBU.front().message.target_speed;
 
         GC_target = PBUToGeo(GeodezicToGeoCentric(GD_Msc), crd_target);
 
         recieve_msg_PBU.pop_front();
+        is_target_init = true;
     }
 
-    double dt;
     if (data.nPoints != 0)
     {
-        dt = time - data.times.back();
-    }
-    else
-        dt = time;
+        GeocentricCoodinates GC_rocket = {data.xPos.back(), data.yPos.back(), data.zPos.back()};
+        if ((GC_target-GC_rocket).length() <= 200)
+            is_target_init = false;
 
-    dt = 0.01;
-
-    if (!is_tossed)
-    {
-        toss_rocket(dt);
-    }
-    else
-    {
-        std::vector<TrajectoryPoint> points_rocket(2);
-
-        points_rocket[0].initialPoint.x = data.xPos.back();
-        points_rocket[0].initialPoint.y = data.yPos.back();
-        points_rocket[0].initialPoint.z = data.zPos.back();
-        points_rocket[0].initialVel = sqrt(data.xVel.back()*data.xVel.back() + data.yVel.back()*data.yVel.back() + data.zVel.back()*data.zVel.back());
-
-        GC_target = PBUToGeo(GeodezicToGeoCentric(GD_Msc), crd_target);
-
-        TrajectoryPoint target_pos(GC_target, 1.1*vel_target);
-        points_rocket[1] = target_pos;
-
-        calculate(dt, points_rocket);
+        std::cout << "CHECK LENGTH at " << time << " : " << (GC_target-GC_rocket).length() << std::endl;
     }
 
-    if (!recieve_msg_PBU.empty() || !recieve_msg_PU.empty())
+    if (start_calculate && is_target_init)
     {
-        ZurMSG msg;
-        GeocentricCoodinates GC(data.xPos.back(), data.yPos.back(), data.zPos.back());
-        Vector3D crd = GeoToPBU(GeodezicToGeoCentric(GD_Msc), GC);
-        msg.crd_zur = {crd.x, crd.y, crd.z};
-        msg.vels_zur = {data.xVel.back(), data.yVel.back(), data.zVel.back()};
-        msg.status = status;
+        double dt;
+        if (data.nPoints != 0)
+        {
+            dt = time - data.times.back();
+        }
+        else
+            dt = time;
 
-        writeLog(dt, id, msg.crd_zur[0], msg.crd_zur[1], msg.crd_zur[2],
-                msg.vels_zur[0], msg.vels_zur[1], msg.vels_zur[2],
-                data.angle_horizontal_plane.back(), data.wayAngle.back(),
-                status);
+        dt = 0.01;
 
-        write_to_csv();
+        if (!is_tossed)
+        {
+            toss_rocket(dt);
+        }
+        else
+        {
+            std::vector<TrajectoryPoint> points_rocket(2);
 
-        send<ZurMSG>(data.times.back(), msg);
+            points_rocket[0].initialPoint.x = data.xPos.back();
+            points_rocket[0].initialPoint.y = data.yPos.back();
+            points_rocket[0].initialPoint.z = data.zPos.back();
+            points_rocket[0].initialVel = sqrt(data.xVel.back()*data.xVel.back() + data.yVel.back()*data.yVel.back() + data.zVel.back()*data.zVel.back());
+
+            GC_target = PBUToGeo(GeodezicToGeoCentric(GD_Msc), crd_target);
+
+            TrajectoryPoint target_pos(GC_target, 1.5*vel_target);
+            points_rocket[1] = target_pos;
+
+            calculate(dt, points_rocket);
+            data.times.back() += start_time;
+        }
+
+        if (data.nPoints != 0)
+        {
+            ZurMSG msg;
+            GeocentricCoodinates GC(data.xPos.back(), data.yPos.back(), data.zPos.back());
+            Vector3D crd = GeoToPBU(GeodezicToGeoCentric(GD_Msc), GC);
+            msg.crd_zur = {crd.x, crd.y, crd.z};
+            msg.vels_zur = {data.xVel.back(), data.yVel.back(), data.zVel.back()};
+            msg.status = status;
+
+            writeLog(data.times.back(), id, msg.crd_zur[0], msg.crd_zur[1], msg.crd_zur[2],
+                    msg.vels_zur[0], msg.vels_zur[1], msg.vels_zur[2],
+                    data.angle_horizontal_plane.back(), data.wayAngle.back(),
+                    int(status));
+
+            //write_to_csv();
+
+            send<ZurMSG>(data.times.back(), msg);
+        }
     }
 }
 
@@ -122,82 +142,6 @@ void zur::set_status(ZurStatus trg)
 {
     status = trg;
 }
-
-/*void zur::pursuit(double dt)
-{
-    double rocket_vel = start_point.initialVel;
-    GeocentricCoodinates start_rocket(start_point.initialPoint.x, start_point.initialPoint.y, start_point.initialPoint.z);
-
-    std::vector<TrajectoryPoint> points_rocket(2);
-
-    bool first_time = true;
-
-    std::vector<double> cur_vec_vel(3);
-    std::vector<double> AccelsLast_(3);
-    double NormLast_ = 0;
-    double TransLast_ = 0;
-    double HorizLast_  = 0;
-    double BankLast_ = 0;
-    double WayLast_ = 0;
-
-    int i = 0;
-    double time_detection = 0;
-
-    TrajectoryPoint target_pos(GC_, rocket_vel);
-    points_rocket[1] = target_pos;
-
-        if (first_time)
-        {
-            time_detection = data_target.times[i];
-            toss_rocket(point_start_rocket, data_rocket);
-
-            points_rocket[0].initialPoint.x = data_rocket.xPos.back();
-            points_rocket[0].initialPoint.y = data_rocket.yPos.back();
-            points_rocket[0].initialPoint.z = data_rocket.zPos.back();
-            points_rocket[0].initialVel = sqrt(data_rocket.xVel.back()*data_rocket.xVel.back() + data_rocket.yVel.back()*data_rocket.yVel.back() + data_rocket.zVel.back()*data_rocket.zVel.back());
-
-            double vel_ = sqrt(data_rocket.xVel.back()*data_rocket.xVel.back() + data_rocket.yVel.back()*data_rocket.yVel.back() + data_rocket.zVel.back()*data_rocket.zVel.back());
-            cur_vec_vel = {data_rocket.xVel.back()/vel_, data_rocket.yVel.back()/vel_, data_rocket.zVel.back()/vel_};
-            AccelsLast_ = {data_rocket.xAcc.back(), data_rocket.yAcc.back(), data_rocket.zAcc.back()};
-            NormLast_ = data_rocket.normalOverload.back();
-            TransLast_ = data_rocket.transverseOverload.back();
-            HorizLast_ = data_rocket.angle_horizontal_plane.back();
-            BankLast_ = data_rocket.bankAngle.back();
-            WayLast_ = data_rocket.wayAngle.back();
-
-            //calculate(points_rocket, data_rocket, 4, cur_vec_vel, AccelsLast_, NormLast_, TransLast_, HorizLast_, BankLast_, WayLast_);
-            first_time = false;
-        }
-
-    points_rocket[0].initialPoint.x = data.xPos.back();
-    points_rocket[0].initialPoint.y = data.yPos.back();
-    points_rocket[0].initialPoint.z = data.zPos.back();
-    points_rocket[0].initialVel = sqrt(data.xVel.back()*data.xVel.back() + data.yVel.back()*data.yVel.back() + data.zVel.back()*data.zVel.back());
-
-    //calculate(points_rocket, data_rocket, 9, cur_vec_vel, AccelsLast_, NormLast_, TransLast_, HorizLast_, BankLast_, WayLast_);
-
-    GeocentricCoodinates GC_r(data.xPos.back(), data.yPos.back(), data.zPos.back());
-    GC_.x = data_target.xPos[i+10];
-    GC_.y = data_target.yPos[i+10];
-    GC_.z = data_target.zPos[i+10];
-
-    //std::cout << (GC_ - GC_r).length() << "\n";
-    if ((GC_ - GC_r).length() < 200)
-    {
-        data_target.resize(i+11);
-        break;
-    }
-
-    std::cout << i << " " << data_target.times[i] << " " << data_rocket.times.back() << "\n";
-
-    i += 10;
-
-    for (int i = 0; i < data_rocket.nPoints; i++)
-    {
-        data_rocket.times[i] += time_detection;
-    }
-}
-*/
 
 void zur::calculate(double dt, std::vector<TrajectoryPoint> control_points)
 {
@@ -424,7 +368,7 @@ void zur::toss_rocket(double dt)
     GD_tmp.altitude = GD_tmp.altitude + data.nPoints*(h/n_steps);
     GeocentricCoodinates GC_tmp = GeodezicToGeoCentric(GD_tmp);
 
-    data.times.push_back(data.nPoints*dt);
+    data.times.push_back(data.nPoints*dt + start_time);
 
     data.xPos.push_back(GC_tmp.x);
     data.yPos.push_back(GC_tmp.y);
@@ -446,6 +390,6 @@ void zur::toss_rocket(double dt)
     data.normalOverload.push_back((OY*(data.yVel.back()/g) + OY - OY*data.yVel.back()).length());
     data.transverseOverload.push_back(1);
 
-    if (GD_tmp.altitude == 50)
+    if (GD_tmp.altitude > 50)
         is_tossed = true;
 }

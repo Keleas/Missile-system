@@ -37,7 +37,7 @@ public:
     Vector3D get_coords();
     void set_status(TargetStatus trg);
 
-    MessageQueue<Explosion> recieve_msg;
+    MessageQueue<ZurMSG> recieve_msg;
 
 private:
     void calculate(double dt);
@@ -48,7 +48,7 @@ private:
     int num_point_passed = 0;
 
     AbstractTargetParams param;
-    Vector3D coords;
+    GeocentricCoodinates coords;
     TargetStatus status = TargetStatus::is_not_fly;
 
     std::vector<TrajectoryPoint> control_points;
@@ -92,29 +92,6 @@ inline void AirTarget::write_to_file(std::string file_name, std::vector<Trajecto
     }
 
     ofs.close();
-}
-
-inline void AirTarget::write_to_csv(bool fisrt_time)
-{
-    std::string sep = ", ";
-
-    if (fisrt_time)
-    {
-        log << "Target_type" << sep << "Id" << sep << "X" << sep << "Y" << sep
-            << "Z" << sep << "Vx" << sep << "Vy" << sep << "Vz" << sep << "Elevation" << sep
-            << "Azimut" << sep << "Status" << "\n";
-    }
-    else
-    {
-        GeocentricCoodinates GC = {data.xPos.back(), data.yPos.back(), data.zPos.back()};
-        //GeodezicCoodinates crd = GeocentricToGeodezic(GC);
-        Vector3D crd = GeoToPBU(GeodezicToGeoCentric(GD_Msc), GC);
-
-        log << targetModelType << sep << id << sep << crd.x << sep << crd.y << sep
-            << crd.z << sep << data.xVel.back() << sep << data.yVel.back() << sep
-            << data.zVel.back() << sep << data.angle_horizontal_plane.back() << sep
-            << data.wayAngle.back() << sep << int(status) << "\n";
-    }
 }
 
 Vector3D GeoToLocal(GeodezicCoodinates GD, GeocentricCoodinates GC, GeocentricCoodinates GC0);

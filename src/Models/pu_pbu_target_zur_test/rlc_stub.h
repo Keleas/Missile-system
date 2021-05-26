@@ -11,11 +11,11 @@ public:
     RLCstub(id_type id, MsgChannelCarrier& carrier, std::ostream& log);
     ~RLCstub() override {}
 
-    bool init(const rapidjson::Value& initial_data) override final {};
+    bool init(const rapidjson::Value& initial_data) override final { return true; }
 
-    void firstStep() override final {};
+    void firstStep() override final {}
     void step(double time) override final;
-    void endStep() override final {};
+    void endStep() override final {}
 
 private:
     MessageQueue<TargetMsg> target_msgs;

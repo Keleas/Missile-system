@@ -1,6 +1,6 @@
 #include "airtarget.h"
 
-#define square_destroy_range 2500
+#define square_destroy_range 40000
 
 
 AirTarget::AirTarget(id_type id, MsgChannelCarrier &carrier, std::ostream& log)
@@ -74,9 +74,10 @@ void AirTarget::step(double time)
 {
     if (!recieve_msg.empty())
     {
-        Vector3D crd_rct = recieve_msg.front().message.crd_rct;
+        Vector3D crd_rct_inPBU = recieve_msg.front().message.crd_zur;
+        GeocentricCoodinates crd_rct_GC = PBUToGeo(GeodezicToGeoCentric(GD_Msc), crd_rct_inPBU);
         recieve_msg.pop_front();
-        double dist = (coords-crd_rct).sqrlength();
+        double dist = (coords-crd_rct_GC).lengthSquared();
 
         if (dist <= square_destroy_range)
             status = TargetStatus::is_destroy;
@@ -88,6 +89,8 @@ void AirTarget::step(double time)
     }
     else
         dt = time;
+
+    dt = 0.01;
 
     if (num_point_passed == control_points.size()-1)
         status = TargetStatus::is_done;
@@ -102,9 +105,9 @@ void AirTarget::step(double time)
     msg.vels = {data.xVel.back(), data.yVel.back(), data.zVel.back()};
     msg.status = status;
 
-    writeLog(dt, targetModelType, id, msg.coord[0], msg.coord[1], msg.coord[2],
+    writeLog(data.times.back(), targetModelType, id, msg.coord[0], msg.coord[1], msg.coord[2],
             msg.vels[0], msg.vels[1], msg.vels[2],
-            data.angle_horizontal_plane.back(), data.wayAngle.back(), status);
+            data.angle_horizontal_plane.back(), data.wayAngle.back(), int(status));
 
     //write_to_csv();
 

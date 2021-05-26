@@ -11,6 +11,8 @@ public:
     Vector3D(GeocentricCoodinates coord);
     Vector3D(const std::array<double, 3> &coord);
 
+//    Vector3D& operator=(const std::array<double,3> &coords);
+
 
     double length() const;
     double sqrlength() const;
@@ -49,6 +51,14 @@ inline Vector3D::Vector3D(const std::array<double, 3> &coord)
     y = coord[1];
     z = coord[2];
 }
+
+//Vector3D &Vector3D::operator=(const std::array<double, 3> &coords)
+//{
+//    x = coords[0];
+//    y = coords[1];
+//    z = coords[2];
+//    return *this;
+//}
 
 inline double Vector3D::length() const{
     return sqrt(x*x + y*y + z*z);

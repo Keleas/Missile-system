@@ -8,18 +8,19 @@ PU::PU(id_type id, MsgChannelCarrier &carrier, std::ostream& log)
 
 bool PU::init(const rapidjson::Value& initial_data)
 {
-    pu_coords = {initial_data["X"].GetDouble(),
-                 initial_data["Y"].GetDouble(),
-                 initial_data["Z"].GetDouble()};
+    pu_coords = {initial_data["x"].GetDouble(),
+                 initial_data["y"].GetDouble(),
+                 initial_data["z"].GetDouble()};
 
-    rocket_count = initial_data["Rocket_count"].GetUint();
-    range = initial_data["Range"].GetDouble();
-    launch_time = initial_data["Cooldown"].GetDouble();
-    pbu_id = initial_data["PBU_ID"].GetUint();
+    rocket_count = initial_data["rockets_amount"].GetUint();
+    range = initial_data["radius"].GetDouble();
+    launch_time = initial_data["cooldown"].GetDouble();
+//    pbu_id = initial_data["PBU_ID"].GetUint();
+    pbu_id = 0;
 
-    for (auto& v : initial_data["ZUR_ids"].GetArray())
+    for (auto& v : initial_data["zur_id"].GetArray())
     {
-        zur_ids.push_back(v.GetUint());
+        zur_ids.push_back(v["id"].GetUint());
     }
     return true;
 }
