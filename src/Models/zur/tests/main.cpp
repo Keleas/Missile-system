@@ -4,12 +4,12 @@
 #include "ModelingDispatcher.h"
 
 
-void printMSG(id_type id, double time)//, TargetMsg msg)
+void printMSG(id_type id, double time, ZurMSG msg)
 {
     std::cout << "Message from " << id << " at time " << time <<std::endl;
-    ///std::cout << "coord: " << msg.coord[0] << " " << msg.coord[1] << " " << msg.coord[2] << std::endl;
-    ///std::cout << "vel: " << msg.vels[0] << " " << msg.vels[1] << " " << msg.vels[2] << std::endl;
-    ///std::cout << "name: " << msg.name << std::endl;
+    std::cout << "coord: " << msg.crd_zur[0] << " " << msg.crd_zur[1] << " " << msg.crd_zur[2] << std::endl;
+    std::cout << "vel: " << msg.vels_zur[0] << " " << msg.vels_zur[1] << " " << msg.vels_zur[2] << std::endl;
+    std::cout << "name: " << msg.name << std::endl;
 }
 
 int main(int argc, char *argv[])

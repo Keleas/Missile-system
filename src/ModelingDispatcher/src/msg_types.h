@@ -31,13 +31,6 @@ struct ZurMSG : public Entity
     ZurStatus status;
 };
 
-struct PuToZurMsg : public Entity
-{
-    vec3 crd_pu;
-    vec3 crd_target;
-    double vel_target;
-};
-
 struct RocketMsg : public BasePhysicsEntity
 {
     bool is_explosion;

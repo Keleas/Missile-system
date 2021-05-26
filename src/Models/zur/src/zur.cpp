@@ -1,27 +1,20 @@
 #include "zur.h"
 
+zur::zur(id_type id, MsgChannelCarrier &carrier, std::ostream& log)
+    : Model{id, carrier, log}
+{
+    declareteQueue(recieve_msg_PBU);
+    declareteQueue(recieve_msg_PU);
+}
+
 bool zur::init(const rapidjson::Value& initial_data)
 {
-    rocketModelType = initial_data["rocket_model_type"].GetString();
     rocketName = initial_data["rocket_name"].GetString();
     param.MAX_TRANSVERSE_OVERLOAD = initial_data["rocket_max_Nx"].GetDouble();
     param.MAX_NORMAL_OVERLOAD =  initial_data["rocket_max_Ny"].GetDouble();
     param.MAX_MAH =  initial_data["rocket_max_M"].GetDouble();
     param.MIN_TRANSVERSE_OVERLOAD =  initial_data["rocket_min_Nx"].GetDouble();
-
-    for (auto& v : initial_data["rocket_points"].GetArray())
-    {
-        TrajectoryPoint p;
-        double x = v["x"].GetDouble();
-        double y = v["y"].GetDouble();
-        double z = v["z"].GetDouble();
-
-        GeocentricCoodinates GC = PBUToGeo(GeodezicToGeoCentric(GD_Msc), {x,y,z});
-
-        p.initialPoint = GC;
-        p.initialVel = v["vel"].GetDouble();
-        control_points.push_back(p);
-    }
+    param.PRACTICAL_ROOF =  initial_data["rocket_practical_roof"].GetDouble();
 }
 
 void zur::firstStep()
@@ -35,11 +28,28 @@ void zur::step(double time)
     GeocentricCoodinates GC_target;
     Vector3D crd_target;
     double vel_target;
-    if (!recieve_msg_pu.empty())
+    if (!recieve_msg_PU.empty())
     {
-        crd_target = recieve_msg_pu.front().message.crd_target;
-        vel_target = recieve_msg_pu.front().message.vel_target;
-        recieve_msg_pu.pop_front();
+        crd_target = recieve_msg_PU.front().message.target_coord;
+        vel_target = recieve_msg_PU.front().message.target_speed;
+
+        Vector3D crd_pu = recieve_msg_PU.front().message.pu_coord;
+        start_point.initialPoint = PBUToGeo(GeodezicToGeoCentric(GD_Msc), crd_pu);
+        start_point.initialVel = 1.1 * vel_target;
+
+        GC_target = PBUToGeo(GeodezicToGeoCentric(GD_Msc), crd_target);
+
+        recieve_msg_PU.pop_front();
+    }
+
+    if (!recieve_msg_PBU.empty())
+    {
+        crd_target = recieve_msg_PU.front().message.target_coord;
+        vel_target = recieve_msg_PU.front().message.target_speed;
+
+        GC_target = PBUToGeo(GeodezicToGeoCentric(GD_Msc), crd_target);
+
+        recieve_msg_PBU.pop_front();
     }
 
     double dt;
@@ -78,6 +88,8 @@ void zur::step(double time)
     msg.vels_zur = {data.xVel.back(), data.yVel.back(), data.zVel.back()};
     msg.status = status;
 
+    //writeLog();
+
     write_to_csv();
 
     send<ZurMSG>(data.times.back(), msg);
@@ -102,7 +114,7 @@ void AirTarget::set_status(TargetStatus trg)
     status = trg;
 }
 
-void zur::pursuit(double dt)
+/*void zur::pursuit(double dt)
 {
     double rocket_vel = start_point.initialVel;
     GeocentricCoodinates start_rocket(start_point.initialPoint.x, start_point.initialPoint.y, start_point.initialPoint.z);
@@ -125,7 +137,7 @@ void zur::pursuit(double dt)
     TrajectoryPoint target_pos(GC_, rocket_vel);
     points_rocket[1] = target_pos;
 
-        /*if (first_time)
+        if (first_time)
         {
             time_detection = data_target.times[i];
             toss_rocket(point_start_rocket, data_rocket);
@@ -146,7 +158,7 @@ void zur::pursuit(double dt)
 
             //calculate(points_rocket, data_rocket, 4, cur_vec_vel, AccelsLast_, NormLast_, TransLast_, HorizLast_, BankLast_, WayLast_);
             first_time = false;
-        }*/
+        }
 
     points_rocket[0].initialPoint.x = data.xPos.back();
     points_rocket[0].initialPoint.y = data.yPos.back();
@@ -176,6 +188,7 @@ void zur::pursuit(double dt)
         data_rocket.times[i] += time_detection;
     }
 }
+*/
 
 void zur::calculate(double dt, std::vector<TrajectoryPoint> control_points)
 {
