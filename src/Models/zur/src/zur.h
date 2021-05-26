@@ -22,8 +22,8 @@ public:
     ZurStatus get_status();
     Vector3D get_coords();
 
-    MessageQueue<PuToZurMsg> recieve_msg_pu;
-    MessageQueue<RLSToZurMsg> recieve_msg_rls;
+    MessageQueue<PBUtoZURMsg> recieve_msg_PBU;
+    MessageQueue<PUtoZURMsg> recieve_msg_PU;
 
 private:
     void calculate(double dt, std::vector<TrajectoryPoint> control_points);
@@ -39,6 +39,8 @@ private:
 
     TrajectoryPoint start_point;
     TrajData data;
+
+    TrajectoryPoint target_point;
 
     Vector3D NuCurNext;
 
