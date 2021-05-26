@@ -257,6 +257,8 @@ private:
 
     void set_radius_radar(Radar* rls);
 
+    void set_radius_launcher(Launcher* pu);
+
 private slots:
     ///
     /// \brief Слот, обработки нажатия клавиши мыши на полотно
@@ -299,6 +301,8 @@ private slots:
     void on_pushButton_open_clicked();
 
     void on_pushButton_modelling_clicked();
+
+    void get_pos_mouse_on_canvas(QMouseEvent *event);
 };
 
 #endif // WIDGET_MODELSET_H

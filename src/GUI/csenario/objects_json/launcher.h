@@ -57,6 +57,10 @@ public:
     double get_x(){return x;}
     double get_y(){return y;}
     int get_id(){return id;};
+    QVector<double> get_rad_x(){return vector_radius_x;}
+    QVector<double> get_rad_y(){return vector_radius_y;}
+    int get_graph(){return number_graph;}
+    void set_graph(int number){number_graph = number;}
 
 private:
     int id;
@@ -68,6 +72,12 @@ private:
     int cooldown;
     QString name;
     QVector<Antiaircraft*> rokets;
+
+    QVector<double> vector_radius_x,vector_radius_y;
+
+    int number_graph;
+
+    void calculate_radius(double radius);
 };
 
 

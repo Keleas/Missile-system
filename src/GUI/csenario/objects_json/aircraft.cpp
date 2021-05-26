@@ -53,7 +53,7 @@ QTreeWidgetItem* Point::get_item(int count)
             <<"x: "+QString::number(x)
             <<"y: "+QString::number(y)
             <<"z: "+QString::number(z)
-            <<"Скорость: "+QString::number(velocity);
+            <<"Скорость[км/ч]: "+QString::number(velocity);
         QTreeWidgetItem* item = new QTreeWidgetItem();
 
         item->setText(0,list.at(0));

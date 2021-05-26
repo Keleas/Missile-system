@@ -8,13 +8,13 @@ modeling::modeling(QWidget *parent) :
     std::srand(QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0);
     ui->setupUi(this);
 
-    ui->customPlot_1->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes |
-                                    QCP::iSelectLegend | QCP::iSelectPlottables);
+    ui->customPlot_1->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom /*| QCP::iSelectAxes |
+                                    QCP::iSelectLegend | QCP::iSelectPlottables*/);
     ui->customPlot_1->xAxis->setRange(-1000, 100000);
     ui->customPlot_1->yAxis->setRange(-1000, 100000);
 
-    ui->customPlot_2->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes |
-                                    QCP::iSelectLegend | QCP::iSelectPlottables);
+    ui->customPlot_2->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom /*| QCP::iSelectAxes |
+                                    QCP::iSelectLegend | QCP::iSelectPlottables*/);
     ui->customPlot_2->xAxis->setRange(-100000, 100000);
     ui->customPlot_2->yAxis->setRange(-100000, 100000);
 

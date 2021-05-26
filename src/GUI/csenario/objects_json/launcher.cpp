@@ -143,6 +143,7 @@ Launcher::Launcher(QJsonObject initData, QSqlDatabase db)
        Antiaircraft *p = new Antiaircraft(value.toObject(),db);
        rokets.append(p);
     }
+    calculate_radius(radius);
 }
 
 QJsonObject Launcher::toJsonObject()
@@ -199,6 +200,7 @@ void Launcher::set_properties(double _radius,
     radius = _radius;
     count_ammo=_count_ammo;
     cooldown=_cooldown;
+    calculate_radius(radius);
 }
 
 void Launcher::append_zur(Antiaircraft *roket)
@@ -214,7 +216,7 @@ QTreeWidgetItem* Launcher::get_item(int count)
        <<"x: "+QString::number(x)
       <<"y: "+QString::number(y)
      <<"z: "+QString::number(z)
-    <<"Радиус действия (км): "+QString::number(radius)
+    <<"Радиус действия (м): "+QString::number(radius)
     <<"Количество ЗУР: "+QString::number(count_ammo)
     <<"Время перезарядки (c): "+QString::number(cooldown);
 
@@ -231,5 +233,11 @@ QTreeWidgetItem* Launcher::get_item(int count)
     return item;
 }
 
-
-
+void Launcher::calculate_radius(double radius)
+{
+    for (double t=0; t<2*3.14; t+=0.01)
+    {
+        vector_radius_x.append(radius*(cos(t))+x);
+        vector_radius_y.append(radius*(sin(t))+y);
+    }
+}

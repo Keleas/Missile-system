@@ -42,6 +42,9 @@ widget_modelset::widget_modelset(QWidget *parent) :
     connect(ui->pushButton_pbu, SIGNAL(toggled(bool)),
             this, SLOT(button_pbu_toggled(bool)));
 
+    connect(ui->customPlot, SIGNAL(mouseMove(QMouseEvent*)),
+            this, SLOT(get_pos_mouse_on_canvas(QMouseEvent*)));
+
     ccp_pbu.set_coordinates(0,0,0);
     ccp_pbu.set_id(0);
     x_pbu.append(0);
@@ -120,13 +123,20 @@ void widget_modelset::clearData()
     ui->label_name_config->clear();
 }
 
-void widget_modelset::click_on_canvas(QMouseEvent *event)
+void widget_modelset::get_pos_mouse_on_canvas(QMouseEvent *event)
 {
     QString cord;
     double x = ui->customPlot->xAxis->pixelToCoord(event->pos().x());
     double y = ui->customPlot->yAxis->pixelToCoord(event->pos().y());
     cord = "x = "+QString::number(x)+", y = "+QString::number(y);
     ui->lineEdit->setText(cord);
+}
+
+void widget_modelset::click_on_canvas(QMouseEvent *event)
+{
+
+    double x = ui->customPlot->xAxis->pixelToCoord(event->pos().x());
+    double y = ui->customPlot->yAxis->pixelToCoord(event->pos().y());
 
     switch (state_buttons)
     {
@@ -516,7 +526,7 @@ void widget_modelset::add_children_items_pu(double x, double y)
         vector_item_zur.append(item_roket);
         pu->append_zur(zur);
     }
-
+    set_radius_launcher(pu);
 }
 
 void widget_modelset::add_children_items_radar(double x, double y)
@@ -571,10 +581,10 @@ void widget_modelset::add_point_items_aircraft(double x, double y,
 
     QList<QString> list;
     list<<"#"+QString::number(vector_x_aircraft.size())
-        <<"x: "+QString::number(x)
-        <<"y: "+QString::number(y)
-        <<"z: "+vector.at(0)
-        <<"Скорость: "+vector.at(1);
+        <<"x[м]: "+QString::number(x)
+        <<"y[м]: "+QString::number(y)
+        <<"z[м]: "+vector.at(0)
+        <<"Скорость[км/ч]: "+vector.at(1);
     QTreeWidgetItem* item_child = new QTreeWidgetItem();
     _item->addChild(item_child);
     item_child->setText(0,list.at(0));    
@@ -595,8 +605,8 @@ QVector<QString> widget_modelset::input_dialog_point_aircraft()
     d->setWindowTitle("Введите данные");
     QLineEdit* lineEdit_z = new QLineEdit();
     QLineEdit* lineEdit_velocity = new QLineEdit();
-    QLabel* label_z = new QLabel("z");
-    QLabel* label_velocity = new QLabel("Скорость");
+    QLabel* label_z = new QLabel("z[м]");
+    QLabel* label_velocity = new QLabel("Скорость[км/ч]");
     QLabel* label_point = new QLabel("Point #"+
                                      QString::number(vector_x_aircraft.size()));
 
@@ -711,7 +721,7 @@ QList<QString> widget_modelset::input_dialog_pu()
     QLineEdit* lineEdit_radius = new QLineEdit();
     QLineEdit* lineEdit_count = new QLineEdit();
     QLineEdit* lineEdit_cooldown = new QLineEdit();
-    QLabel* label_radius = new QLabel("Радиус действия (км):");
+    QLabel* label_radius = new QLabel("Радиус действия (м):");
     QLabel* label_count = new QLabel("Количество ЗУР:");
     QLabel* label_cooldown = new QLabel("Время перезарядки (c):");
     QLabel* label_point = new QLabel("ПУ_"+
@@ -730,7 +740,7 @@ QList<QString> widget_modelset::input_dialog_pu()
     lineEdit_cooldown->setValidator(new QRegExpValidator(QRegExp("^[0-9]*[.,]?"
                                         "[0-9]+(?:[eE][-+]?[0-9]+)?$"), this));
 
-    lineEdit_radius->setText("100");
+    lineEdit_radius->setText("100000");
     lineEdit_count->setText("4");
     lineEdit_cooldown->setText("10");
 
@@ -753,7 +763,7 @@ QList<QString> widget_modelset::input_dialog_pu()
          result = d->exec();
     if(result == QDialog::Accepted)
     {
-        results.append("Радиус действия (км): "+lineEdit_radius->text());
+        results.append("Радиус действия (м): "+lineEdit_radius->text());
         results.append("Количество ЗУР: "+lineEdit_count->text());
         results.append("Время перезарядки (c): "+lineEdit_cooldown->text());
         vector_launchers.last()->set_properties(lineEdit_radius->text().toDouble(),
@@ -1029,6 +1039,14 @@ void widget_modelset::set_radius_graphs()
         plot(index_aircraft,rls->get_rad_max_x(), rls->get_rad_max_y());
         set_pen_radius(index_aircraft);
     }
+    for (Launcher* pu : vector_launchers)
+    {
+        ui->customPlot->addGraph();
+        index_aircraft = (ui->customPlot->graphCount())-1;
+        pu->set_graph(index_aircraft);
+        plot(index_aircraft,pu->get_rad_x(), pu->get_rad_y());
+        set_pen_radius(index_aircraft);
+    }
     ui->customPlot->replot();
 }
 
@@ -1039,6 +1057,17 @@ void widget_modelset::set_radius_radar(Radar* rls)
     index_aircraft = (ui->customPlot->graphCount())-1;
     rls->set_graph(index_aircraft);
     plot(index_aircraft,rls->get_rad_max_x(), rls->get_rad_max_y());
+    set_pen_radius(index_aircraft);
+    ui->customPlot->replot();
+}
+
+void widget_modelset::set_radius_launcher(Launcher* pu)
+{
+    //qDebug
+    ui->customPlot->addGraph();
+    index_aircraft = (ui->customPlot->graphCount())-1;
+    pu->set_graph(index_aircraft);
+    plot(index_aircraft,pu->get_rad_x(), pu->get_rad_y());
     set_pen_radius(index_aircraft);
     ui->customPlot->replot();
 }
