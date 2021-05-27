@@ -36,7 +36,7 @@ public:
 
 signals:
     void set_json(QString);
-    void start_modelling(int);
+    void pick_modelling(int);
 
 
 private:

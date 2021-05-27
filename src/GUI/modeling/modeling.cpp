@@ -49,6 +49,7 @@ modeling::modeling(QWidget *parent) :
 
 modeling::~modeling()
 {
+    clear_data();
     delete ui;
 }
 
@@ -59,6 +60,42 @@ void modeling::clear_data()
     vector_x_radar.clear();
     vector_y_radar.clear();
     vector_z_radar.clear();
+    vector_x_pu.clear();
+    vector_y_pu.clear();
+    vector_z_pu.clear();
+    vector_range_pu.clear();
+    for (QMap <int, launcher_model>::iterator i = map_launchers.begin();
+         i != map_launchers.end(); ++i)
+    {
+        i->~launcher_model();
+    }
+    map_launchers.clear();
+    for (QMap <int, aircraft_model>::iterator i = map_aircraft_m.begin();
+         i != map_aircraft_m.end(); ++i)
+    {
+        i->~aircraft_model();
+    }
+    map_aircraft_m.clear();
+    for (QMap <int, zur_model>::iterator i = map_zurs.begin();
+         i != map_zurs.end(); ++i)
+    {
+        i->~zur_model();
+    }
+    map_zurs.clear();
+    for (QMap <int, aircraft_pbu*>::iterator i = map_aircraft_pbu.begin();
+         i != map_aircraft_pbu.end(); ++i)
+    {
+        i.value()->~aircraft_pbu();
+    }
+    map_aircraft_pbu.clear();
+    for (QMap <int, radar_model>::iterator i = map_radars.begin();
+         i != map_radars.end(); ++i)
+    {
+        i->~radar_model();
+    }
+    map_radars.clear();
+    ui->customPlot_1->clearGraphs();
+    ui->customPlot_2->clearGraphs();
 }
 
 void modeling::set_data(QString _config_name)
@@ -132,6 +169,7 @@ void modeling::set_data(QString _config_name)
             QJsonObject j_object_craft = value.toObject()["initial_data"].toObject();
             zur_model zur(j_object_craft);
             int id =value.toObject()["id"].toInt();
+
             zur.set_id(id);
             map_zurs.insert(id,zur);
         }
@@ -357,9 +395,11 @@ void modeling::create_moving_graphs()
 
         graphs_la.append(count_graph);
     }
-        for (QMap <int, zur_model>::iterator i = map_zurs.begin();
-             i != map_zurs.end(); ++i)
+
+    for (QMap <int, zur_model>::iterator i = map_zurs.begin();
+         i != map_zurs.end(); ++i)
     {
+
         ui->customPlot_1->addGraph();
         ui->customPlot_2->addGraph();
         count_graph = (ui->customPlot_1->graphCount())-1;
@@ -391,9 +431,16 @@ void modeling::set_data_plot()
     for (QMap <int, aircraft_model>::iterator i = map_aircraft_m.begin();
          i != map_aircraft_m.end(); ++i)
     {
+
         plot_1(i->get_graph(),i->get_vector_range(),i->get_vector_z());
         plot_2(i->get_graph(),i->get_vector_x(),i->get_vector_y());
     }
+//    for (QMap <int, aircraft_pbu*>::iterator i = map_aircraft_pbu.begin();
+//         i != map_aircraft_pbu.end(); ++i)
+//    {
+//        plot_1(i->operator[]get_graph(),i->get_vector_range(),i->get_vector_z());
+//        plot_2(i->get_graph(),i->get_vector_x(),i->get_vector_y());
+//    }
 }
 
 void modeling::read_csv()
@@ -417,14 +464,14 @@ void modeling::read_csv()
             if (rx.exactMatch(fileInfo.fileName()))
             {
                 pick_read_method(ii,fileInfo.fileName());
-                //qDebug() <<fileInfo.fileName()<<" dsfsd";
+//                qDebug() <<fileInfo.fileName()<<" dsfsd";
             }
 //            qDebug() << qPrintable(QString("%1 %2").arg(fileInfo.size(), 10)
 //                                   .arg(fileInfo.fileName()));
         }
     }
     ///@note vremenno
-    //set_data_plot();
+    set_data_plot();
     create_dynamic_elements();
 }
 
@@ -434,7 +481,7 @@ void modeling::pick_read_method(int state, QString _name_csv)
     {
     case rls_read:
     {
-        qDebug()<<"Не робит";
+        //qDebug()<<"Не робит";
        // read_radar_csv(_name_csv);
     }break;
     case launcher_read:
@@ -474,13 +521,12 @@ void modeling::read_aircraft_csv(QString name_csv)
         {
             ++ii; /////временно
             line = in.readLine();
-            id=line.split(',').at(1).toInt();
-
-            map_aircraft_m.operator[](id).append_point(ii,
-                                                       line.split(',').at(2).toDouble(),
+            id=line.split(',').at(2).toInt();
+            map_aircraft_m.operator[](id).append_point(line.split(',').at(0).toDouble(),
                                                        line.split(',').at(3).toDouble(),
                                                        line.split(',').at(4).toDouble(),
-                                                       line.split(',').at(10).toInt());
+                                                       line.split(',').at(5).toDouble(),
+                                                       line.split(',').at(11).toInt());
         }
         file.close();
     }
@@ -488,6 +534,7 @@ void modeling::read_aircraft_csv(QString name_csv)
 ///@note уточнить
 void modeling::read_zur_csv(QString name_csv)
 {
+
     QFile file(name_csv);
     if ( !file.open(QFile::ReadOnly | QFile::Text) )
     {
@@ -501,15 +548,14 @@ void modeling::read_zur_csv(QString name_csv)
         while (!in.atEnd())
         {
             line = in.readLine();
-            id=line.split(',').at(1).toInt();
 
-            map_zurs.take(id).append_point(line.split(',').at(0).toDouble(),
-                                           line.split(',').at(2).toDouble(),
-                                           line.split(',').at(3).toDouble(),
-                                           line.split(',').at(4).toDouble(),
-                                           line.split(',').at(10).toInt());
-            ///@note уточнить
-            map_zurs.take(id).set_status(line.split(',').at(9).toInt());
+            id=line.split(',').at(1).toInt();
+            map_zurs.operator[](id).append_point(line.split(',').at(0).toDouble(),
+                                                       line.split(',').at(2).toDouble(),
+                                                       line.split(',').at(3).toDouble(),
+                                                       line.split(',').at(4).toDouble(),
+                                                       line.split(',').at(10).toInt());
+
         }
         file.close();
     }
@@ -555,8 +601,7 @@ void modeling::read_pbu_csv(QString name_csv)
 
                ui->customPlot_1->addGraph();
                ui->customPlot_2->addGraph();
-               count_graph = (ui->customPlot_1->graphCount())-1;
-               craft->set_graph(count_graph);
+               craft->set_graph((ui->customPlot_1->graphCount())-1);
 
                map_aircraft_pbu.insert(id,craft);
             }
@@ -600,12 +645,14 @@ void modeling::read_launcher_csv(QString name_csv)
 void modeling::change_step(int index)
 {
 
+
     for (QMap <int, aircraft_model>::iterator i = map_aircraft_m.begin();
          i != map_aircraft_m.end(); ++i)
     {
         double uu = double(index);
         if(i->get_points().contains(uu)==true)
         {
+            //qDebug()<<i->get_graph()<<" la"<<i->get_id();
             plot_1(i->get_graph(),i->get_points().operator[](uu)->vector_point_range,
                     i->get_points().operator[](uu)->vector_point_z);
             plot_2(i->get_graph(),i->get_points().operator[](uu)->vector_point_x,
@@ -653,6 +700,10 @@ void modeling::change_step(int index)
             i->get_steps().operator[](uu)->status_curr;
         }
     }
+
+//    plot_1(launcher_plot,vector_range_pu,vector_z_pu);
+//    plot_2(launcher_plot,vector_x_pu,vector_y_pu);
+//    qDebug()<<vector_range_pu;
 }
 
 void modeling::append_layout_pu()
@@ -688,6 +739,34 @@ void modeling::on_checkBox_range_rls_clicked(bool checked)
 void modeling::on_checkBox_range_pu_clicked(bool checked)
 {
     for (int ii : graphs_pu)
+    {
+        ui->customPlot_1->graph(ii)->setVisible(checked);
+        ui->customPlot_2->graph(ii)->setVisible(checked);
+    }
+
+    ui->customPlot_1->replot();
+    ui->customPlot_1->update();
+    ui->customPlot_2->replot();
+    ui->customPlot_2->update();
+}
+
+void modeling::on_checkBox_view_pbu_clicked(bool checked)
+{
+    for (int ii : graphs_la_pbu)
+    {
+        ui->customPlot_1->graph(ii)->setVisible(checked);
+        ui->customPlot_2->graph(ii)->setVisible(checked);
+    }
+
+    ui->customPlot_1->replot();
+    ui->customPlot_1->update();
+    ui->customPlot_2->replot();
+    ui->customPlot_2->update();
+}
+
+void modeling::on_checkBox_view_all_clicked(bool checked)
+{
+    for (int ii : graphs_la)
     {
         ui->customPlot_1->graph(ii)->setVisible(checked);
         ui->customPlot_2->graph(ii)->setVisible(checked);

@@ -40,6 +40,10 @@ private slots:
 
     void on_checkBox_range_pu_clicked(bool checked);
 
+    void on_checkBox_view_pbu_clicked(bool checked);
+
+    void on_checkBox_view_all_clicked(bool checked);
+
 private:
     Ui::modeling *ui;
 

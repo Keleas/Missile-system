@@ -7,6 +7,7 @@ class pbu_model: public abs_stationary_model
 {
 public:
     pbu_model();
+    ~pbu_model();
     pbu_model(QJsonObject initData);
     void set_data(int id, double x, double y);
 

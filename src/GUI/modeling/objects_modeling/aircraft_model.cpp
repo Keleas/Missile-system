@@ -5,6 +5,16 @@ aircraft_model::aircraft_model()
 
 }
 
+aircraft_model::~aircraft_model()
+{
+    vector_horizontal_range.clear();
+    vector_x.clear();
+    vector_y.clear();
+    vector_z.clear();
+    points.clear();
+}
+
+
 aircraft_model::aircraft_model(QJsonObject initData)
 {
     id = initData["id"].toInt();

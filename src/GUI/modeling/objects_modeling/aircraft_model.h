@@ -8,6 +8,7 @@ class aircraft_model: public abs_moving_model
 public:
     aircraft_model();
     aircraft_model(QJsonObject initData);
+    ~aircraft_model();
 private:
     QString name_model;
 

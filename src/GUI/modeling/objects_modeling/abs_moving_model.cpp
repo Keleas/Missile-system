@@ -7,6 +7,15 @@ abs_moving_model::abs_moving_model()
 
 }
 
+abs_moving_model::~abs_moving_model()
+{
+    vector_horizontal_range.clear();
+    vector_x.clear();
+    vector_y.clear();
+    vector_z.clear();
+    points.clear();
+}
+
 void abs_moving_model::set_id(int id)
 {
     this->id = id;

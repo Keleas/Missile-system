@@ -44,6 +44,8 @@ public:
 
     QString get_name(){return name;}
 
+    ~abs_moving_model();
+
 protected:
 
 

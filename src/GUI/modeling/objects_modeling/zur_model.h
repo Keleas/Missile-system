@@ -6,6 +6,7 @@ class zur_model: public abs_moving_model
 {
 public:
     zur_model();
+    ~zur_model();
     zur_model(QJsonObject initData);
     int get_id(){return id;}
 private:

@@ -1077,12 +1077,14 @@ void widget_modelset::set_radius_launcher(Launcher* pu)
     ui->customPlot->replot();
 }
 
+///////////////////////////////////////////////////////////////////
+/// @note старт моделирования start modelling
 void widget_modelset::on_pushButton_modelling_clicked()
 {
-    emit start_modelling(0);
+    emit pick_modelling(0);
     emit set_json(name_config);
 }
-
+////////////////////////////////////////////////////////////////////
 void widget_modelset::set_pen_graph(int number)
 {
     QPen pen_line(Qt::red, 3, Qt::DashDotLine,

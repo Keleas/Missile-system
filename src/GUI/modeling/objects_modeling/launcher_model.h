@@ -12,6 +12,7 @@ struct Step_launcher
 class launcher_model: public abs_stationary_model
 {
 public:
+    ~launcher_model();
     launcher_model();
     launcher_model(QJsonObject initData);
     //void set_ammo(int ammo);
@@ -30,7 +31,6 @@ private:
 
     QMap <double, Step_launcher*> time_steps;
 
-    QMap <int, zur_model> map_zurs;
 };
 
 #endif // LAUNCHER_MODEL_H

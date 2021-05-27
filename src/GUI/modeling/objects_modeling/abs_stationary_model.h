@@ -34,6 +34,8 @@ public:
     void set_graph(int number){number_graph=number;}
     int get_graph(){return number_graph;}
 
+    ~abs_stationary_model();
+
 protected:
 
     QString name;

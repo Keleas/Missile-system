@@ -7,6 +7,18 @@ abs_stationary_model::abs_stationary_model()
 
 }
 
+abs_stationary_model::~abs_stationary_model()
+{
+    vector_radius_max_range.clear();
+    vector_radius_max_z.clear();
+    vector_radius_max_x.clear();
+    vector_radius_max_y.clear();
+    vector_radius_min_x.clear();
+    vector_radius_min_y.clear();
+    vector_radius_min_range.clear();
+    vector_radius_min_z.clear();
+}
+
 void abs_stationary_model::set_id(int id)
 {
     this->id = id;

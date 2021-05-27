@@ -5,6 +5,18 @@ pbu_model::pbu_model()
 
 }
 
+pbu_model::~pbu_model()
+{
+    vector_radius_max_range.clear();
+    vector_radius_max_z.clear();
+    vector_radius_max_x.clear();
+    vector_radius_max_y.clear();
+    vector_radius_min_x.clear();
+    vector_radius_min_y.clear();
+    vector_radius_min_range.clear();
+    vector_radius_min_z.clear();
+}
+
 pbu_model::pbu_model(QJsonObject initData)
 {
     id = initData["id"].toInt();
