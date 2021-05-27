@@ -6,7 +6,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    connect(ui->tab_2, SIGNAL(start_modelling(int)),
+    connect(ui->tab_2, SIGNAL(pick_modelling(int)),
             ui->tabWidget, SLOT(setCurrentIndex(int)));
     connect(ui->tab_2, SIGNAL(set_json(QString)),
             ui->tab, SLOT(accept_json(QString)));
@@ -45,7 +45,7 @@ void MainWindow::need_progess_bar()
 //            v_futureWatcher[id],SLOT(cancel()));
 
 
-//    QtConcurrent::run(&widget_modelset::start_modelling()                      *v_futureInterface[id]);
+//    QtConcurrent::run(&widget_modelset::pick_modelling()                      *v_futureInterface[id]);
 
 //    v_futureWatcher[id]->setFuture(v_futureInterface[id]->future());
 //    v_progress[id]->show();

@@ -32,6 +32,8 @@ public:
 
     void set_graph(int number){number_graph=number;}
     int get_graph(){return number_graph;}
+    void set_graph_t(int number){number_graph_t=number;}
+    int get_graph_t(){return number_graph_t;}
 
     int get_id(){return id;}
 
@@ -53,6 +55,7 @@ protected:
     int id;
     int status_modeling = 1;
     int number_graph;
+    int number_graph_t;
 
     QMap<double, Point_model*> points;
 
