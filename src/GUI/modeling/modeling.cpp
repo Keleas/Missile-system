@@ -151,6 +151,16 @@ void modeling::accept_json(QString _name_json)
     read_csv();
 }
 
+void modeling::set_visible_graph(int plot1, int plot2, bool state_visible)
+{
+    ui->customPlot_1->graph(plot1)->setVisible(state_visible);
+    ui->customPlot_1->replot();
+    ui->customPlot_1->update();
+    ui->customPlot_2->graph(plot2)->setVisible(state_visible);
+    ui->customPlot_2->replot();
+    ui->customPlot_2->update();
+}
+
 void modeling::plot_1(int number,
                     QVector<double> vector_z,
                     QVector<double> vector_range)
@@ -158,6 +168,7 @@ void modeling::plot_1(int number,
     ui->customPlot_1->graph(number)->setData(vector_z,vector_range,true);
     ui->customPlot_1->replot();
     ui->customPlot_1->update();
+   // ui->customPlot_1->graph(number)->setVisible(false);
 }
 
 void modeling::plot_2(int number,
@@ -226,6 +237,16 @@ void modeling::set_stationary_elements()
         vector_x_radar.append(i->get_x());
         vector_y_radar.append(i->get_y());
         vector_z_radar.append(i->get_z());
+
+        ui->customPlot_1->addGraph();
+        ui->customPlot_2->addGraph();
+        count_graph = (ui->customPlot_1->graphCount())-1;
+        i->set_graph(count_graph);
+        plot_1(count_graph,i->get_rad_max_range(),i->get_rad_max_z());
+        plot_2(count_graph,i->get_rad_max_x(),i->get_rad_max_y());
+        set_pen_radius(count_graph);
+
+        graphs_rls.append(count_graph);
     }
     plot_1(radar_plot,vector_range_radar,vector_z_radar);
     plot_2(radar_plot,vector_x_radar,vector_y_radar);
@@ -237,12 +258,22 @@ void modeling::set_stationary_elements()
         vector_x_pu.append(i->get_x());
         vector_y_pu.append(i->get_y());
         vector_z_pu.append(i->get_z());
+
+        ui->customPlot_1->addGraph();
+        ui->customPlot_2->addGraph();
+        count_graph = (ui->customPlot_1->graphCount())-1;
+        i->set_graph(count_graph);
+        plot_1(count_graph,i->get_rad_max_range(),i->get_rad_max_z());
+        plot_2(count_graph,i->get_rad_max_x(),i->get_rad_max_y());
+        set_pen_radius(count_graph);
+
+        graphs_pu.append(count_graph);
     }
     plot_1(launcher_plot,vector_range_pu,vector_z_pu);
     plot_2(launcher_plot,vector_x_pu,vector_y_pu);
 }
 
-void modeling::set_pen(int index)
+void modeling::set_pen(int index, int object)
 {
     QPen pen_line(Qt::red, 3, Qt::DashDotLine,
              Qt::RoundCap, Qt::RoundJoin);
@@ -250,15 +281,47 @@ void modeling::set_pen(int index)
                   qrand() % ((255 + 1) - 0) + 0,
                   qrand() % ((255 + 1) - 0) + 0, 255 );
     pen_line.setColor(color);
-    ui->customPlot_1->graph(index)->
-            setScatterStyle(QCPScatterStyle::ssCircle);
-    ui->customPlot_1->graph(index)->setLineStyle(QCPGraph::lsNone);
-    ui->customPlot_1->graph(index)->setPen(pen_line);
+    switch (object)
+    {
 
-    ui->customPlot_2->graph(index)->
-            setScatterStyle(QCPScatterStyle::ssCircle);
-    ui->customPlot_2->graph(index)->setLineStyle(QCPGraph::lsNone);
-    ui->customPlot_2->graph(index)->setPen(pen_line);
+    case aircraft_plot:
+    {
+        ui->customPlot_1->graph(index)->
+                setScatterStyle(QCPScatterStyle::ssCircle);
+        ui->customPlot_1->graph(index)->setLineStyle(QCPGraph::lsNone);
+        ui->customPlot_1->graph(index)->setPen(pen_line);
+
+        ui->customPlot_2->graph(index)->
+                setScatterStyle(QCPScatterStyle::ssCircle);
+        ui->customPlot_2->graph(index)->setLineStyle(QCPGraph::lsNone);
+        ui->customPlot_2->graph(index)->setPen(pen_line);
+    }break;
+    case zur_plot:
+    {
+        ui->customPlot_1->graph(index)->
+                setScatterStyle(QCPScatterStyle::ssPlus);
+        ui->customPlot_1->graph(index)->setLineStyle(QCPGraph::lsNone);
+        ui->customPlot_1->graph(index)->setPen(pen_line);
+
+        ui->customPlot_2->graph(index)->
+                setScatterStyle(QCPScatterStyle::ssPlus);
+        ui->customPlot_2->graph(index)->setLineStyle(QCPGraph::lsNone);
+        ui->customPlot_2->graph(index)->setPen(pen_line);
+    }break;
+    case aircraft_pbu_plot:
+    {
+        ui->customPlot_1->graph(index)->
+                setScatterStyle(QCPScatterStyle::ssCircle);
+        ui->customPlot_1->graph(index)->setLineStyle(QCPGraph::lsNone);
+        ui->customPlot_1->graph(index)->setPen(pen_line);
+
+        ui->customPlot_2->graph(index)->
+                setScatterStyle(QCPScatterStyle::ssCircle);
+        ui->customPlot_2->graph(index)->setLineStyle(QCPGraph::lsNone);
+        ui->customPlot_2->graph(index)->setPen(pen_line);
+    }break;
+    }
+
 }
 
 void modeling::set_pen_radius(int number)
@@ -280,7 +343,7 @@ void modeling::set_pen_radius(int number)
     ui->customPlot_2->graph(number)->setPen(pen_line);
 }
 
-///@note позже добавть объекты видимости РЛС
+
 void modeling::create_moving_graphs()
 {
     for (QMap <int, aircraft_model>::iterator i = map_aircraft_m.begin();
@@ -290,26 +353,21 @@ void modeling::create_moving_graphs()
         ui->customPlot_2->addGraph();
         count_graph = (ui->customPlot_1->graphCount())-1;
         i.value().set_graph(count_graph);
-        set_pen(count_graph);
+        set_pen(count_graph,aircraft_plot);
+
+        graphs_la.append(count_graph);
     }
-//    for (QMap <int, aircraft_pbu*>::iterator i = map_aircraft_pbu.begin();
-//         i != map_aircraft_pbu.end(); ++i)
-//    {
-//        ui->customPlot_1->addGraph();
-//        ui->customPlot_2->addGraph();
-//        i.value()->set_graph(count_graph);
-//        set_pen(count_graph);
-//        ++count_graph;
-//    }
-//    for (QMap <int, zur_model>::iterator i = map_zurs.begin();
-//         i != map_zurs.end(); ++i)
-//    {
-//        ui->customPlot_1->addGraph();
-//        ui->customPlot_2->addGraph();
-//        i.value().set_graph(count_graph);
-//        set_pen(count_graph);
-//        ++count_graph;
-//    }
+        for (QMap <int, zur_model>::iterator i = map_zurs.begin();
+             i != map_zurs.end(); ++i)
+    {
+        ui->customPlot_1->addGraph();
+        ui->customPlot_2->addGraph();
+        count_graph = (ui->customPlot_1->graphCount())-1;
+        i.value().set_graph(count_graph);
+        set_pen(count_graph,zur_plot);
+
+        graphs_zur.append(count_graph);
+    }
 }
 
 void modeling::create_dynamic_elements()
@@ -321,21 +379,10 @@ void modeling::create_dynamic_elements()
         ui->customPlot_2->addGraph();
         count_graph = (ui->customPlot_1->graphCount())-1;
         i.value()->set_graph(count_graph);
-        set_pen(count_graph);
-        //plot_1(count_graph,i.value()->get_vector_range(),i.value()->get_vector_z());
-        //plot_2(count_graph,i.value()->get_vector_x(),i.value()->get_vector_y());
+        set_pen(count_graph,aircraft_pbu_plot);
+
+        graphs_la_pbu.append(count_graph);
     }
-
-//    for (QMap <int, zur_model*>::iterator i = map_launchers.begin();
-//         i != map_launchers.end(); ++i)
-//    {
-//        ui->customPlot_1->addGraph();
-//        ui->customPlot_2->addGraph();
-//        count_graph = (ui->customPlot_1->graphCount())-1;
-//        i.value()->set_graph(count_graph);
-//        set_pen(count_graph);
-//    }
-
 }
 
 ///@note полное отображение траектории
@@ -347,14 +394,6 @@ void modeling::set_data_plot()
         plot_1(i->get_graph(),i->get_vector_range(),i->get_vector_z());
         plot_2(i->get_graph(),i->get_vector_x(),i->get_vector_y());
     }
-//    for (QMap <int, aircraft_pbu*>::iterator i = map_aircraft_pbu.begin();
-//         i != map_aircraft_pbu.end(); ++i)
-//    {
-//        plot_1(i.value()->get_graph(),i.value()->get_vector_z(),
-//               i.value()->get_vector_range());
-//        plot_2(i.value()->get_graph(),i.value()->get_vector_x(),
-//               i.value()->get_vector_y());
-//    }
 }
 
 void modeling::read_csv()
@@ -412,7 +451,7 @@ void modeling::pick_read_method(int state, QString _name_csv)
     }break;
     case zur_read:
     {
-        //read_zur_csv(_name_csv);
+        read_zur_csv(_name_csv);
     }break;
     }
 }
@@ -462,13 +501,13 @@ void modeling::read_zur_csv(QString name_csv)
         while (!in.atEnd())
         {
             line = in.readLine();
-            id=line.split(',').at(2).toInt();
+            id=line.split(',').at(1).toInt();
 
             map_zurs.take(id).append_point(line.split(',').at(0).toDouble(),
                                            line.split(',').at(2).toDouble(),
                                            line.split(',').at(3).toDouble(),
                                            line.split(',').at(4).toDouble(),
-                                           line.split(',').at(9).toInt());
+                                           line.split(',').at(10).toInt());
             ///@note уточнить
             map_zurs.take(id).set_status(line.split(',').at(9).toInt());
         }
@@ -574,6 +613,19 @@ void modeling::change_step(int index)
         }
     }
 
+    for (QMap <int, zur_model>::iterator i = map_zurs.begin();
+         i != map_zurs.end(); ++i)
+    {
+        double uu = double(index);
+        if(i->get_points().contains(uu)==true)
+        {
+            plot_1(i->get_graph(),i->get_points().operator[](uu)->vector_point_range,
+                    i->get_points().operator[](uu)->vector_point_z);
+            plot_2(i->get_graph(),i->get_points().operator[](uu)->vector_point_x,
+                    i->get_points().operator[](uu)->vector_point_y);
+        }
+    }
+
     for (QMap <int, aircraft_pbu*>::iterator i = map_aircraft_pbu.begin();
          i != map_aircraft_pbu.end(); ++i)
     {
@@ -589,7 +641,7 @@ void modeling::change_step(int index)
                     i.value()->get_points().operator[](uu)->vector_point_y);
         }
     }
-
+///@note доделать
     for(QMap <int, launcher_model>::iterator i = map_launchers.begin();
         i != map_launchers.end(); ++i)
     {
@@ -601,9 +653,6 @@ void modeling::change_step(int index)
             i->get_steps().operator[](uu)->status_curr;
         }
     }
-//    map_aircraft_m;
-//    map_aircraft_pbu;
-//    map_launchers;
 }
 
 void modeling::append_layout_pu()
@@ -622,3 +671,30 @@ void modeling::append_layout_pu()
     ui->pu_box->setLayout(vbox);
 }
 
+void modeling::on_checkBox_range_rls_clicked(bool checked)
+{
+    for (int ii : graphs_rls)
+    {
+        ui->customPlot_1->graph(ii)->setVisible(checked);
+        ui->customPlot_2->graph(ii)->setVisible(checked);
+    }
+
+    ui->customPlot_1->replot();
+    ui->customPlot_1->update();
+    ui->customPlot_2->replot();
+    ui->customPlot_2->update();
+}
+
+void modeling::on_checkBox_range_pu_clicked(bool checked)
+{
+    for (int ii : graphs_pu)
+    {
+        ui->customPlot_1->graph(ii)->setVisible(checked);
+        ui->customPlot_2->graph(ii)->setVisible(checked);
+    }
+
+    ui->customPlot_1->replot();
+    ui->customPlot_1->update();
+    ui->customPlot_2->replot();
+    ui->customPlot_2->update();
+}

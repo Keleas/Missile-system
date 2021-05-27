@@ -16,7 +16,7 @@ launcher_model::launcher_model(QJsonObject initData)
     radius = initData["radius"].toDouble();
     ammo = initData["rockets_amount"].toInt();
     horizontal_range = sqrt(pow(x,2)+pow(y,2));
-
+    calculate_radius_max(radius);
 }
 
 void launcher_model::append_step(double _step,

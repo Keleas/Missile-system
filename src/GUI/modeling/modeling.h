@@ -36,6 +36,10 @@ private slots:
 
     void change_step(int index);
 
+    void on_checkBox_range_rls_clicked(bool checked);
+
+    void on_checkBox_range_pu_clicked(bool checked);
+
 private:
     Ui::modeling *ui;
 
@@ -66,6 +70,8 @@ private:
 
     //QHash <int, aircraft_model> map_aircraft_m;
 
+    QVector<int> graphs_rls, graphs_pu, graphs_la, graphs_la_pbu, graphs_zur;
+
     pbu_model pbu;
 
     int count_graph = 3;
@@ -77,6 +83,9 @@ private:
         pbu_plot, ///< график ПБУ
         radar_plot,///< график РЛС
         launcher_plot,///< график ПУ
+        aircraft_plot,///< график ЛА общий
+        zur_plot,///< график ЗУР
+        aircraft_pbu_plot,///< график ЛА ПБУ
     };
 
     enum num_read_method
@@ -107,7 +116,7 @@ private:
                 QVector<double> vector_x,
                 QVector<double> vector_y);
 
-    void set_pen(int index);
+    void set_pen(int index, int object);
 
     void set_pen_radius(int number);
 
@@ -129,6 +138,9 @@ private:
 
     void append_layout_pu();
 
+    void set_visible_graph(int plot1, int plot2, bool state_visible);
+
+    void set_radius_graphs();
 };
 
 #endif // MODELING_H

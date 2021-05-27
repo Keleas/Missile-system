@@ -20,6 +20,9 @@ radar_model::radar_model(QJsonObject initData)
     Dmax = initData["Dmax"].toDouble();
     Dmin = initData["Dmin"].toDouble();
 
+    calculate_radius_max(Dmax);
+    calculate_radius_min(Dmin);
+
 }
 
 void radar_model::set_radius(double radius)
