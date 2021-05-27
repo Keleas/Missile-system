@@ -1,5 +1,5 @@
-#ifndef AIRTARGET_H
-#define AIRTARGET_H
+#ifndef RLS_H
+#define RLS_H
 
 #include <string>
 #include <fstream>
@@ -27,8 +27,6 @@ class RLS : public Model
 public:
     RLS(id_type id, MsgChannelCarrier& carrier, std::ostream& log);
 
-    void calculate(double dt);
-
     bool init(const rapidjson::Value &initial_data) override final;
     void firstStep() override final;
     void step(double time) override final;
@@ -50,4 +48,4 @@ private:
 
 DEFAULT_MODEL_FACTORY(RLS)
 
-#endif // AIRTARGET_H
+#endif // RLS_H

@@ -104,7 +104,7 @@ void AirTarget::step(double time)
     msg.coord = {crd.x, crd.y, crd.z};
     msg.vels = {data.xVel.back(), data.yVel.back(), data.zVel.back()};
     msg.status = status;
-
+    msg.type_model = targetModelType;
     writeLog(data.times.back(), targetModelType, id, msg.coord[0], msg.coord[1], msg.coord[2],
             msg.vels[0], msg.vels[1], msg.vels[2],
             data.angle_horizontal_plane.back(), data.wayAngle.back(), int(status));

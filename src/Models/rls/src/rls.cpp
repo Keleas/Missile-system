@@ -243,14 +243,14 @@ bool RLS::init(const rapidjson::Value& initial_data)
     targets_RCS.insert(std::make_pair("Anti-aircraft", 3));
 
     double Loc_tmp[3];
-    Loc_tmp[0] = initial_data["Loc"][0].GetDouble();
-    Loc_tmp[1] = initial_data["Loc"][1].GetDouble();
-    Loc_tmp[2] = initial_data["Loc"][2].GetDouble();
+    Loc_tmp[0] = initial_data["x"].GetDouble();
+    Loc_tmp[1] = initial_data["y"].GetDouble();
+    Loc_tmp[2] = initial_data["z"].GetDouble();
 
     double n[3];
-    n[0] = initial_data["n"][0].GetDouble();
-    n[1] = initial_data["n"][1].GetDouble();
-    n[2] = initial_data["n"][2].GetDouble();
+    n[0] = initial_data["rotate_x"].GetDouble();
+    n[1] = initial_data["rotate_y"].GetDouble();
+    n[2] = initial_data["rotate_z"].GetDouble();
 
     emxInit_struct1_T(&MFR);
 
@@ -297,7 +297,7 @@ void RLS::step(double time)
     TargetMsg msg;
     msg.coord = { 15000, 10000, 3000 };
     msg.vels = { 7, 8, 9 };
-    msg.type_model = "Миг-29";
+    msg.type_model = "F-35";
 
     send<TargetMsg>(1, msg);
 

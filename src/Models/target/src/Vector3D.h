@@ -2,6 +2,7 @@
 #define VECTOR3D_H
 
 #include "Coordinates.h"
+#include <array>
 
 class Vector3D
 {
@@ -47,9 +48,9 @@ inline Vector3D::Vector3D(GeocentricCoodinates coord) : x{coord.x}, y{coord.y}, 
 
 inline Vector3D::Vector3D(const std::array<double, 3> &coord)
 {
-    x = coord[0];
-    y = coord[1];
-    z = coord[2];
+    x = coord.at(0);
+    y = coord.at(1);
+    z = coord.at(2);
 }
 
 //Vector3D &Vector3D::operator=(const std::array<double, 3> &coords)

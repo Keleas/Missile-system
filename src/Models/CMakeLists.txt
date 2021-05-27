@@ -11,7 +11,3 @@ add_subdirectory(pbu)
 add_subdirectory(target)
 add_subdirectory(pu)
 add_subdirectory(rls)
-
-#if(BUILD_TESTS)
-    add_subdirectory(pu_pbu_target_zur_test)
-#endif()

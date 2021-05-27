@@ -15,6 +15,8 @@ bool zur::init(const rapidjson::Value& initial_data)
     param.MAX_MAH =  initial_data["rocket_max_M"].GetDouble();
     param.MIN_TRANSVERSE_OVERLOAD =  initial_data["rocket_min_Nx"].GetDouble();
     param.PRACTICAL_ROOF =  initial_data["rocket_practical_roof"].GetDouble();
+
+    return 0;
 }
 
 void zur::firstStep()

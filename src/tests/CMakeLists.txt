@@ -21,7 +21,6 @@ target_include_directories(${projectName} PRIVATE
         ${PROJECT_ROOT}/Models/rls/src
         ${PROJECT_ROOT}/Models/pbu/src
         ${PROJECT_ROOT}/Models/pu/src
-        ${PROJECT_ROOT}/Models/zur/src
         )
 
 target_link_libraries(${projectName} PRIVATE
@@ -29,5 +28,4 @@ target_link_libraries(${projectName} PRIVATE
         rls_model
         pbu_model
 	    pu_model
-        zur_model
     )
