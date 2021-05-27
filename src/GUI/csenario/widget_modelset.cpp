@@ -71,6 +71,7 @@ widget_modelset::widget_modelset(QWidget *parent) :
 
     ui->pushButton_modelling->setDisabled(true);
 
+    ui->pushButton_pbu->setVisible(false);
     //set_properties_antiaircraft();
 }
 

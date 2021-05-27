@@ -14,6 +14,34 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <item row="2" column="0" colspan="2">
+    <widget class="QGroupBox" name="groupBox_4">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>50</height>
+      </size>
+     </property>
+     <property name="title">
+      <string/>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <widget class="QScrollBar" name="sosiska">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QCustomPlot" name="customPlot_1" native="true"/>
+   </item>
+   <item row="0" column="0">
+    <widget class="QCustomPlot" name="customPlot_2" native="true"/>
+   </item>
    <item row="1" column="0" colspan="2">
     <widget class="QGroupBox" name="groupBox">
      <property name="minimumSize">
@@ -32,98 +60,7 @@
       <string/>
      </property>
      <layout class="QGridLayout" name="gridLayout_9">
-      <item row="8" column="2">
-       <widget class="QPushButton" name="pushButton">
-        <property name="text">
-         <string>Очистить</string>
-        </property>
-       </widget>
-      </item>
-      <item row="8" column="1">
-       <widget class="QCheckBox" name="checkBox_view_all">
-        <property name="text">
-         <string>Общее отображение ЛА от общего моделирования</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="7" column="0">
-       <spacer name="verticalSpacer_5">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Maximum</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>10</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="5" column="1">
-       <widget class="QCheckBox" name="checkBox_view_pbu">
-        <property name="text">
-         <string>Отображение ЛА от вида ПБУ</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="7" column="1">
-       <spacer name="verticalSpacer_6">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Maximum</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>10</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="1" column="0">
-       <spacer name="verticalSpacer">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Maximum</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>10</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="4" column="0">
-       <spacer name="verticalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Maximum</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>10</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="1" column="1">
+      <item row="0" column="1">
        <spacer name="verticalSpacer_3">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
@@ -139,14 +76,93 @@
         </property>
        </spacer>
       </item>
-      <item row="0" column="2" rowspan="8">
-       <widget class="QGroupBox" name="pu_box">
-        <property name="title">
-         <string>ПУ</string>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="checkBox_range_rls">
+        <property name="text">
+         <string>Область обзора РЛС</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
-      <item row="4" column="1">
+      <item row="0" column="0">
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Maximum</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>10</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="5" column="2">
+       <widget class="QPushButton" name="pushButton">
+        <property name="text">
+         <string>Очистить</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QCheckBox" name="checkBox_view_t_zur">
+        <property name="text">
+         <string>Конечные траектории ЗУР</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <spacer name="verticalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Maximum</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>10</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="3" column="0">
+       <widget class="QCheckBox" name="checkBox_range_pu">
+        <property name="text">
+         <string>Область поражения ПУ</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2">
+       <widget class="QCheckBox" name="checkBox_view_all">
+        <property name="text">
+         <string>Общее отображение ЛА от общего моделирования</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QCheckBox" name="checkBox_view_pbu">
+        <property name="text">
+         <string>Отображение ЛА от вида ПБУ</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
        <spacer name="verticalSpacer_4">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
@@ -162,122 +178,47 @@
         </property>
        </spacer>
       </item>
+      <item row="3" column="1">
+       <widget class="QCheckBox" name="checkBox_view_t_la">
+        <property name="text">
+         <string>Конечные траектории целей</string>
+        </property>
+       </widget>
+      </item>
       <item row="2" column="1">
-       <widget class="QCheckBox" name="checkBox_6">
-        <property name="text">
-         <string>Истинные траектории ЗУР</string>
+       <spacer name="verticalSpacer_5">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
         </property>
-       </widget>
-      </item>
-      <item row="8" column="0">
-       <widget class="QCheckBox" name="checkBox_5">
-        <property name="text">
-         <string>Истинные траектории целей</string>
+        <property name="sizeType">
+         <enum>QSizePolicy::Maximum</enum>
         </property>
-       </widget>
-      </item>
-      <item row="5" column="0">
-       <widget class="QCheckBox" name="checkBox_range_pu">
-        <property name="text">
-         <string>Область поражения ПУ</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QCheckBox" name="checkBox_range_rls">
-        <property name="text">
-         <string>Область обзора РЛС</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="2" column="0" colspan="2">
-    <widget class="QGroupBox" name="groupBox_4">
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>50</height>
-      </size>
-     </property>
-     <property name="title">
-      <string/>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="4">
-       <widget class="QPushButton" name="pause_button">
-        <property name="maximumSize">
+        <property name="sizeHint" stdset="0">
          <size>
-          <width>35</width>
-          <height>35</height>
+          <width>20</width>
+          <height>10</height>
          </size>
         </property>
-        <property name="text">
-         <string>||</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="8">
-       <widget class="QPushButton" name="stop_button">
-        <property name="maximumSize">
-         <size>
-          <width>35</width>
-          <height>35</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>stop</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="3">
-       <widget class="QPushButton" name="play_button">
-        <property name="maximumSize">
-         <size>
-          <width>35</width>
-          <height>35</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>play</string>
-        </property>
-       </widget>
+       </spacer>
       </item>
       <item row="0" column="2">
-       <widget class="QLabel" name="time_label">
-        <property name="maximumSize">
+       <spacer name="verticalSpacer_6">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Maximum</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
          <size>
-          <width>80</width>
-          <height>35</height>
+          <width>20</width>
+          <height>10</height>
          </size>
         </property>
-        <property name="text">
-         <string>00:00/00:00</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QScrollBar" name="sosiska">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
+       </spacer>
       </item>
      </layout>
     </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QCustomPlot" name="customPlot_2" native="true"/>
-   </item>
-   <item row="0" column="1">
-    <widget class="QCustomPlot" name="customPlot_1" native="true"/>
    </item>
   </layout>
  </widget>

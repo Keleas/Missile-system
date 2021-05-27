@@ -104,6 +104,8 @@ void modeling::clear_data()
     graphs_la.clear();
     graphs_la_pbu.clear();
     graphs_zur.clear();
+    graphs_la_t.clear();
+    graphs_zur_t.clear();
 
     map_radars.clear();
     map_aircraft_pbu.clear();
@@ -375,6 +377,9 @@ void modeling::set_pen(int index, int object)
     }break;
     case aircraft_pbu_plot_t:
     {
+        QPen pen_line(Qt::green, 3, Qt::DashDotLine,
+                 Qt::RoundCap, Qt::RoundJoin);
+        pen_line.setColor(color);
         ui->customPlot_1->graph(index)->
                 setScatterStyle(QCPScatterStyle::ssDot);
         ui->customPlot_1->graph(index)->setLineStyle(QCPGraph::lsNone);
@@ -387,6 +392,9 @@ void modeling::set_pen(int index, int object)
     }break;
     case zur_plot_t:
     {
+        QPen pen_line(Qt::blue, 3, Qt::DashDotLine,
+                 Qt::RoundCap, Qt::RoundJoin);
+        pen_line.setColor(color);
         ui->customPlot_1->graph(index)->
                 setScatterStyle(QCPScatterStyle::ssDot);
         ui->customPlot_1->graph(index)->setLineStyle(QCPGraph::lsNone);
@@ -399,6 +407,9 @@ void modeling::set_pen(int index, int object)
     }break;
     case aircraft_plot_t:
     {
+        QPen pen_line(Qt::red, 3, Qt::DashDotLine,
+                 Qt::RoundCap, Qt::RoundJoin);
+        pen_line.setColor(color);
         ui->customPlot_1->graph(index)->
                 setScatterStyle(QCPScatterStyle::ssDot);
         ui->customPlot_1->graph(index)->setLineStyle(QCPGraph::lsNone);
@@ -426,30 +437,30 @@ void modeling::set_pen_d(int index, int object)
                       0, 255 );
         pen_line.setColor(color);
         ui->customPlot_1->graph(index)->
-                setScatterStyle(QCPScatterStyle::ssCircle);
+                setScatterStyle(QCPScatterStyle::ssCross);
         ui->customPlot_1->graph(index)->setLineStyle(QCPGraph::lsNone);
         ui->customPlot_1->graph(index)->setPen(pen_line);
 
         ui->customPlot_2->graph(index)->
-                setScatterStyle(QCPScatterStyle::ssCircle);
+                setScatterStyle(QCPScatterStyle::ssCross);
         ui->customPlot_2->graph(index)->setLineStyle(QCPGraph::lsNone);
         ui->customPlot_2->graph(index)->setPen(pen_line);
     }break;
     case zur_plot_d:
     {
-        QPen pen_line(Qt::red, 3, Qt::DashDotLine,
+        QPen pen_line(Qt::blue, 3, Qt::DashDotLine,
                  Qt::RoundCap, Qt::RoundJoin);
         QColor color( 0,
                       0,
                       128, 255 );
         pen_line.setColor(color);
         ui->customPlot_1->graph(index)->
-                setScatterStyle(QCPScatterStyle::ssPlus);
+                setScatterStyle(QCPScatterStyle::ssCross);
         ui->customPlot_1->graph(index)->setLineStyle(QCPGraph::lsNone);
         ui->customPlot_1->graph(index)->setPen(pen_line);
 
         ui->customPlot_2->graph(index)->
-                setScatterStyle(QCPScatterStyle::ssPlus);
+                setScatterStyle(QCPScatterStyle::ssCross);
         ui->customPlot_2->graph(index)->setLineStyle(QCPGraph::lsNone);
         ui->customPlot_2->graph(index)->setPen(pen_line);
     }break;
@@ -524,9 +535,30 @@ void modeling::set_data_plot()
     for (QMap <int, aircraft_model>::iterator i = map_aircraft_m.begin();
          i != map_aircraft_m.end(); ++i)
     {
-
-        plot_1(i->get_graph(),i->get_vector_range(),i->get_vector_z());
-        plot_2(i->get_graph(),i->get_vector_x(),i->get_vector_y());
+        ui->customPlot_1->addGraph();
+        ui->customPlot_2->addGraph();
+        int index = (ui->customPlot_1->graphCount())-1;
+        i->set_graph_t(index);
+        graphs_la_t.append(index);
+        plot_1(index,i->get_vector_range(),i->get_vector_z());
+        plot_2(index,i->get_vector_x(),i->get_vector_y());
+        ui->customPlot_1->graph(index)->setVisible(false);
+        ui->customPlot_2->graph(index)->setVisible(false);
+        set_pen(index, aircraft_plot_t);
+    }
+    for (QMap <int, zur_model>::iterator i = map_zurs.begin();
+         i != map_zurs.end(); ++i)
+    {
+        ui->customPlot_1->addGraph();
+        ui->customPlot_2->addGraph();
+        int index = (ui->customPlot_1->graphCount())-1;
+        i->set_graph_t(index);
+        graphs_zur_t.append(index);
+        plot_1(index,i->get_vector_range(),i->get_vector_z());
+        plot_2(index,i->get_vector_x(),i->get_vector_y());
+        ui->customPlot_1->graph(index)->setVisible(false);
+        ui->customPlot_2->graph(index)->setVisible(false);
+        set_pen(index, zur_plot_t);
     }
 //    for (QMap <int, aircraft_pbu*>::iterator i = map_aircraft_pbu.begin();
 //         i != map_aircraft_pbu.end(); ++i)
@@ -750,6 +782,14 @@ void modeling::change_step(int index)
                     i->get_points().operator[](uu)->vector_point_z);
             plot_2(i->get_graph(),i->get_points().operator[](uu)->vector_point_x,
                     i->get_points().operator[](uu)->vector_point_y);
+            if(i->get_points().operator[](uu)->status==2)
+            {
+                set_pen_d(i->get_graph(),aircraft_plot_d);
+            }
+            else
+            {
+                set_pen(count_graph,aircraft_plot);
+            }
         }
     }
 
@@ -763,6 +803,14 @@ void modeling::change_step(int index)
                     i->get_points().operator[](uu)->vector_point_z);
             plot_2(i->get_graph(),i->get_points().operator[](uu)->vector_point_x,
                     i->get_points().operator[](uu)->vector_point_y);
+        }
+        if(i->get_points().operator[](uu)->status==2)
+        {
+            set_pen_d(i->get_graph(),zur_plot_d);
+        }
+        else
+        {
+            set_pen(count_graph,zur_plot);
         }
     }
 
@@ -801,18 +849,17 @@ void modeling::change_step(int index)
 
 void modeling::append_layout_pu()
 {
-    QVBoxLayout* vbox = new QVBoxLayout(this);
-    for (QMap <int, launcher_model>::iterator i = map_launchers.begin();
-         i != map_launchers.end(); ++i)
-    {
-        QHBoxLayout* hbox = new QHBoxLayout(this);
-        QLabel* name_label = new QLabel(i->get_name(),this);
-        QLabel* ammo_label = new QLabel(QString::number(i->get_ammo()),this);
-        hbox->addWidget(name_label);
-        hbox->addWidget(ammo_label);
-        vbox->addLayout(hbox);
-    }
-    ui->pu_box->setLayout(vbox);
+//    QVBoxLayout* vbox = new QVBoxLayout(this);
+//    for (QMap <int, launcher_model>::iterator i = map_launchers.begin();
+//         i != map_launchers.end(); ++i)
+//    {
+//        QHBoxLayout* hbox = new QHBoxLayout(this);
+//        QLabel* name_label = new QLabel(i->get_name(),this);
+//        QLabel* ammo_label = new QLabel(QString::number(i->get_ammo()),this);
+//        hbox->addWidget(name_label);
+//        hbox->addWidget(ammo_label);
+//        vbox->addLayout(hbox);
+//    }
 }
 
 void modeling::on_checkBox_range_rls_clicked(bool checked)
@@ -874,4 +921,31 @@ void modeling::on_checkBox_view_all_clicked(bool checked)
 void modeling::on_pushButton_clicked()
 {
     clear_data();
+}
+
+void modeling::on_checkBox_view_t_la_clicked(bool checked)
+{
+    for (int ii : graphs_la_t)
+    {
+        ui->customPlot_1->graph(ii)->setVisible(checked);
+        ui->customPlot_2->graph(ii)->setVisible(checked);
+    }
+
+    ui->customPlot_1->replot();
+    ui->customPlot_1->update();
+    ui->customPlot_2->replot();
+    ui->customPlot_2->update();
+}
+
+void modeling::on_checkBox_view_t_zur_clicked(bool checked)
+{
+    for (int ii : graphs_zur_t)
+    {
+        ui->customPlot_1->graph(ii)->setVisible(checked);
+        ui->customPlot_2->graph(ii)->setVisible(checked);
+    }
+    ui->customPlot_1->replot();
+    ui->customPlot_1->update();
+    ui->customPlot_2->replot();
+    ui->customPlot_2->update();
 }

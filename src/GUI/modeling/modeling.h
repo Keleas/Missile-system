@@ -46,6 +46,10 @@ private slots:
 
     void on_pushButton_clicked();
 
+    void on_checkBox_view_t_la_clicked(bool checked);
+
+    void on_checkBox_view_t_zur_clicked(bool checked);
+
 private:
     Ui::modeling *ui;
 
@@ -76,7 +80,7 @@ private:
 
     //QHash <int, aircraft_model> map_aircraft_m;
 
-    QVector<int> graphs_rls, graphs_pu, graphs_la, graphs_la_pbu, graphs_zur;
+    QVector<int> graphs_la_t, graphs_zur_t, graphs_rls, graphs_pu, graphs_la, graphs_la_pbu, graphs_zur;
 
     pbu_model pbu;
 
