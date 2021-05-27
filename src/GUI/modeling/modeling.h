@@ -44,6 +44,8 @@ private slots:
 
     void on_checkBox_view_all_clicked(bool checked);
 
+    void on_pushButton_clicked();
+
 private:
     Ui::modeling *ui;
 
@@ -90,6 +92,11 @@ private:
         aircraft_plot,///< график ЛА общий
         zur_plot,///< график ЗУР
         aircraft_pbu_plot,///< график ЛА ПБУ
+        aircraft_pbu_plot_t,///< график  траектории ЛА ПБУ
+        zur_plot_t,///< график  траектории ЗУР
+        aircraft_plot_t,///< график  tr ЛА общий
+        aircraft_plot_d,///< график  destr ЛА общий
+        zur_plot_d,///< график  траектории ЛА общий
     };
 
     enum num_read_method
@@ -145,6 +152,8 @@ private:
     void set_visible_graph(int plot1, int plot2, bool state_visible);
 
     void set_radius_graphs();
+
+    void set_pen_d(int index, int object);
 };
 
 #endif // MODELING_H

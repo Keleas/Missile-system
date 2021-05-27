@@ -49,21 +49,6 @@ modeling::modeling(QWidget *parent) :
 
 modeling::~modeling()
 {
-    clear_data();
-    delete ui;
-}
-
-void modeling::clear_data()
-{
-    count_graph = 3;
-    vector_range_radar.clear();
-    vector_x_radar.clear();
-    vector_y_radar.clear();
-    vector_z_radar.clear();
-    vector_x_pu.clear();
-    vector_y_pu.clear();
-    vector_z_pu.clear();
-    vector_range_pu.clear();
     for (QMap <int, launcher_model>::iterator i = map_launchers.begin();
          i != map_launchers.end(); ++i)
     {
@@ -94,8 +79,38 @@ void modeling::clear_data()
         i->~radar_model();
     }
     map_radars.clear();
+    clear_data();
+    delete ui;
+}
+
+void modeling::clear_data()
+{
+    count_graph = 3;
+    vector_range_radar.clear();
+    vector_x_radar.clear();
+    vector_y_radar.clear();
+    vector_z_radar.clear();
+    vector_x_pu.clear();
+    vector_y_pu.clear();
+    vector_z_pu.clear();
+    vector_range_pu.clear();
+
     ui->customPlot_1->clearGraphs();
     ui->customPlot_2->clearGraphs();
+    create_stationary_graphs();
+
+    graphs_rls.clear();
+    graphs_pu.clear();
+    graphs_la.clear();
+    graphs_la_pbu.clear();
+    graphs_zur.clear();
+
+    map_radars.clear();
+    map_aircraft_pbu.clear();
+    map_aircraft_m.clear();
+    map_zurs.clear();
+    map_launchers.clear();
+    ui->sosiska->setValue(0);
 }
 
 void modeling::set_data(QString _config_name)
@@ -358,10 +373,88 @@ void modeling::set_pen(int index, int object)
         ui->customPlot_2->graph(index)->setLineStyle(QCPGraph::lsNone);
         ui->customPlot_2->graph(index)->setPen(pen_line);
     }break;
-    }
+    case aircraft_pbu_plot_t:
+    {
+        ui->customPlot_1->graph(index)->
+                setScatterStyle(QCPScatterStyle::ssDot);
+        ui->customPlot_1->graph(index)->setLineStyle(QCPGraph::lsNone);
+        ui->customPlot_1->graph(index)->setPen(pen_line);
 
+        ui->customPlot_2->graph(index)->
+                setScatterStyle(QCPScatterStyle::ssDot);
+        ui->customPlot_2->graph(index)->setLineStyle(QCPGraph::lsNone);
+        ui->customPlot_2->graph(index)->setPen(pen_line);
+    }break;
+    case zur_plot_t:
+    {
+        ui->customPlot_1->graph(index)->
+                setScatterStyle(QCPScatterStyle::ssDot);
+        ui->customPlot_1->graph(index)->setLineStyle(QCPGraph::lsNone);
+        ui->customPlot_1->graph(index)->setPen(pen_line);
+
+        ui->customPlot_2->graph(index)->
+                setScatterStyle(QCPScatterStyle::ssDot);
+        ui->customPlot_2->graph(index)->setLineStyle(QCPGraph::lsNone);
+        ui->customPlot_2->graph(index)->setPen(pen_line);
+    }break;
+    case aircraft_plot_t:
+    {
+        ui->customPlot_1->graph(index)->
+                setScatterStyle(QCPScatterStyle::ssDot);
+        ui->customPlot_1->graph(index)->setLineStyle(QCPGraph::lsNone);
+        ui->customPlot_1->graph(index)->setPen(pen_line);
+
+        ui->customPlot_2->graph(index)->
+                setScatterStyle(QCPScatterStyle::ssDot);
+        ui->customPlot_2->graph(index)->setLineStyle(QCPGraph::lsNone);
+        ui->customPlot_2->graph(index)->setPen(pen_line);
+    }break;
+}
 }
 
+void modeling::set_pen_d(int index, int object)
+{
+    switch (object)
+    {
+
+    case aircraft_plot_d:
+    {
+        QPen pen_line(Qt::red, 3, Qt::DashDotLine,
+                 Qt::RoundCap, Qt::RoundJoin);
+        QColor color( 255,
+                      0,
+                      0, 255 );
+        pen_line.setColor(color);
+        ui->customPlot_1->graph(index)->
+                setScatterStyle(QCPScatterStyle::ssCircle);
+        ui->customPlot_1->graph(index)->setLineStyle(QCPGraph::lsNone);
+        ui->customPlot_1->graph(index)->setPen(pen_line);
+
+        ui->customPlot_2->graph(index)->
+                setScatterStyle(QCPScatterStyle::ssCircle);
+        ui->customPlot_2->graph(index)->setLineStyle(QCPGraph::lsNone);
+        ui->customPlot_2->graph(index)->setPen(pen_line);
+    }break;
+    case zur_plot_d:
+    {
+        QPen pen_line(Qt::red, 3, Qt::DashDotLine,
+                 Qt::RoundCap, Qt::RoundJoin);
+        QColor color( 0,
+                      0,
+                      128, 255 );
+        pen_line.setColor(color);
+        ui->customPlot_1->graph(index)->
+                setScatterStyle(QCPScatterStyle::ssPlus);
+        ui->customPlot_1->graph(index)->setLineStyle(QCPGraph::lsNone);
+        ui->customPlot_1->graph(index)->setPen(pen_line);
+
+        ui->customPlot_2->graph(index)->
+                setScatterStyle(QCPScatterStyle::ssPlus);
+        ui->customPlot_2->graph(index)->setLineStyle(QCPGraph::lsNone);
+        ui->customPlot_2->graph(index)->setPen(pen_line);
+    }break;
+    }
+}
 void modeling::set_pen_radius(int number)
 {
     QPen pen_line(Qt::red, 3, Qt::DashDotLine,
@@ -776,4 +869,9 @@ void modeling::on_checkBox_view_all_clicked(bool checked)
     ui->customPlot_1->update();
     ui->customPlot_2->replot();
     ui->customPlot_2->update();
+}
+
+void modeling::on_pushButton_clicked()
+{
+    clear_data();
 }
