@@ -9,19 +9,17 @@ set(HEADERS
         Coordinates.h
         TrajData.h
         Vector3D.h
+        zur.h
         )
 
 set(SOURCES
         airtarget.cpp
+        zur.cpp
         )
 
 add_library(${projectName}
         ${HEADERS}
         ${SOURCES}
-        )
-
-target_include_directories(${projectName} INTERFACE
-        ${PROJECT_ROOT}/ModelingDispatcher/src
         )
 
 target_link_libraries(${projectName} INTERFACE

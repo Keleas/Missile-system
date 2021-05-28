@@ -2,6 +2,7 @@
 #define VECTOR3D_H
 
 #include "Coordinates.h"
+#include <array>
 
 class Vector3D
 {
@@ -9,6 +10,9 @@ public:
     Vector3D() = default;
     Vector3D(double _x, double _y, double _z);
     Vector3D(GeocentricCoodinates coord);
+    Vector3D(const std::array<double, 3> &coord);
+
+//    Vector3D& operator=(const std::array<double,3> &coords);
 
 
     double length() const;
@@ -41,6 +45,21 @@ private:
 inline Vector3D::Vector3D(double _x, double _y, double _z) : x{_x}, y{_y}, z{_z} {}
 
 inline Vector3D::Vector3D(GeocentricCoodinates coord) : x{coord.x}, y{coord.y}, z{coord.z} {}
+
+inline Vector3D::Vector3D(const std::array<double, 3> &coord)
+{
+    x = coord.at(0);
+    y = coord.at(1);
+    z = coord.at(2);
+}
+
+//Vector3D &Vector3D::operator=(const std::array<double, 3> &coords)
+//{
+//    x = coords[0];
+//    y = coords[1];
+//    z = coords[2];
+//    return *this;
+//}
 
 inline double Vector3D::length() const{
     return sqrt(x*x + y*y + z*z);
@@ -163,5 +182,60 @@ inline double angeleBetween(Vector3D const& a, Vector3D const& b){
     return res;
 }
 
+inline Vector3D GeoToPBU(GeocentricCoodinates GC0, GeocentricCoodinates GC)
+{
+    EarthEllipsoid ellipsoid;
+    /*
+    ellipsoid.a = 100000000000000000;
+    ellipsoid.b = ellipsoid.a;
+    ellipsoid.e = sqrt(ellipsoid.a*ellipsoid.a - ellipsoid.b*ellipsoid.b) / ellipsoid.a;
+    ellipsoid.f = (ellipsoid.a-ellipsoid.b) / ellipsoid.a;*/
+
+    GeodezicCoodinates GD0 = GeocentricToGeodezic(GC0).toRadians();
+    double sinB = sin(GD0.latitude);
+    double N = ellipsoid.a / sqrt(1 - pow(ellipsoid.e, 2) * pow(sinB, 2));
+
+    double z = GC.z + pow(ellipsoid.e, 2) * N * sinB;
+    double x = GC.x * cos(GD0.longitude) + GC.y * sin(GD0.longitude);
+    double y = -GC.x * sin(GD0.longitude) + GC.y * cos(GD0.longitude);
+
+    double z1 = z;
+
+    z = z1 * cos(M_PI_2 - GD0.latitude) + x * sin(M_PI_2 - GD0.latitude);
+    x = -z1 * sin(M_PI_2 - GD0.latitude) + x * cos(M_PI_2 - GD0.latitude);
+    z = z - (N+GD0.altitude);
+    x = -x;
+    return Vector3D(x, y, z);
+}
+
+inline GeocentricCoodinates PBUToGeo(GeocentricCoodinates GC0, Vector3D PBU)
+{
+    EarthEllipsoid ellipsoid;
+    /*
+    ellipsoid.a = 100000000000000000;
+    ellipsoid.b = ellipsoid.a;
+    ellipsoid.e = sqrt(ellipsoid.a*ellipsoid.a - ellipsoid.b*ellipsoid.b) / ellipsoid.a;
+    ellipsoid.f = (ellipsoid.a-ellipsoid.b) / ellipsoid.a;*/
+
+    GeodezicCoodinates GD0 = GeocentricToGeodezic(GC0).toRadians();
+    double sinB = sin(GD0.latitude);
+    double N = ellipsoid.a / sqrt(1 - pow(ellipsoid.e, 2) * pow(sinB, 2));
+
+    double x = -PBU.x;
+    double z = PBU.z + N + GD0.altitude;
+
+    double z1 = z;
+    z = z1 * cos(-M_PI_2 + GD0.latitude) + x * sin(-M_PI_2 + GD0.latitude);
+    x = -z1 * sin(-M_PI_2 + GD0.latitude) + x * cos(-M_PI_2 + GD0.latitude);
+
+    double x1 = x;
+    x = x1 * cos(-GD0.longitude) + PBU.y * sin(-GD0.longitude);
+    double y = -x1 * sin(-GD0.longitude) + PBU.y * cos(-GD0.longitude);
+
+    z = z - pow(ellipsoid.e, 2) * N * sinB;
+
+    return GeocentricCoodinates(x, y, z);
+
+}
 
 #endif // VECTOR3D_H
